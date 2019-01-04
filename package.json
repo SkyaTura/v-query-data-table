@@ -1,0 +1,17 @@
+{
+  "name": "v-query-data-table",
+  "version": "1.0.0",
+  "description": "A Vuetify Data Table wrapper with easy API querying",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Antonio Eduardo <antonio@skyatura.com.br>",
+  "repository": "https://github.com/SkyaTura/v-query-data-table",
+  "license": "ISC",
+  "dependencies": {
+    "debounce": "^1.2.0",
+    "lodash.get": "^4.4.2",
+    "lodash.merge": "^4.6.1"
+  }
+}
