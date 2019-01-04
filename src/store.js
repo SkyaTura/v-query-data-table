@@ -4,6 +4,38 @@ import pick from 'lodash.get'
 export const namespaced = true
 
 export const state = () => ({
+  model: {
+    active: true,
+    loading: false,
+    headers: [],
+    dataset: {
+      items: [],
+      totalItems: 0,
+    },
+    query: {
+      pagination: {
+        descending: false,
+        page: 1,
+        rowsPerPage: 5,
+        sortBy: '',
+      },
+      searchString: '',
+    },
+    request: {
+      endpoint: '',
+      options: {
+        method: 'get',
+      },
+    },
+    responseFields: {
+      items: 'items',
+      totalItems: 'totalItems',
+    },
+    dataTableProps: {
+      rowsPerPageItems: [5, 10, 25, 50, 100],
+      rowsPerPageText: 'Itens por página:',
+    },
+  },
   list: {},
 })
 
@@ -24,6 +56,16 @@ export const mutations = {
     state.list = {
       ...state.list,
       [key]: merge(state.list[key], options),
+    }
+  },
+  TABLE_UPDATE_DATASET(state, { key, dataset }) {
+    if (!state.list[key]) return false
+    state.list = {
+      ...state.list,
+      [key]: {
+        ...state.list[key],
+        dataset,
+      },
     }
   },
   TABLE_REMOVE(state, key) {
@@ -71,30 +113,49 @@ export const actions = {
       post: 'data',
       get: 'params',
     }
-    const queryPayload = {
+    const queryBase = {
       ...query.pagination,
-      searchString: query.searchString,
+      search: query.searchString,
     }
-    const { data } = await this.$axios({
+    const queryPayload =
+      typeof request.queryTransform === 'function'
+        ? request.queryTransform({ table, payload, queryPayload })
+        : queryBase
+    const payload = {
       ...request.options,
       url: request.endpoint,
       [request.queryType || paramsToken[request.options.method]]: queryPayload,
-    })
+    }
+
+    const axiosParams =
+      typeof request.requestInterceptor === 'function'
+        ? request.requestInterceptor({ table, payload, queryPayload })
+        : payload
+
+    const { data } = await this.$axios(await axiosParams)
     const transformedData = responseTransform ? responseTransform(data) : data
     const dataset = {
       items: pick(transformedData, responseFields.items),
       totalItems: pick(transformedData, responseFields.totalItems),
     }
-    commit('TABLE_UPDATE', { key, options: { dataset } })
     return dataset
   },
 
-  async query({ commit, dispatch }, { key }) {
+  async query({ commit, dispatch, getters }, { key }) {
+    const table = getters.getTable(key)
+    const { request } = table
     commit('TABLE_SET_LOADING', { key, loading: true })
     try {
-      await dispatch('fetch', { key })
+      const response =
+        typeof request.customHandler === 'function'
+          ? request.customHandler(table)
+          : dispatch('fetch', { key })
+      const dataset = await response
+      console.log(dataset)
+      commit('TABLE_UPDATE_DATASET', { key, dataset })
     } catch (e) {
-      commit('TABLE_UPDATE', {
+      console.error(e)
+      commit('TABLE_UPDATE_DATASET', {
         key,
         dataset: { items: [], totalItems: 0 },
       })
@@ -123,44 +184,12 @@ export const actions = {
       payload
     )
   },
-  createTable({ commit, getters, dispatch }, payload) {
+  createTable({ commit, getters, dispatch, state }, payload) {
     const { key, options } = payload
     if (getters.getTable(key)) return false
-    const table = {
-      active: true,
-      loading: false,
-      headers: [],
-      dataset: {
-        items: [],
-        totalItems: 0,
-      },
-      query: {
-        pagination: {
-          descending: false,
-          page: 1,
-          rowsPerPage: 5,
-          sortBy: '',
-        },
-        searchString: '',
-      },
-      request: {
-        endpoint: '',
-        options: {
-          method: 'get',
-        },
-      },
-      responseFields: {
-        items: 'items',
-        totalItems: 'totalItems',
-      },
-      dataTableProps: {
-        rowsPerPageItems: [5, 10, 25, 50, 100],
-        rowsPerPageText: 'Itens por página:',
-      },
-    }
     commit('TABLE_CREATE', {
       key,
-      options: merge(table, options),
+      options: merge(state.model, options),
     })
     return payload.quiet || dispatch('query', payload)
   },
