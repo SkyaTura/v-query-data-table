@@ -27,15 +27,21 @@ v-card(flat, v-if="table")
           v-alert(v-else :value="true" color="error" icon="warning")
             | Sua busca {{ !searchString ? &apos;&apos; : &grave;por &quot;${searchString}&quot;&grave; }} n&atilde;o encontrou resultados.
       template(slot="header-cell" slot-scope="props")
-        slot(name="header-cell", v-bind="props")
+        slot(name="header-cell", v-bind="props", :$slotScope="props")
       //- template(slot="headers" slot-scope="props")
-        slot(name="headers", v-bind="props")
+        slot(name="headers", v-bind="props", :$slotScope="props")
       template(slot="items" slot-scope="props")
-        slot(name="items", v-bind="props")
+        slot(name="items", v-bind="props", :$slotScope="props")
+          tr(@click="props.expanded = !props.expanded")
+            td(
+              v-for="cell in table.headers",
+              :align="cell.align",
+              :key="props.item[cell.value][usedProps.itemKey || 'id']"
+            ) {{ props.item[cell.value] }}
       template(slot="page-text" slot-scope="props")
-        slot(name="page-text", v-bind="props")
+        slot(name="page-text", v-bind="props", :$slotScope="props")
       template(slot="expand" slot-scope="props")
-        slot(name="expand", v-bind="props")
+        slot(name="expand", v-bind="props", :$slotScope="props")
       template(slot="actions-append")
         slot(name="actions-append")
       template(slot="actions-prepend")
@@ -84,6 +90,7 @@ export default {
       await this.datatable.prepare(storeSetup)
       return
     }
+    if (table.dataset.items.length) return
     this.query()
   },
   methods: {

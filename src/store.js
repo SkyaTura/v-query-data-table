@@ -151,7 +151,6 @@ export const actions = {
           ? request.customHandler(table)
           : dispatch('fetch', { key })
       const dataset = await response
-      console.log(dataset)
       commit('TABLE_UPDATE_DATASET', { key, dataset })
     } catch (e) {
       console.error(e)
@@ -163,8 +162,14 @@ export const actions = {
     commit('TABLE_SET_LOADING', { key, loading: false })
   },
 
-  paginate({ commit, dispatch }, payload) {
+  paginate({ commit, dispatch, getters }, payload) {
+    const table = getters.getTable(payload.key)
+    const props = ['descending', 'page', 'rowsPerPage', 'sortBy']
+    const isDifferent = !props.every(
+      prop => table.query.pagination[prop] === payload.pagination[prop]
+    )
     commit('TABLE_SET_PAGINATION', payload)
+    if (!isDifferent) return false
     return dispatch('query', payload)
   },
 
