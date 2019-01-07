@@ -15,7 +15,7 @@ v-card(flat, v-if="table")
     v-data-table(
       v-bind="usedProps",
       :headers="table.headers",
-      :items="table.dataset.items",
+      :items="items",
       :pagination="table.query.pagination",
       :loading="loading",
       :total-items="table.dataset.totalItems",
@@ -64,6 +64,7 @@ export default {
     title: { type: String, default: '' },
     store: { type: String, required: true },
     storeSetup: { type: Object, default: () => ({}) },
+    itemTransform: { type: Function, default: null },
     dataTableProps: { type: Object, default: () => ({}) },
     hideSearch: { type: Boolean, default: false },
   },
@@ -73,6 +74,12 @@ export default {
     },
     table() {
       return this.datatable.table
+    },
+    items() {
+      const { table, itemTransform } = this
+      return typeof itemTransform === 'function'
+        ? table.dataset.items.map(itemTransform)
+        : table.dataset.items
     },
     loading() {
       return this.table.loading

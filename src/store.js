@@ -14,10 +14,10 @@ export const state = () => ({
     },
     query: {
       pagination: {
-        descending: false,
+        descending: null,
         page: 1,
         rowsPerPage: 5,
-        sortBy: '',
+        sortBy: null,
       },
       searchString: '',
     },
@@ -108,35 +108,24 @@ export const mutations = {
 export const actions = {
   async fetch({ commit, getters }, { key }) {
     const table = getters.getTable(key)
-    const { request, query, responseFields, responseTransform } = table
+    const { request, query, responseFields } = table
     const paramsToken = {
       post: 'data',
       get: 'params',
     }
-    const queryBase = {
-      ...query.pagination,
-      search: query.searchString,
-    }
-    const queryPayload =
-      typeof request.queryTransform === 'function'
-        ? request.queryTransform({ table, payload, queryPayload })
-        : queryBase
     const payload = {
       ...request.options,
       url: request.endpoint,
-      [request.queryType || paramsToken[request.options.method]]: queryPayload,
+      [request.queryType || paramsToken[request.options.method]]: {
+        ...query.pagination,
+        search: query.searchString,
+      },
     }
 
-    const axiosParams =
-      typeof request.requestInterceptor === 'function'
-        ? request.requestInterceptor({ table, payload, queryPayload })
-        : payload
-
-    const { data } = await this.$axios(await axiosParams)
-    const transformedData = responseTransform ? responseTransform(data) : data
+    const { data } = await this.$axios(payload)
     const dataset = {
-      items: pick(transformedData, responseFields.items),
-      totalItems: pick(transformedData, responseFields.totalItems),
+      items: pick(data, responseFields.items),
+      totalItems: pick(data, responseFields.totalItems),
     }
     return dataset
   },
