@@ -183,7 +183,7 @@ export const actions = {
     if (getters.getTable(key)) return false
     commit('TABLE_CREATE', {
       key,
-      options: merge(state.model, options),
+      options: merge(JSON.parse(JSON.stringify(state.model)), options),
     })
     return payload.quiet || dispatch('query', payload)
   },
