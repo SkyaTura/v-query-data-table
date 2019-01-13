@@ -46,62 +46,34 @@ export const getters = {
 export const mutations = {
   TABLE_CREATE(state, { key, options }) {
     if (state.list[key]) return false
-    state.list = {
-      ...state.list,
-      [key]: options,
-    }
+    state.list[key] = options
   },
   TABLE_UPDATE(state, { key, options }) {
     if (!state.list[key]) return false
-    state.list = {
-      ...state.list,
-      [key]: merge(state.list[key], options),
-    }
+    state.list[key] = merge(state.list[key], options)
   },
   TABLE_UPDATE_DATASET(state, { key, dataset }) {
     if (!state.list[key]) return false
-    state.list = {
-      ...state.list,
-      [key]: {
-        ...state.list[key],
-        dataset,
-      },
-    }
+    state.list[key].dataset = dataset
   },
   TABLE_REMOVE(state, key) {
     if (!state.list[key]) return false
-    state.list = {
-      ...state.list,
-      [key]: undefined,
-    }
+    delete state.list[key]
   },
   TABLE_SET_PAGINATION(state, { key, pagination }) {
     if (!state.list[key]) return false
-    state.list = {
-      ...state.list,
-      [key]: merge(state.list[key], {
-        query: { pagination },
-      }),
-    }
+    state.list[key] = merge(state.list[key], {
+      query: { pagination },
+    })
   },
   TABLE_SET_SEARCH(state, { key, searchString }) {
     if (!state.list[key]) return false
-    state.list = {
-      ...state.list,
-      [key]: merge(state.list[key], {
-        query: {
-          searchString,
-          pagination: { page: 1 },
-        },
-      }),
-    }
+    state.list[key].query.searchString = searchString
+    state.list[key].query.pagination.page = 1
   },
   TABLE_SET_LOADING(state, { key, loading }) {
     if (!state.list[key]) return false
-    state.list = {
-      ...state.list,
-      [key]: merge(state.list[key], { loading }),
-    }
+    state.list[key].loading = loading
   },
 }
 
@@ -113,14 +85,14 @@ export const actions = {
       post: 'data',
       get: 'params',
     }
-    const payload = {
-      ...request.options,
-      url: request.endpoint,
-      [request.queryType || paramsToken[request.options.method]]: {
-        ...query.pagination,
-        search: query.searchString,
+    const payload = merge(
+      request.options,
+      {
+        url: request.endpoint,
+        [request.queryType || paramsToken[request.options.method]]:
+          merge(query.pagination, { search: query.searchString }),
       },
-    }
+    )
 
     const { data } = await this.$axios(payload)
     const dataset = {
