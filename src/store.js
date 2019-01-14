@@ -1,6 +1,7 @@
 import merge from 'lodash.merge'
 import pick from 'lodash.get'
 
+const clone = obj => !obj ? obj : JSON.parse(JSON.stringify(obj))
 export const namespaced = true
 
 export const state = () => ({
@@ -40,7 +41,7 @@ export const state = () => ({
 })
 
 export const getters = {
-  getTable: state => key => state.list[key],
+  getTable: state => key => clone(state.list[key]),
 }
 
 export const mutations = {
@@ -54,7 +55,11 @@ export const mutations = {
   },
   TABLE_UPDATE_DATASET(state, { key, dataset }) {
     if (!state.list[key]) return false
-    state.list[key].dataset = dataset
+    state.list = clone(Object.assign(
+      {},
+      state.list,
+      { [key]: Object.assign({}, state.list[key], { dataset }) },
+    ))
   },
   TABLE_REMOVE(state, key) {
     if (!state.list[key]) return false
@@ -62,14 +67,19 @@ export const mutations = {
   },
   TABLE_SET_PAGINATION(state, { key, pagination }) {
     if (!state.list[key]) return false
-    state.list[key] = merge(state.list[key], {
-      query: { pagination },
-    })
+    state.list = clone(Object.assign(
+      {},
+      state.list,
+      { [key]: merge(state.list[key], { query: { pagination } } ) },
+    ))
   },
   TABLE_SET_SEARCH(state, { key, searchString }) {
     if (!state.list[key]) return false
-    state.list[key].query.searchString = searchString
-    state.list[key].query.pagination.page = 1
+    state.list = merge(state.list, {
+      [key]: {
+        query: { searchString, pagination: { page: 1 } },
+      },
+    })
   },
   TABLE_SET_LOADING(state, { key, loading }) {
     if (!state.list[key]) return false
