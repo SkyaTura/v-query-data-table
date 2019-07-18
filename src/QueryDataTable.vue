@@ -5,6 +5,7 @@ v-card(flat, v-if="table")
       slot(name="title-prepend")
       h5.headline.md-0(v-if="title")
         slot(name="title") {{ title }}
+        slot(name="tooltip")
       slot(name="title-append")
       v-spacer
       slot(name="search-prepend")
