@@ -20,6 +20,7 @@ export default {
   name: 'app',
   components: { VQueryDataTable },
   data: () => ({
+    query: null,
     datatable: {
       actions: {
         single: {
@@ -45,22 +46,29 @@ export default {
           text: 'Dessert (100g serving)',
           align: 'left',
           value: 'name',
-          $custom: {
-            template: 'chips',
-            format: v => (v ? 'Ativo' : 'Inativo'),
-            color: v => (v ? 'success' : 'error'),
-          },
         },
         {
           text: 'Calories',
           align: 'center',
           filterable: true,
           value: 'calories',
+          $custom: {
+            template: 'chips',
+            // format: v => (v ? 'Ativo' : 'Inativo'),
+            dark: true,
+            color(value) {
+              const calories = parseInt(value, 10)
+              if (calories > 400) return 'red'
+              else if (calories > 200) return 'orange'
+              else return 'green'
+            },
+          },
         },
         { text: 'Fat (g)', value: 'fat' },
         { text: 'Carbs (g)', value: 'carbs' },
         { text: 'Protein (g)', value: 'protein' },
         { text: 'Iron (%)', value: 'iron' },
+        { text: 'Ações', value: '_actions' },
       ],
       fetch: fakeApi,
     },

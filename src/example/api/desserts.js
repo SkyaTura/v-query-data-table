@@ -1,4 +1,6 @@
-const items = [
+import FuzzySearch from 'fuzzy-search'
+
+const db = [
   {
     name: 'Frozen Yogurt',
     calories: 200,
@@ -81,9 +83,46 @@ const items = [
   },
 ]
 
-export default () =>
-  new Promise(resolve =>
+const searcher = new FuzzySearch(db, ['name'])
+
+export default payload =>
+  new Promise(resolve => {
+    const {
+      sortBy = [],
+      sortDesc = [],
+      page = 1,
+      itemsPerPage = 10,
+      search = '',
+    } = payload
+
+    let items = JSON.parse(JSON.stringify(searcher.search(search)))
+    const total = db.length
+
+    if (sortBy.length === 1 && sortDesc.length === 1) {
+      items = items.sort((a, b) => {
+        const sortA = a[sortBy[0]]
+        const sortB = b[sortBy[0]]
+
+        if (sortDesc[0]) {
+          if (sortA < sortB) return 1
+          if (sortA > sortB) return -1
+          return 0
+        } else {
+          if (sortA < sortB) return -1
+          if (sortA > sortB) return 1
+          return 0
+        }
+      })
+    }
+
+    if (itemsPerPage > 0) {
+      items = items.slice((page - 1) * itemsPerPage, page * itemsPerPage)
+    }
+
     setTimeout(() => {
-      resolve(JSON.parse(JSON.stringify(items)))
-    }, Math.random() * 5000)
-  )
+      resolve({
+        items,
+        total,
+      })
+    }, Math.random() * 3000)
+  })
