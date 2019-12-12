@@ -96,7 +96,6 @@ export default payload =>
     } = payload
 
     let items = JSON.parse(JSON.stringify(searcher.search(search)))
-    const total = db.length
 
     if (sortBy.length === 1 && sortDesc.length === 1) {
       items = items.sort((a, b) => {
@@ -114,6 +113,7 @@ export default payload =>
         }
       })
     }
+    const total = items.length
 
     if (itemsPerPage > 0) {
       items = items.slice((page - 1) * itemsPerPage, page * itemsPerPage)
@@ -123,6 +123,7 @@ export default payload =>
       resolve({
         items,
         total,
+        collectionCount: db.length,
       })
     }, Math.random() * 3000)
   })

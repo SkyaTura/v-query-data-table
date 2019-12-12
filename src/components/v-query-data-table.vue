@@ -2,6 +2,19 @@
 v-card(flat color="transparent" v-if="loading.firstTime && loading.active")
   v-skeleton-loader(type="table")
 v-card(flat color="transparent" v-else)
+  v-dialog(v-model="goToPageDialog" max-width="300px")
+    v-card
+      v-card-title Ir para a página
+      v-card-text
+        v-select(
+          label="Selecione a página"
+          :items="Array(pageCount).fill(null).map((item, index) => index + 1)"
+          v-model="options.page"
+          @change="goToPageDialog = false"
+        )
+      v-card-actions
+        v-spacer
+        v-btn(text color="primary" @click="goToPageDialog = false") Cancelar
   slot(name="header")
     v-card-title.align-center
       slot(name="header.title")
@@ -62,6 +75,10 @@ v-card(flat color="transparent" v-else)
               template(v-if="!disallowDense || !disallowGroups")
                 v-divider
                 v-subheader Opções de visualização
+                v-list-item(v-if="pageCount > 1" @click="goToPageDialog = true")
+                  v-list-item-avatar.mr-0
+                    v-icon find_in_page
+                  v-list-item-title Ir para a página
                 v-list-item(v-if="!disallowDense" @click.stop="settings.dense = !settings.dense")
                   v-switch.my-0(hide-details dense read-only :input-value="settings.dense")
                   v-list-item-title Listagem densa
@@ -138,7 +155,9 @@ v-card(flat color="transparent" v-else)
 
   v-row.align-center.justify-space-between
     v-col
-      .caption(v-if="serverItemsLength > -1") Exibindo {{ shownItems.length }} de {{ serverItemsLength }} itens.
+      template(v-if="!loading.active && serverItemsLength")
+        .caption Exibindo de {{ statusBar.startIndex }} até {{ statusBar.endIndex }} de {{ serverItemsLength }} {{ serverItemsLength === 1 ? 'registro' : 'registros' }}
+          template(v-if="serverItemsLength < collectionLength")  de um total de {{ collectionLength }} {{ collectionLength === 1 ? 'filtrado' : 'filtrados' }}
     v-col
       v-pagination.pagination(
         v-model="options.page"
@@ -146,7 +165,7 @@ v-card(flat color="transparent" v-else)
         color="secondary"
       )
     v-col(cols="2")
-      v-select(label="Itens por página:" v-model="options.itemsPerPage" :items="itemsPerPages")
+      v-select(label="Itens por página:" :value="options.itemsPerPage" :items="itemsPerPages" @input="changeItemsPerPage")
   slot(name="body.bottom")
 
 </template>
@@ -155,7 +174,7 @@ v-card(flat color="transparent" v-else)
 import ColumnTemplateChip from './ColumnTemplateChip'
 
 export default {
-  name: 'VQueryDataTable',
+  name: 'v-query-data-table',
   components: { ColumnTemplateChip },
   props: {
     dataTableOptions: { type: Object, default: () => ({}) },
@@ -173,7 +192,10 @@ export default {
   },
   data: () => ({
     cache: new Map(),
+    goToPageDialog: false,
+    goToPageInput: 1,
     serverItemsLength: -1,
+    colletionLength: -1,
     options: {
       page: 1,
       itemsPerPage: 10,
@@ -199,6 +221,14 @@ export default {
     },
   }),
   computed: {
+    statusBar() {
+      const { colletionLength, serverItemsLength, shownItems, options } = this
+      const { page, itemsPerPage } = options
+      const itemsLength = shownItems.length
+      const startIndex = (page - 1) * itemsPerPage + 1
+      const endIndex = startIndex + itemsLength - 1
+      return { startIndex, endIndex }
+    },
     shownItems() {
       return this.items || this.currentItems
     },
@@ -329,6 +359,10 @@ export default {
     this.loadSettings()
   },
   methods: {
+    goToPage() {},
+    changeItemsPerPage(itemsPerPage) {
+      Object.assign(this.options, { itemsPerPage, page: 1 })
+    },
     toggleSelection() {
       const { shownItems: items } = this
       if (this.selected.length === this.pagination.itemsPerPage) {
@@ -377,25 +411,29 @@ export default {
       return this.apiFetch(payload)
     },
     async apiFetch(payload) {
-      const { noCaching, serverItemsLength } = this
+      const { noCaching, serverItemsLength, collectionLength } = this
       const response = await this.fetch(payload)
-      const { total, items } = response
-      if (!noCaching && serverItemsLength !== total) {
+      const { total, items, collectionCount = -1 } = response
+      const dbHasChange =
+        collectionCount !== collectionLength ||
+        (collectionCount === -1 && serverItemsLength !== total)
+      if (!noCaching && dbHasChange) {
         this.cache = new Map()
       }
-      this.serverItemsLength = total
-      return items
+      this.collectionLength = collectionCount
+      return response
     },
     async refresh(skipCache) {
       const { cache, noCaching, options, search } = this
       const payload = { ...options, search }
       this.setLoading(true)
-      const items = await this.cachedFetch(payload, skipCache || noCaching)
+      const response = await this.cachedFetch(payload, skipCache || noCaching)
       if (!noCaching) {
-        cache.set(JSON.stringify(payload), items)
+        cache.set(JSON.stringify(payload), response)
       }
-      this.currentItems = items
-      this.$emit('update:items', items)
+      this.currentItems = response.items
+      this.serverItemsLength = response.total
+      this.$emit('update:items', response.items)
       this.setLoading(false)
     },
     clearCache() {

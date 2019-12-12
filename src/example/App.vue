@@ -14,11 +14,9 @@ v-app#app
 
 <script>
 import fakeApi from './api/desserts'
-import VQueryDataTable from '../components/VQueryDataTable'
 
 export default {
   name: 'app',
-  components: { VQueryDataTable },
   data: () => ({
     query: null,
     datatable: {
