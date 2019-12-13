@@ -1,25 +1,40 @@
 import vue from 'rollup-plugin-vue'
-import buble from 'rollup-plugin-buble'
 import commonjs from 'rollup-plugin-commonjs'
 import cleanup from 'rollup-plugin-cleanup'
+import babel from 'rollup-plugin-babel'
+import alias from '@rollup/plugin-alias'
+
+const outputs = ['esm', 'cjs', 'umd']
 
 const config = {
   input: 'src/wrapper.js',
-  output: {
-    name: 'VQueryDataTable',
+  output: outputs.map(format => ({
+    format,
     exports: 'named',
-  },
+    file: `lib/bundle.${format}.js`,
+    name: 'VQueryDataTable',
+  })),
   plugins: [
+    alias({
+      resolve: ['.js', '.vue'],
+      entries: {
+        components: '.',
+      },
+    }),
     commonjs(),
     vue({
       css: true,
       compileTemplate: true,
-      template: {
-        isProduction: true,
-      },
+      template: { isProduction: true },
     }),
     cleanup(),
-    buble(),
+    babel({
+      runtimeHelpers: true,
+      presets: ['@vue/cli-plugin-babel/preset'],
+    }),
+    // buble(),
+    /*
+     */
   ],
 }
 

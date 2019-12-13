@@ -1,0 +1,10 @@
+src/
+dist/
+.browserslistrc
+.editorconfig
+.eslintrc.js
+.lintstagedrc
+.prettierrc
+babel.config.js
+rollup.config.js
+vue.config.js

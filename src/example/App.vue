@@ -5,7 +5,12 @@ v-app#app
   v-content
     v-container(fluid)
       v-container
-        v-card.py-3.px-5.big-corners(flat)
+        v-switch(dense hideDetails v-model="datatable.hideActions" label="Esconder ações")
+        v-switch(dense hideDetails v-model="datatable.hideMenu" label="Esconder menu")
+        v-switch(dense hideDetails v-model="datatable.hideSearch" label="Esconder busca")
+        v-switch(dense hideDetails v-model="datatable.disallowDense" label="Não permitir listagem densa")
+        v-switch(dense hideDetails v-model="datatable.disallowGroups" label="Não permitir agrupar")
+        v-card.mt-4.py-3.px-5.big-corners(flat)
           VQueryDataTable(
             v-bind="datatable"
             @action-table-add="newItem"
@@ -20,6 +25,8 @@ export default {
   data: () => ({
     query: null,
     datatable: {
+      hideActions: false,
+      hideMenu: false,
       actions: {
         single: {
           modify: { icon: 'edit', text: 'Editar' },

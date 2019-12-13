@@ -1,5 +1,12 @@
 module.exports = {
   lintOnSave: false,
+  configureWebpack: {
+    resolve: {
+      alias: {
+        components: '.',
+      },
+    },
+  },
   pages: {
     index: {
       entry: 'src/example/main.js',

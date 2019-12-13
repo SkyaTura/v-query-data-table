@@ -23,7 +23,13 @@ v-card(flat color="transparent" v-else)
         slot(name="header.title.append")
       v-spacer
       slot(name="header.search")
-        v-col(cols="12" sm="5" md="4" :order="$vuetify.breakpoint.xsOnly ? 1 : 0")
+        v-col.py-0(
+          cols="12"
+          sm="5"
+          md="4"
+          :order="$vuetify.breakpoint.xsOnly ? 1 : 0"
+          v-if="!hideSearch"
+        )
           v-text-field(
             label="Buscar"
             v-model="search"
@@ -38,53 +44,52 @@ v-card(flat color="transparent" v-else)
             single-line
           )
       slot(name="header.actions")
-        template(v-if="!hideActions")
-          v-row.shrink.pa-0.hidden-sm-and-down
-            template(v-if="validActions.quick.length")
-              v-btn.ml-3(
-                v-for="action in validActions.quick"
-                :key="action.name"
-                @click="action.handler"
-                v-bind="action.options || { color: color }"
-              )
-                v-icon {{ action.icon }}
-                span {{ action.text }}
-          v-menu(bottom left offset-x v-if="!hideMenu")
-            template(v-slot:activator="{ on }")
-              v-btn.ml-5(icon v-on="on")
-                v-icon more_vert
-            v-list
-              template(v-if="validActions.table.length")
-                template(v-for="(action, index) in validActions.table")
-                  v-divider(:key="action.name" v-if="action.divider")
-                  v-subheader(:key="action.name" v-else-if="action.subheader") {{ action.text }}
-                  v-list-item(:key="action.name" v-else @click="action.handler")
-                    v-list-item-avatar.mr-0
-                      v-icon {{ action.icon }}
-                    v-list-item-title {{ action.text }}
-                v-divider
-              v-list-item(@click="clearCache")
+        v-row.shrink.pa-0.hidden-sm-and-down
+          template(v-if="validActions.quick.length && !hideActions")
+            v-btn.ml-3(
+              v-for="action in validActions.quick"
+              :key="action.name"
+              @click="action.handler"
+              v-bind="action.options || { color: color }"
+            )
+              v-icon {{ action.icon }}
+              span {{ action.text }}
+        v-menu(bottom left offset-x v-if="!hideMenu")
+          template(v-slot:activator="{ on }")
+            v-btn.ml-5(icon v-on="on")
+              v-icon more_vert
+          v-list
+            template(v-if="validActions.table.length && !hideActions")
+              template(v-for="(action, index) in validActions.table")
+                v-divider(:key="action.name" v-if="action.divider")
+                v-subheader(:key="action.name" v-else-if="action.subheader") {{ action.text }}
+                v-list-item(:key="action.name" v-else @click="action.handler")
+                  v-list-item-avatar.mr-0
+                    v-icon {{ action.icon }}
+                  v-list-item-title {{ action.text }}
+              v-divider
+            v-list-item(@click="clearCache")
+              v-list-item-avatar.mr-0
+                v-icon refresh
+              v-list-item-title Atualizar
+            //- TODO: Adicionar layout de impressão
+              v-list-item.hidden-sm-and-down(@click="")
                 v-list-item-avatar.mr-0
-                  v-icon refresh
-                v-list-item-title Atualizar
-              //- TODO: Adicionar layout de impressão
-                v-list-item.hidden-sm-and-down(@click="")
-                  v-list-item-avatar.mr-0
-                    v-icon print
-                  v-list-item-title Imprimir
-              template(v-if="!disallowDense || !disallowGroups")
-                v-divider
-                v-subheader Opções de visualização
-                v-list-item(v-if="pageCount > 1" @click="goToPageDialog = true")
-                  v-list-item-avatar.mr-0
-                    v-icon find_in_page
-                  v-list-item-title Ir para a página
-                v-list-item(v-if="!disallowDense" @click.stop="settings.dense = !settings.dense")
-                  v-switch.my-0(hide-details dense read-only :input-value="settings.dense")
-                  v-list-item-title Listagem densa
-                v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.showGroupBy = !settings.showGroupBy")
-                  v-switch.my-0(hide-details dense read-only :input-value="settings.showGroupBy")
-                  v-list-item-title Permitir agrupar
+                  v-icon print
+                v-list-item-title Imprimir
+            template(v-if="!disallowDense || !disallowGroups || pageCount > 1")
+              v-divider
+              v-subheader Opções de visualização
+              v-list-item(v-if="pageCount > 1" @click="goToPageDialog = true")
+                v-list-item-avatar.mr-0
+                  v-icon find_in_page
+                v-list-item-title Ir para a página
+              v-list-item(v-if="!disallowDense" @click.stop="settings.dense = !settings.dense")
+                v-switch.my-0(hide-details dense read-only :input-value="settings.dense")
+                v-list-item-title Listagem densa
+              v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.showGroupBy = !settings.showGroupBy")
+                v-switch.my-0(hide-details dense read-only :input-value="settings.showGroupBy")
+                v-list-item-title Permitir agrupar
   slot(name="body.top")
   v-expansion-panels.bulk-actions(:value="selected.length ? 0 : -1")
     v-expansion-panel
@@ -107,9 +112,9 @@ v-card(flat color="transparent" v-else)
     v-model="selected"
     :options.sync="options"
   )
-    template(v-slot:body v-if="loading.active")
+    template(v-slot:body="" v-if="loading.active")
       tbody.disable-mouse
-        tr(disabled)
+        tr
           td(colspan="100%")
             v-skeleton-loader(type="table-tbody")
     template(v-for="slot in slots" v-slot:[slot]="props")
@@ -125,7 +130,7 @@ v-card(flat color="transparent" v-else)
           span {{ getGroupHeader(props) }}
           v-btn(icon small @click="props.remove")
             v-icon(small) close
-    template(v-slot:item._actions="payload")
+    template(v-slot:item._actions="payload" v-if="!hideActions")
       template(v-if="$vuetify.breakpoint.smAndUp")
         v-tooltip(
           top
@@ -171,7 +176,7 @@ v-card(flat color="transparent" v-else)
 </template>
 
 <script>
-import ColumnTemplateChip from './ColumnTemplateChip'
+import ColumnTemplateChip from 'components/ColumnTemplateChip'
 
 export default {
   name: 'v-query-data-table',
@@ -182,6 +187,7 @@ export default {
     disallowGroups: { type: Boolean, default: false },
     hideActions: { type: Boolean, default: false },
     hideMenu: { type: Boolean, default: false },
+    hideSearch: { type: Boolean, default: false },
     actions: { type: Object, default: () => ({}) },
     headers: { type: Array, required: true },
     fetch: { type: Function, default: null },
@@ -222,7 +228,7 @@ export default {
   }),
   computed: {
     statusBar() {
-      const { colletionLength, serverItemsLength, shownItems, options } = this
+      const { shownItems, options } = this
       const { page, itemsPerPage } = options
       const itemsLength = shownItems.length
       const startIndex = (page - 1) * itemsPerPage + 1
@@ -246,12 +252,17 @@ export default {
         search,
         settings,
         serverItemsLength,
+        validActions,
+        hideActions,
+        disallowDense,
+        disallowGroups,
       } = this
       const defaults = {
         multiSort: true,
-        showSelect: true,
+        showSelect: !hideActions && !!validActions.bulk.length,
         itemKey: 'name',
-        ...settings,
+        dense: !disallowDense && settings.dense,
+        showGroupBy: !disallowGroups && settings.showGroupBy,
       }
       const overrides = {
         items,
@@ -270,6 +281,7 @@ export default {
       return Object.assign({}, defaults, dataTableOptions, overrides)
     },
     computedHeaders() {
+      const { headers, hideActions } = this
       const common = {
         align: 'center',
       }
@@ -279,15 +291,17 @@ export default {
       const templateDefaults = {
         chips: { small: true },
       }
-      return this.headers.map(header => {
-        const { $custom = {} } = header
-        const { template } = $custom
-        const headerDefaults = defaults[header.value] || {}
-        const templateOptions = templateDefaults[template] || {}
-        return Object.assign({}, common, headerDefaults, header, {
-          $custom: { ...templateOptions, ...$custom },
+      return headers
+        .map(header => {
+          const { $custom = {} } = header
+          const { template } = $custom
+          const headerDefaults = defaults[header.value] || {}
+          const templateOptions = templateDefaults[template] || {}
+          return Object.assign({}, common, headerDefaults, header, {
+            $custom: { ...templateOptions, ...$custom },
+          })
         })
-      })
+        .filter(item => item.value !== '_actions' || !hideActions)
     },
     pageCount() {
       const { shownItems, options, serverItemsLength } = this
