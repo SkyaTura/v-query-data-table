@@ -6,7 +6,7 @@
     append-icon="search"
     label="Buscar"
   >
-    <slot/>
+    <slot />
   </v-text-field>
 </template>
 

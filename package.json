@@ -1,17 +1,65 @@
 {
   "name": "v-query-data-table",
-  "version": "1.0.6",
   "description": "A Vuetify Data Table wrapper with easy API querying",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "version": "2.0.1",
   "author": "Antonio Eduardo <antonio@skyatura.com.br>",
   "repository": "https://github.com/SkyaTura/v-query-data-table",
   "license": "ISC",
+  "main": "lib/bundle.umd.js",
+  "module": "lib/bundle.esm.js",
+  "unpkg": "lib/bundle.umg.js",
+  "browser": {
+    "./sfc": "lib/bundle.umd.js"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build:example": "vue-cli-service build",
+    "build": "rollup --config",
+    "lint": "vue-cli-service lint"
+  },
   "dependencies": {
     "debounce": "^1.2.0",
     "lodash.get": "^4.4.2",
-    "lodash.merge": "^4.6.1"
+    "lodash.merge": "^4.6.2"
+  },
+  "devDependencies": {
+    "@rollup/plugin-alias": "^2.2.0",
+    "@vue/cli-plugin-babel": "^4.1.0",
+    "@vue/cli-plugin-eslint": "^4.1.0",
+    "@vue/cli-service": "^4.1.0",
+    "@vue/component-compiler-utils": "^3.1.0",
+    "@vue/eslint-config-prettier": "^5.0.0",
+    "babel-eslint": "^10.0.3",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.7.2",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "fuzzy-search": "^3.0.2",
+    "minimist": "^1.2.0",
+    "prettier": "^1.19.1",
+    "pug": "^2.0.4",
+    "pug-plain-loader": "^1.0.0",
+    "rollup": "^1.27.9",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-cleanup": "^3.1.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-vue": "^5.1.4",
+    "sass": "^1.23.7",
+    "sass-loader": "^8.0.0",
+    "vue": "^2.6.10",
+    "vue-cli-plugin-vuetify": "^2.0.2",
+    "vue-template-compiler": "^2.6.10",
+    "vuetify": "^2.1.13",
+    "vuetify-loader": "^1.4.3"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.10",
+    "vuetify": "^2.1.13"
   }
 }
