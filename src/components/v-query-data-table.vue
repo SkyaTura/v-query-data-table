@@ -427,7 +427,7 @@ export default {
     async apiFetch(payload) {
       const { noCaching, serverItemsLength, collectionLength } = this
       const response = await this.fetch(payload)
-      const { total, items, collectionCount = -1 } = response
+      const { total, collectionCount = -1 } = response
       const dbHasChange =
         collectionCount !== collectionLength ||
         (collectionCount === -1 && serverItemsLength !== total)

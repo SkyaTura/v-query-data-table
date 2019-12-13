@@ -29,10 +29,10 @@ export default {
     },
     options() {
       const { color, column } = this
+      // eslint-disable-next-line no-unused-vars
       const { template, format, ...options } = column.$custom
       return { ...options, color }
     },
   },
 }
 </script>
-

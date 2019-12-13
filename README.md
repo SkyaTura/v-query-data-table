@@ -1,4 +1,5 @@
 # v-query-data-table
+> [Live Demo](https://v-query-data-table.emiolo.com.br/)
 
 ## Why is this in portuguese?
 This component was created for internal usage at emiolo.com
@@ -58,7 +59,7 @@ module.exports = {
 
 ### Utilização em HTML puro
 ```html
-<script type="text/javascript" src="https://unpkg.com/v-query-data-table@2.0.0/dist/bundle.umd.js"></script>
+<script type="text/javascript" src="https://unpkg.com/v-query-data-table@2.x/lib/bundle.umd.js"></script>
 ```
 
 ## Desenvolvimento

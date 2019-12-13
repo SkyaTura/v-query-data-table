@@ -1,7 +1,7 @@
 {
   "name": "v-query-data-table",
   "description": "A Vuetify Data Table wrapper with easy API querying",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "author": "Antonio Eduardo <antonio@skyatura.com.br>",
   "repository": "https://github.com/SkyaTura/v-query-data-table",
   "license": "ISC",
