@@ -1,15 +1,15 @@
 {
   "name": "v-query-data-table",
   "description": "A Vuetify Data Table wrapper with easy API querying",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": "Antonio Eduardo <antonio@skyatura.com.br>",
   "repository": "https://github.com/SkyaTura/v-query-data-table",
   "license": "ISC",
-  "main": "dist/bundle.umd.js",
-  "module": "dist/bundle.esm.js",
-  "unpkg": "dist/bundle.min.js",
+  "main": "lib/bundle.umd.js",
+  "module": "lib/bundle.esm.js",
+  "unpkg": "lib/bundle.umg.js",
   "browser": {
-    "./sfc": "src/bundle.umd.js"
+    "./sfc": "lib/bundle.umd.js"
   },
   "scripts": {
     "serve": "vue-cli-service serve",
