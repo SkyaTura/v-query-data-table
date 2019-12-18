@@ -1,29 +1,33 @@
 {
   "name": "v-query-data-table",
   "description": "A Vuetify Data Table wrapper with easy API querying",
-  "version": "2.0.2",
+  "version": "2.0.5",
   "author": "Antonio Eduardo <antonio@skyatura.com.br>",
   "repository": "https://github.com/SkyaTura/v-query-data-table",
   "license": "ISC",
   "main": "lib/bundle.umd.js",
   "module": "lib/bundle.esm.js",
-  "unpkg": "lib/bundle.umg.js",
+  "unpkg": "lib/bundle.umd.js",
   "browser": {
     "./sfc": "lib/bundle.umd.js"
   },
   "scripts": {
+    "dev": "npm run dev:example & npm run dev:lib",
+    "dev:example": "npm run serve",
+    "dev:lib": "nodemon --watch \"src\" --watch \"rollup.config.js\" -e js,vue --exec \"npm run build\"",
     "serve": "vue-cli-service serve",
     "build:example": "vue-cli-service build",
     "build": "rollup --config",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "debounce": "^1.2.0",
-    "lodash.get": "^4.4.2",
-    "lodash.merge": "^4.6.2"
+    "core-js": "^3.5.0",
+    "regenerator-runtime": "^0.13.3",
+    "vue-runtime-helpers": "^1.1.2"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^2.2.0",
+    "@vue/babel-preset-app": "^4.1.1",
     "@vue/cli-plugin-babel": "^4.1.0",
     "@vue/cli-plugin-eslint": "^4.1.0",
     "@vue/cli-service": "^4.1.0",
@@ -42,6 +46,7 @@
     "eslint-plugin-vue": "^5.0.0",
     "fuzzy-search": "^3.0.2",
     "minimist": "^1.2.0",
+    "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
     "pug": "^2.0.4",
     "pug-plain-loader": "^1.0.0",

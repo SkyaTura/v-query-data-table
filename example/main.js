@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import vuetify from './plugins/vuetify'
-import VQueryDataTable from '../wrapper'
+import VQueryDataTable from '../src/wrapper'
 
 Vue.config.productionTip = false
 Vue.use(VQueryDataTable)

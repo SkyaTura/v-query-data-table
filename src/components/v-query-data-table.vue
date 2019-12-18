@@ -16,10 +16,10 @@ v-card(flat color="transparent" v-else)
         v-spacer
         v-btn(text color="primary" @click="goToPageDialog = false") Cancelar
   slot(name="header")
-    v-card-title.align-center
+    v-card-title.align-center.pr-0
       slot(name="header.title")
         slot(name="header.title.prepend")
-        .display-1 Titulo
+        .display-1 {{ title }}
         slot(name="header.title.append")
       v-spacer
       slot(name="header.search")
@@ -50,7 +50,7 @@ v-card(flat color="transparent" v-else)
               v-for="action in validActions.quick"
               :key="action.name"
               @click="action.handler"
-              v-bind="action.options || { color: color }"
+              v-bind="{ color: action.color || 'primary', ...action.options }"
             )
               v-icon {{ action.icon }}
               span {{ action.text }}
@@ -100,7 +100,13 @@ v-card(flat color="transparent" v-else)
             .caption(v-else) Ações em massa para os {{ selected.length }} itens selecionados:
             v-row
               slot(name="bulkActions.prepend")
-              v-btn.ml-3(small v-for="action in validActions.bulk" :key="action.name" @click="action.handler(selected)" v-bind="action.options || { color: 'primary' }")
+              v-btn.ml-3(
+                small
+                v-for="action in validActions.bulk"
+                :key="action.name"
+                @click="action.handler(selected)"
+                v-bind="{ color: action.color || 'primary', ...action.options }"
+              )
                 v-icon(small v-if="action.icon") {{ action.icon }}
                 span {{ action.text }}
               slot(name="bulkActions.append")
@@ -132,20 +138,21 @@ v-card(flat color="transparent" v-else)
             v-icon(small) close
     template(v-slot:item._actions="payload" v-if="!hideActions")
       template(v-if="$vuetify.breakpoint.smAndUp")
-        v-tooltip(
-          top
-          v-for="(action, index) in validActions.single"
-          :disabled="!action.text"
-          :key="action.name"
-        )
-          template(v-slot:activator="{ on }")
-            v-icon(
-              small
-              v-on="on"
-              :class="index ? 'ml-1' : ''"
-              @click="action.handler(payload)"
-            ) {{ action.icon }}
-          span {{ action.text }}
+        .text-no-wrap
+          v-tooltip(
+            top
+            v-for="(action, index) in validActions.single"
+            :disabled="!action.text"
+            :key="action.name"
+          )
+            template(v-slot:activator="{ on }")
+              v-icon(
+                small
+                v-on="on"
+                :class="[index ? 'ml-1' : '', getIconClasses(action)]"
+                @click="action.handler(payload)"
+              ) {{ action.icon }}
+            span {{ action.text }}
       template(v-else)
         v-btn.ml-3(
           small
@@ -153,7 +160,7 @@ v-card(flat color="transparent" v-else)
           v-for="action in validActions.single"
           :key="action.name"
           @click="action.handler(payload)"
-          v-bind="action.options || { color: 'primary' }"
+          v-bind="{ color: action.color || 'primary', ...action.options }"
         )
           v-icon(small v-if="action.icon") {{ action.icon }}
           span {{ action.text }}
@@ -182,6 +189,8 @@ export default {
   name: 'v-query-data-table',
   components: { ColumnTemplateChip },
   props: {
+    title: { type: String, default: '' },
+    coloredActionIcons: { type: Boolean, default: false },
     dataTableOptions: { type: Object, default: () => ({}) },
     disallowDense: { type: Boolean, default: false },
     disallowGroups: { type: Boolean, default: false },
@@ -227,6 +236,9 @@ export default {
     },
   }),
   computed: {
+    alignedHeaders() {
+      return this.computedHeaders.filter(header => header.align)
+    },
     statusBar() {
       const { shownItems, options } = this
       const { page, itemsPerPage } = options
@@ -373,6 +385,13 @@ export default {
     this.loadSettings()
   },
   methods: {
+    getIconClasses(action) {
+      if (!this.coloredActionIcons || !action.color) return ''
+      return action.color
+        .split(' ')
+        .map(v => `${v}--text`)
+        .join(' ')
+    },
     goToPage() {},
     changeItemsPerPage(itemsPerPage) {
       Object.assign(this.options, { itemsPerPage, page: 1 })
@@ -438,16 +457,23 @@ export default {
       return response
     },
     async refresh(skipCache) {
-      const { cache, noCaching, options, search } = this
+      const { cache, noCaching, options, search, fetch, items } = this
       const payload = { ...options, search }
       this.setLoading(true)
-      const response = await this.cachedFetch(payload, skipCache || noCaching)
-      if (!noCaching) {
-        cache.set(JSON.stringify(payload), response)
+      if (typeof fetch === 'function') {
+        console.log(fetch)
+        const response = await this.cachedFetch(payload, skipCache || noCaching)
+        if (!noCaching) {
+          cache.set(JSON.stringify(payload), response)
+        }
+        this.currentItems = response.items
+        this.serverItemsLength = response.total
+        this.$emit('update:items', response.items)
+      } else {
+        this.currentItems = items || []
+        this.serverItemsLength = this.currentItems.length
+        this.collectionLength = this.currentItems.length
       }
-      this.currentItems = response.items
-      this.serverItemsLength = response.total
-      this.$emit('update:items', response.items)
       this.setLoading(false)
     },
     clearCache() {
