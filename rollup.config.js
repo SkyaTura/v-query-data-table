@@ -8,6 +8,14 @@ const outputs = ['esm', 'cjs', 'umd']
 
 const config = {
   input: 'src/wrapper.js',
+  external: [
+    'vue',
+    'vuetify',
+    'vue-runtime-helpers',
+    'regenerator-runtime',
+    'components',
+    'core-js',
+  ],
   output: outputs.map(format => ({
     format,
     exports: 'named',
@@ -27,10 +35,12 @@ const config = {
       compileTemplate: true,
       template: { isProduction: true },
     }),
-    cleanup(),
+    // cleanup(),
     babel({
       runtimeHelpers: true,
-      presets: ['@vue/cli-plugin-babel/preset'],
+      sourceMap: true,
+      extensions: ['.js', '.vue'],
+      presets: ['@vue/babel-preset-app'],
     }),
     // buble(),
     /*
