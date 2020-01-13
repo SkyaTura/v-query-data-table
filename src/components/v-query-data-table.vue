@@ -183,7 +183,7 @@ v-card(flat color="transparent" v-else)
 </template>
 
 <script>
-import ColumnTemplateChip from 'components/ColumnTemplateChip'
+import ColumnTemplateChip from './ColumnTemplateChip.vue'
 
 export default {
   name: 'v-query-data-table',
@@ -446,14 +446,14 @@ export default {
     async apiFetch(payload) {
       const { noCaching, serverItemsLength, collectionLength } = this
       const response = await this.fetch(payload)
-      const { total, collectionCount = -1 } = response
+      const { resultCount, totalCount = -1 } = response
       const dbHasChange =
-        collectionCount !== collectionLength ||
-        (collectionCount === -1 && serverItemsLength !== total)
+        totalCount !== collectionLength ||
+        (totalCount === -1 && serverItemsLength !== resultCount)
       if (!noCaching && dbHasChange) {
         this.cache = new Map()
       }
-      this.collectionLength = collectionCount
+      this.collectionLength = totalCount
       return response
     },
     async refresh(skipCache) {

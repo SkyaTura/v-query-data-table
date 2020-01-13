@@ -3,6 +3,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import cleanup from 'rollup-plugin-cleanup'
 import babel from 'rollup-plugin-babel'
 import alias from '@rollup/plugin-alias'
+import buble from '@rollup/plugin-buble'
 
 const outputs = ['esm', 'cjs', 'umd']
 
@@ -36,15 +37,15 @@ const config = {
       template: { isProduction: true },
     }),
     // cleanup(),
-    babel({
-      runtimeHelpers: true,
-      sourceMap: true,
-      extensions: ['.js', '.vue'],
-      presets: ['@vue/babel-preset-app'],
-    }),
-    // buble(),
+    buble({ transforms: { asyncAwait: false }, objectAssign: 'Object.assign' }),
     /*
-     */
+                        babel({
+                          runtimeHelpers: true,
+                          sourceMap: true,
+                          extensions: ['.js', '.vue'],
+                          presets: ['@vue/babel-preset-app'],
+                        }),
+                         */
   ],
 }
 
