@@ -8,7 +8,7 @@ v-card(flat color="transparent" v-else)
       v-card-text
         v-select(
           label="Selecione a página"
-          :items="Array(pageCount).fill(null).map((item, index) => index + 1)"
+          :items="Array(pageCount < 0 || isNaN(pageCount) ? 0 : pageCount).fill(null).map((item, index) => index + 1)"
           v-model="options.page"
           @change="goToPageDialog = false"
         )
@@ -461,7 +461,6 @@ export default {
       const payload = { ...options, search }
       this.setLoading(true)
       if (typeof fetch === 'function') {
-        console.log(fetch)
         const response = await this.cachedFetch(payload, skipCache || noCaching)
         if (!noCaching) {
           cache.set(JSON.stringify(payload), response)
