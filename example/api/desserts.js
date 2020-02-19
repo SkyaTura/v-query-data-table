@@ -88,12 +88,14 @@ const searcher = new FuzzySearch(db, ['name'])
 export default payload =>
   new Promise(resolve => {
     const {
-      sortBy = [],
-      sortDesc = [],
+      sortBy: _sortBy = '',
+      sortDesc: _sortDesc = '',
       page = 1,
       itemsPerPage = 10,
       search = '',
     } = payload
+    const sortBy = _sortBy.split(',').map(decodeURI)
+    const sortDesc = _sortDesc.split(',').map(decodeURI)
 
     let items = JSON.parse(JSON.stringify(searcher.search(search)))
 
@@ -121,9 +123,9 @@ export default payload =>
 
     setTimeout(() => {
       resolve({
-        items,
-        total,
-        collectionCount: db.length,
+        data: items,
+        resultCount: total,
+        totalCount: db.length,
       })
     }, Math.random() * 3000)
   })

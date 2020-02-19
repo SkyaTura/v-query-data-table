@@ -173,7 +173,7 @@ v-card(flat color="transparent" v-else)
     v-col
       v-pagination.pagination(
         v-model="options.page"
-        :length="pageCount"
+        :length="isNaN(pageCount) || pageCount < 1 ? 0 : pageCount"
         color="secondary"
       )
     v-col(cols="2")
@@ -200,6 +200,7 @@ export default {
     actions: { type: Object, default: () => ({}) },
     headers: { type: Array, required: true },
     fetch: { type: Function, default: null },
+    transformItem: { type: Function, default: null },
     color: { type: String, default: 'primary' },
     items: { type: Array, default: () => null },
     noCaching: { type: Boolean, default: false },
@@ -248,7 +249,10 @@ export default {
       return { startIndex, endIndex }
     },
     shownItems() {
-      return this.items || this.currentItems
+      const { transformItem } = this
+      const items = this.items || this.currentItems
+      if (typeof transformItem === 'function') return items.map(transformItem)
+      return items
     },
     slots() {
       return Object.keys(this.$scopedSlots)
@@ -437,7 +441,6 @@ export default {
       if (!skipCache) {
         const cached = cache.get(JSON.stringify(payload))
         if (cached) {
-          console.log('cache was used')
           return cached
         }
       }
@@ -458,16 +461,22 @@ export default {
     },
     async refresh(skipCache) {
       const { cache, noCaching, options, search, fetch, items } = this
-      const payload = { ...options, search }
+      const payload = {
+        ...options,
+        search,
+        sortBy: options.sortBy.map(encodeURI).join(','),
+        sortDesc: options.sortDesc.map(encodeURI).join(','),
+        groupBy: options.groupBy.map(encodeURI).join(','),
+      }
       this.setLoading(true)
       if (typeof fetch === 'function') {
         const response = await this.cachedFetch(payload, skipCache || noCaching)
         if (!noCaching) {
           cache.set(JSON.stringify(payload), response)
         }
-        this.currentItems = response.items
-        this.serverItemsLength = response.total
-        this.$emit('update:items', response.items)
+        this.currentItems = response.data
+        this.serverItemsLength = response.resultCount
+        this.$emit('update:items', response.data)
       } else {
         this.currentItems = items || []
         this.serverItemsLength = this.currentItems.length

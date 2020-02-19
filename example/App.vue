@@ -1,5 +1,6 @@
 <template lang="pug">
 v-app#app
+  link(href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet")
   v-app-bar(app dark color="blue darken-4")
     .title Vuetify - Query Data Table
   v-content
