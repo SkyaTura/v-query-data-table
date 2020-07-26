@@ -90,6 +90,9 @@ v-card(flat color="transparent" v-else)
               v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.showGroupBy = !settings.showGroupBy")
                 v-switch.my-0(hide-details dense read-only :input-value="settings.showGroupBy")
                 v-list-item-title Permitir agrupar
+              v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.keepGroupedColumns = !settings.keepGroupedColumns")
+                v-switch.my-0(hide-details dense read-only :input-value="settings.keepGroupedColumns")
+                v-list-item-title Manter colunas agrupadas
   slot(name="body.top")
   v-expansion-panels.bulk-actions(:value="selected.length ? 0 : -1")
     v-expansion-panel
@@ -116,8 +119,34 @@ v-card(flat color="transparent" v-else)
   v-data-table.VQueryDataTable(
     v-bind="dataTableAttrs"
     v-model="selected"
+    ref="table"
     :options.sync="options"
   )
+    template(v-slot:[`header.${header.value}`] v-for="header in dataTableAttrs.headers")
+      .customHeader
+        span.customHeader-text {{ header.text }}
+        span.customHeader-actions
+          span.customHeader-actions-sort(v-if="header.sortable !== false" :class="{ sorted: getHeaderSort(header).sorted }")
+            v-badge(
+              overlap
+              color="transparent"
+              :value="getHeaderSort(header).sorted"
+            )
+              template(v-slot:badge)
+                span.primary--text.darken-1--text {{ getHeaderSort(header).index }}
+              v-tooltip(top)
+                span Ordenar
+                template(v-slot:activator="{ on, attrs }")
+                  v-icon.invertable(v-bind="attrs" v-on="on" :class="{ 'invertable-inverted': getHeaderSort(header).desc }") arrow_upward
+          span.customHeader-actions-group(
+            :class="{ grouped: getHeaderGroup(header).grouped }"
+            v-if="header.groupable !== false"
+            @click.prevent.stop="setGroupBy(header)"
+          )
+            v-tooltip(top)
+              span Agrupar
+              template(v-slot:activator="{ on, attrs }")
+                v-icon.customHeader-actions-sortIcon(v-bind="attrs" v-on="on") folder_open
     template(v-slot:body="" v-if="loading.active")
       tbody.disable-mouse
         tr
@@ -130,12 +159,33 @@ v-card(flat color="transparent" v-else)
         ColumnTemplateChip(v-bind="{ column, props }")
     template(v-slot:group.header="props")
       td(colspan="100%")
-        .text-no-wrap
-          v-btn(icon small @click="props.toggle")
-            v-icon(small) remove
-          span {{ getGroupHeader(props) }}
-          v-btn(icon small @click="props.remove")
-            v-icon(small) close
+        v-row.ma-0.text-no-wrap(align="center")
+          span(v-if="getGroupHeader(props).value !== undefined")
+            span.font-weight-bold {{ getGroupHeader(props).text }}:
+            span &nbsp;{{ getGroupHeader(props).value }}
+          v-spacer
+          v-tooltip(top)
+            span Desagrupar
+            template(v-slot:activator="{ on, attrs }")
+              v-btn(
+                icon
+                small
+                v-bind="attrs"
+                v-on="on"
+                @click="props.remove"
+              )
+                v-icon(small) close
+          v-tooltip(top)
+            span {{ props.isOpen ? 'Recolher' : 'Expandir' }}
+            template(v-slot:activator="{ on, attrs }")
+              v-btn(
+                icon
+                small
+                v-bind="attrs"
+                v-on="on"
+                @click="props.toggle"
+              )
+                v-icon.invertable(:class="{ 'invertable-inverted': props.isOpen }") expand_more
     template(v-slot:item._actions="payload" v-if="!hideActions")
       template(v-if="$vuetify.breakpoint.smAndUp")
         .text-no-wrap
@@ -166,18 +216,24 @@ v-card(flat color="transparent" v-else)
           span {{ action.text }}
 
   v-row.align-center.justify-space-between
-    v-col
+    v-col.shrink.text-no-wrap
       template(v-if="!loading.active && serverItemsLength")
         .caption Exibindo de {{ statusBar.startIndex }} até {{ statusBar.endIndex }} de {{ serverItemsLength }} {{ serverItemsLength === 1 ? 'registro' : 'registros' }}
           template(v-if="serverItemsLength < collectionLength")  de um total de {{ collectionLength }} {{ collectionLength === 1 ? 'filtrado' : 'filtrados' }}
     v-col
       v-pagination.pagination(
-        v-model="options.page"
-        :length="pageCount"
         color="secondary"
+        :length="pageCount"
+        v-model="options.page"
+        total-visible="7"
       )
-    v-col(cols="2")
-      v-select(label="Itens por página:" :value="options.itemsPerPage" :items="itemsPerPages" @input="changeItemsPerPage")
+    v-col.shrink
+      v-select.pageSelect(
+        label="Itens por página:"
+        :value="options.itemsPerPage"
+        :items="itemsPerPages"
+        @input="changeItemsPerPage"
+      )
   slot(name="body.bottom")
 
 </template>
@@ -188,6 +244,7 @@ import ColumnTemplateChip from './ColumnTemplateChip.vue'
 export default {
   name: 'v-query-data-table',
   components: { ColumnTemplateChip },
+  inheritAttrs: false,
   props: {
     title: { type: String, default: '' },
     coloredActionIcons: { type: Boolean, default: false },
@@ -225,6 +282,7 @@ export default {
     settings: {
       dense: false,
       showGroupBy: true,
+      keepGroupedColumns: true,
     },
     selected: [],
     currentItems: [],
@@ -290,7 +348,13 @@ export default {
       if (serverItemsLength < 0) {
         overrides.search = search
       }
-      return Object.assign({}, defaults, dataTableOptions, overrides)
+      return Object.assign(
+        {},
+        defaults,
+        this.$attrs,
+        dataTableOptions,
+        overrides
+      )
     },
     computedHeaders() {
       const { headers, hideActions } = this
@@ -364,7 +428,14 @@ export default {
     },
     options: {
       deep: true,
-      handler(newValue) {
+      handler(newValue, oldValue) {
+        if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
+        const [groupBy] = newValue.groupBy
+        if (groupBy) {
+          const sortIndex = newValue.sortBy.indexOf(groupBy)
+          const sortDesc = newValue.sortDesc[sortIndex]
+          newValue.groupDesc = [sortDesc || false]
+        }
         this.$emit('update:query', newValue)
         this.refresh()
       },
@@ -379,12 +450,49 @@ export default {
       if (this.serverItemsLength < 0) return
       this.refresh()
     },
+    'settings.keepGroupedColumns': {
+      handler() {
+        this.onGroup(this.options)
+      },
+    },
   },
   mounted() {
     this.refresh(true)
     this.loadSettings()
   },
   methods: {
+    onGroup({ groupBy }) {
+      const run = () => {
+        const { table } = this.$refs
+        if (!table) return
+        const { keepGroupedColumns } = this.settings
+        table.internalGroupBy = keepGroupedColumns ? [] : groupBy || []
+      }
+      run()
+      this.$nextTick(run)
+    },
+    setGroupBy({ value }) {
+      const groupBy = this.options?.groupBy?.[0] === value ? [] : [value]
+      Object.assign(this.options, {
+        groupBy,
+        groupDesc: groupBy.length ? [value] : [],
+      })
+      this.onGroup({ groupBy })
+    },
+    getHeaderSort({ value }) {
+      const { sortBy, sortDesc } = this.options
+      const sortIndex = sortBy.indexOf(value)
+      const desc = sortIndex < 0 ? false : !!sortDesc[sortIndex]
+      return {
+        desc,
+        sorted: sortIndex > -1,
+        index: sortIndex < 0 ? '' : sortIndex + 1,
+      }
+    },
+    getHeaderGroup({ value }) {
+      const { groupBy } = this.options
+      return { grouped: groupBy.includes(value) }
+    },
     getIconClasses(action) {
       if (!this.coloredActionIcons || !action.color) return ''
       return action.color
@@ -406,9 +514,12 @@ export default {
     },
     getGroupHeader(props) {
       const { group, groupBy } = props
-      const header = this.headers.find(item => item.value === groupBy[0])
-      if (!header) return ''
-      return `${header.text}: ${group}`
+      const header = this.headers.find(item => item.value === groupBy?.[0])
+      return {
+        text: header?.text,
+        key: header?.text,
+        value: group,
+      }
     },
     loadSettings() {
       const localSettings = localStorage.getItem('VQueryDataTable.settings')
@@ -437,7 +548,6 @@ export default {
       if (!skipCache) {
         const cached = cache.get(JSON.stringify(payload))
         if (cached) {
-          console.log('cache was used')
           return cached
         }
       }
@@ -474,6 +584,7 @@ export default {
         this.collectionLength = this.currentItems.length
       }
       this.setLoading(false)
+      this.onGroup(options)
     },
     clearCache() {
       this.cache = new Map()
@@ -493,17 +604,54 @@ export default {
         padding: 0px !important
 .pagination
   width: auto !important
+.pageSelect
+  min-width: 95px
+.invertable
+  transition: .5s transform
+  transform: rotate(0deg)
+  &-inverted
+    transform: rotate(-180deg)
 .VQueryDataTable
-  &.v-data-table--dense
-    ::v-deep
+  ::v-deep
+    &.v-data-table--dense
       .v-data-table__mobile-row
         min-height: 22px
+    .customHeader
+      position: relative
+      ~ *
+        visibility: hidden !important
+        position: absolute
+      &-actions
+        position: absolute
+        white-space: nowrap
+        margin:
+          top: -2px
+          left: 2px
+        > *
+          margin-right: 3px
+          cursor: pointer
+        i
+          font-size: 18px
+        &-sort
+          transition: .3s all
+          opacity: 1
+        &-sort:not(.sorted), &-group:not(.grouped)
+          opacity: .5
+        &-group
+          opacity: 1
+          transition: .3s opacity
+    .customHeader:not(:hover)
+      .customHeader-actions
+        &-sort:not(.sorted), &-group:not(.grouped)
+          opacity: 0
+          visibility: hidden
+          display: none
   &-selectable
     ::v-deep
       td:first-child
         .v-data-table__mobile-row__header
           display: none
-  &-groupable
+  //- &-groupable
     ::v-deep
       .v-data-table-header
         tr

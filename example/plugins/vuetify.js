@@ -4,7 +4,9 @@ import Vuetify from 'vuetify/lib'
 Vue.use(Vuetify)
 
 const opts = {
-  defaultAssets: { font: true },
+  defaultAssets: {
+    font: { family: 'Roboto' },
+  },
   icons: {
     iconfont: 'md',
   },

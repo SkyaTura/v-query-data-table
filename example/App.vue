@@ -1,8 +1,9 @@
 <template lang="pug">
 v-app#app
+  link(rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons")
   v-app-bar(app dark color="blue darken-4")
     .title Vuetify - Query Data Table
-  v-content
+  v-main
     v-container(fluid)
       v-container
         v-switch(dense hideDetails v-model="datatable.hideActions" label="Esconder ações")
@@ -13,8 +14,12 @@ v-app#app
         v-card.mt-4.py-3.px-5.big-corners(flat)
           VQueryDataTable(
             v-bind="datatable"
+            :query.sync="datatable.query"
             @action-table-add="newItem"
           )
+        v-card.mt-4.py-3.px-5.big-corners(flat)
+          v-card-title Exemplo de configuração
+          pre(align="left") {{ datatable }}
 </template>
 
 <script>
@@ -23,10 +28,12 @@ import fakeApi from './api/desserts'
 export default {
   name: 'app',
   data: () => ({
-    query: null,
     datatable: {
       hideActions: false,
       hideMenu: false,
+      hideSearch: false,
+      disallowGroups: false,
+      query: null,
       actions: {
         single: {
           modify: { icon: 'edit', text: 'Editar' },

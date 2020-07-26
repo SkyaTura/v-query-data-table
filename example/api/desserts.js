@@ -125,5 +125,5 @@ export default payload =>
         total,
         collectionCount: db.length,
       })
-    }, Math.random() * 3000)
+    }, Math.random() * 3)
   })
