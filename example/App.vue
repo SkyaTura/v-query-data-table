@@ -45,7 +45,7 @@ export default {
             icon: 'cloud_download',
             text: 'Exportar',
             handler() {
-              console.log('Exportar')
+              console.info('Exportar')
             },
           },
         },
@@ -87,7 +87,7 @@ export default {
   }),
   methods: {
     newItem() {
-      console.log('Novo item')
+      console.info('Novo item')
     },
   },
 }
