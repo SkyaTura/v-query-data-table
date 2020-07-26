@@ -1,9 +1,7 @@
-import vue from 'rollup-plugin-vue'
-import commonjs from 'rollup-plugin-commonjs'
-import cleanup from 'rollup-plugin-cleanup'
-import babel from '@rollup/plugin-babel'
 import alias from '@rollup/plugin-alias'
 import buble from '@rollup/plugin-buble'
+import commonjs from '@rollup/plugin-commonjs'
+import vue from 'rollup-plugin-vue'
 
 const outputs = ['esm', 'cjs', 'umd']
 
@@ -17,7 +15,7 @@ const config = {
     'components',
     'core-js',
   ],
-  output: outputs.map(format => ({
+  output: outputs.map((format) => ({
     format,
     exports: 'named',
     file: `lib/bundle.${format}.js`,
@@ -26,26 +24,17 @@ const config = {
   plugins: [
     alias({
       resolve: ['.js', '.vue'],
-      entries: {
-        components: '.',
-      },
+      entries: { components: '.' },
     }),
     commonjs(),
     vue({
-      css: true,
-      compileTemplate: true,
-      template: { isProduction: true },
+      target: 'node',
+      preprocessStyles: true,
     }),
-    // cleanup(),
-    buble({ transforms: { asyncAwait: false }, objectAssign: 'Object.assign' }),
-    /*
-                        babel({
-                          runtimeHelpers: true,
-                          sourceMap: true,
-                          extensions: ['.js', '.vue'],
-                          presets: ['@vue/babel-preset-app'],
-                        }),
-                         */
+    buble({
+      transforms: { asyncAwait: false },
+      objectAssign: 'Object.assign',
+    }),
   ],
 }
 

@@ -122,7 +122,7 @@ v-card(flat color="transparent" v-else)
     ref="table"
     :options.sync="options"
   )
-    template(v-slot:[`header.${header.value}`] v-for="header in dataTableAttrs.headers")
+    template(v-for="header in dataTableAttrs.headers" v-slot:[header.slot]="")
       .customHeader
         span.customHeader-text {{ header.text }}
         span.customHeader-actions
@@ -132,7 +132,7 @@ v-card(flat color="transparent" v-else)
               color="transparent"
               :value="getHeaderSort(header).sorted"
             )
-              template(v-slot:badge)
+              template(v-slot:badge="")
                 span.primary--text.darken-1--text {{ getHeaderSort(header).index }}
               v-tooltip(top)
                 span Ordenar
@@ -242,7 +242,7 @@ v-card(flat color="transparent" v-else)
 import ColumnTemplateChip from './ColumnTemplateChip.vue'
 
 export default {
-  name: 'v-query-data-table',
+  name: 'VQueryDatatable',
   components: { ColumnTemplateChip },
   inheritAttrs: false,
   props: {
@@ -295,7 +295,7 @@ export default {
   }),
   computed: {
     alignedHeaders() {
-      return this.computedHeaders.filter(header => header.align)
+      return this.computedHeaders.filter((header) => header.align)
     },
     statusBar() {
       const { shownItems, options } = this
@@ -310,8 +310,8 @@ export default {
     },
     slots() {
       return Object.keys(this.$scopedSlots)
-        .filter(key => key.startsWith('table.'))
-        .map(key => key.substring(6))
+        .filter((key) => key.startsWith('table.'))
+        .map((key) => key.substring(6))
     },
     dataTableAttrs() {
       const {
@@ -362,22 +362,23 @@ export default {
         align: 'center',
       }
       const defaults = {
-        _actions: { filterable: false, sortable: false },
+        _actions: { filterable: false, sortable: false, groupable: false },
       }
       const templateDefaults = {
         chips: { small: true },
       }
       return headers
-        .map(header => {
+        .map((header) => {
           const { $custom = {} } = header
           const { template } = $custom
           const headerDefaults = defaults[header.value] || {}
           const templateOptions = templateDefaults[template] || {}
           return Object.assign({}, common, headerDefaults, header, {
+            slot: `header.${header.value}`,
             $custom: { ...templateOptions, ...$custom },
           })
         })
-        .filter(item => item.value !== '_actions' || !hideActions)
+        .filter((item) => item.value !== '_actions' || !hideActions)
     },
     pageCount() {
       const { shownItems, options, serverItemsLength } = this
@@ -390,7 +391,7 @@ export default {
     templatedColumns() {
       const { computedHeaders } = this
       const knownTemplates = ['chips']
-      return computedHeaders.filter(header =>
+      return computedHeaders.filter((header) =>
         knownTemplates.includes(header.$custom.template)
       )
     },
@@ -399,17 +400,17 @@ export default {
       const single = Object.entries(actions.single || {})
       const table = Object.entries(actions.table || {})
       const bulk = Object.entries(actions.bulk || {})
-      const actionReducer = type => (acc, [name, options]) => {
+      const actionReducer = (type) => (acc, [name, options]) => {
         const handler =
           typeof options.handler === 'function'
             ? options.handler
-            : payload => this.$emit(`action-${type}-${name}`, payload)
+            : (payload) => this.$emit(`action-${type}-${name}`, payload)
         const action = { ...options, name, handler }
         return [...acc, action]
       }
       const quickFilter = ([, options]) =>
         options.quick && !options.divider && !options.subheader
-      const limitFilter = max => (item, index) => index < max
+      const limitFilter = (max) => (item, index) => index < max
       return {
         single: single.reduce(actionReducer('single'), []),
         table: table.reduce(actionReducer('table'), []),
@@ -472,7 +473,7 @@ export default {
       this.$nextTick(run)
     },
     setGroupBy({ value }) {
-      const groupBy = this.options?.groupBy?.[0] === value ? [] : [value]
+      const groupBy = this.options.groupBy[0] === value ? [] : [value]
       Object.assign(this.options, {
         groupBy,
         groupDesc: groupBy.length ? [value] : [],
@@ -497,7 +498,7 @@ export default {
       if (!this.coloredActionIcons || !action.color) return ''
       return action.color
         .split(' ')
-        .map(v => `${v}--text`)
+        .map((v) => `${v}--text`)
         .join(' ')
     },
     goToPage() {},
@@ -513,11 +514,12 @@ export default {
       this.selected = [...items]
     },
     getGroupHeader(props) {
-      const { group, groupBy } = props
-      const header = this.headers.find(item => item.value === groupBy?.[0])
+      const { group, groupBy = [] } = props
+      const header =
+        this.headers.find((item) => item.value === groupBy[0]) || {}
       return {
-        text: header?.text,
-        key: header?.text,
+        text: header.text,
+        key: header.text,
         value: group,
       }
     },

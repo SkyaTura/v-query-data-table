@@ -26,7 +26,7 @@ v-app#app
 import fakeApi from './api/desserts'
 
 export default {
-  name: 'app',
+  name: 'App',
   data: () => ({
     datatable: {
       hideActions: false,
