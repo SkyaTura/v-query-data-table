@@ -14,5 +14,5 @@ module.exports = {
       title: 'Vuetify Query Data Table',
     },
   },
-  lintOnSave: process.env.NODE_ENV !== 'production',
+  lintOnSave: false, //-process.env.NODE_ENV !== 'production',
 }

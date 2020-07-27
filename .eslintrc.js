@@ -1,6 +1,7 @@
 module.exports = {
   root: true,
   extends: ['@emiolo/eslint-config/vue'],
+  ignorePatterns: ['node_modules'],
   rules: {
     'vue/no-duplicate-attr-inheritance': ['off'],
     'vue/no-potential-component-option-typo': ['off'],

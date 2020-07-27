@@ -577,8 +577,8 @@ export default {
         if (!noCaching) {
           cache.set(JSON.stringify(payload), response)
         }
-        this.currentItems = response.items
-        this.serverItemsLength = response.total
+        this.currentItems = response.data
+        this.serverItemsLength = response.totalCount
         this.$emit('update:items', response.items)
       } else {
         this.currentItems = items || []
