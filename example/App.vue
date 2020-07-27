@@ -11,6 +11,9 @@ v-app#app
         v-switch(dense hideDetails v-model="datatable.hideSearch" label="Esconder busca")
         v-switch(dense hideDetails v-model="datatable.disallowDense" label="Não permitir listagem densa")
         v-switch(dense hideDetails v-model="datatable.disallowGroups" label="Não permitir agrupar")
+        v-switch(dense hideDetails v-model="datatable.disallowKeepGroupedColumns" label="Não permitir manter coluna agrupada" :disabled="datatable.disallowGroups")
+        v-switch(dense hideDetails v-model="datatable.hideRowGroupClose" label="Ocultar botão de desagrupar na linha" :disabled="datatable.disallowGroups")
+        v-switch(dense hideDetails v-model="datatable.hideRowGroupExpansion" label="Ocultar botão de desagrupar na linha" :disabled="datatable.disallowGroups")
         v-card.mt-4.py-3.px-5.big-corners(flat)
           VQueryDataTable(
             v-bind="datatable"

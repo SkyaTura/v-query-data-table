@@ -90,7 +90,7 @@ v-card(flat color="transparent" v-else)
               v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.showGroupBy = !settings.showGroupBy")
                 v-switch.my-0(hide-details dense read-only :input-value="settings.showGroupBy")
                 v-list-item-title Permitir agrupar
-              v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.keepGroupedColumns = !settings.keepGroupedColumns")
+              v-list-item.hidden-sm-and-down(v-if="!disallowGroups && !disallowKeepGroupedColumns" @click.stop="settings.keepGroupedColumns = !settings.keepGroupedColumns")
                 v-switch.my-0(hide-details dense read-only :input-value="settings.keepGroupedColumns")
                 v-list-item-title Manter colunas agrupadas
   slot(name="body.top")
@@ -120,7 +120,8 @@ v-card(flat color="transparent" v-else)
     v-bind="dataTableAttrs"
     v-model="selected"
     ref="table"
-    :options.sync="options"
+    :options="computedOptions"
+    @update:options="options = $event"
   )
     template(v-for="header in dataTableAttrs.headers" v-slot:[header.slot]="")
       .customHeader
@@ -140,7 +141,7 @@ v-card(flat color="transparent" v-else)
                   v-icon.invertable(v-bind="attrs" v-on="on" :class="{ 'invertable-inverted': getHeaderSort(header).desc }") arrow_upward
           span.customHeader-actions-group(
             :class="{ grouped: getHeaderGroup(header).grouped }"
-            v-if="header.groupable !== false"
+            v-if="header.groupable !== false && !disallowGroups"
             @click.prevent.stop="setGroupBy(header)"
           )
             v-tooltip(top)
@@ -152,40 +153,41 @@ v-card(flat color="transparent" v-else)
         tr
           td(colspan="100%")
             v-skeleton-loader(type="table-tbody")
-    template(v-for="slot in slots" v-slot:[slot]="props")
-      slot(:name="`table.${slot}`" v-bind="props")
     template(v-for="column in templatedColumns" v-slot:[`item.${column.value}`]="props")
       template(v-if="column.$custom.template === 'chips'")
         ColumnTemplateChip(v-bind="{ column, props }")
     template(v-slot:group.header="props")
-      td(colspan="100%")
-        v-row.ma-0.text-no-wrap(align="center")
-          span(v-if="getGroupHeader(props).value !== undefined")
-            span.font-weight-bold {{ getGroupHeader(props).text }}:
-            span &nbsp;{{ getGroupHeader(props).value }}
-          v-spacer
-          v-tooltip(top)
-            span Desagrupar
-            template(v-slot:activator="{ on, attrs }")
-              v-btn(
-                icon
-                small
-                v-bind="attrs"
-                v-on="on"
-                @click="props.remove"
-              )
-                v-icon(small) close
-          v-tooltip(top)
-            span {{ props.isOpen ? 'Recolher' : 'Expandir' }}
-            template(v-slot:activator="{ on, attrs }")
-              v-btn(
-                icon
-                small
-                v-bind="attrs"
-                v-on="on"
-                @click="props.toggle"
-              )
-                v-icon.invertable(:class="{ 'invertable-inverted': props.isOpen }") expand_more
+      slot(name="group.header" v-bind="props")
+        td.slotGroup-default(colspan="100%")
+          v-row.ma-0.text-no-wrap(align="center")
+            slot(name="group.header.content" v-bind="props")
+              span(v-if="getGroupHeader(props).value !== undefined")
+                span.font-weight-bold {{ getGroupHeader(props).text }}:
+                span &nbsp;{{ getGroupHeader(props).value }}
+      v-row.slotGroup-actions.ma-0.text-no-wrap(align="center" v-if="!hideRowGroupExpansion || !hideRowGroupClose")
+        v-spacer
+        v-tooltip(top v-if="!hideRowGroupClose")
+          span Desagrupar
+          template(v-slot:activator="{ on, attrs }")
+            v-btn(
+              icon
+              small
+              v-bind="attrs"
+              v-on="on"
+              @click="props.remove"
+            )
+              v-icon(small) close
+        v-tooltip(top v-if="!hideRowGroupExpansion")
+          span {{ props.isOpen ? 'Recolher' : 'Expandir' }}
+          template(v-slot:activator="{ on, attrs }")
+            v-btn(
+              icon
+              small
+              v-bind="attrs"
+              v-on="on"
+              @click="props.toggle"
+            )
+              v-icon.invertable(:class="{ 'invertable-inverted': props.isOpen }") expand_more
     template(v-slot:item._actions="payload" v-if="!hideActions")
       template(v-if="$vuetify.breakpoint.smAndUp")
         .text-no-wrap
@@ -214,6 +216,8 @@ v-card(flat color="transparent" v-else)
         )
           v-icon(small v-if="action.icon") {{ action.icon }}
           span {{ action.text }}
+    template(v-for="slot in slots" v-slot:[slot]="props")
+      slot(:name="`table.${slot}`" v-bind="props")
 
   v-row.align-center.justify-space-between
     v-col.shrink.text-no-wrap
@@ -251,6 +255,9 @@ export default {
     dataTableOptions: { type: Object, default: () => ({}) },
     disallowDense: { type: Boolean, default: false },
     disallowGroups: { type: Boolean, default: false },
+    hideRowGroupClose: { type: Boolean, default: false },
+    hideRowGroupExpansion: { type: Boolean, default: false },
+    disallowKeepGroupedColumns: { type: Boolean, default: false },
     hideActions: { type: Boolean, default: false },
     hideMenu: { type: Boolean, default: false },
     hideSearch: { type: Boolean, default: false },
@@ -261,6 +268,7 @@ export default {
     items: { type: Array, default: () => null },
     noCaching: { type: Boolean, default: false },
     query: { type: Object, default: () => ({}) },
+    overrideQuery: { type: Object, default: () => ({}) },
   },
   data: () => ({
     cache: new Map(),
@@ -294,6 +302,10 @@ export default {
     },
   }),
   computed: {
+    computedOptions() {
+      const { options, overrideQuery } = this
+      return { ...options, ...overrideQuery }
+    },
     alignedHeaders() {
       return this.computedHeaders.filter((header) => header.align)
     },
@@ -456,6 +468,11 @@ export default {
         this.onGroup(this.options)
       },
     },
+    disallowKeepGroupedColumns: {
+      handler() {
+        this.onGroup(this.options)
+      },
+    },
   },
   mounted() {
     this.refresh(true)
@@ -467,7 +484,10 @@ export default {
         const { table } = this.$refs
         if (!table) return
         const { keepGroupedColumns } = this.settings
-        table.internalGroupBy = keepGroupedColumns ? [] : groupBy || []
+        table.internalGroupBy =
+          keepGroupedColumns && !this.disallowKeepGroupedColumns
+            ? []
+            : groupBy || []
       }
       run()
       this.$nextTick(run)
@@ -615,6 +635,9 @@ export default {
     transform: rotate(-180deg)
 .VQueryDataTable
   ::v-deep
+    .v-row-group__header
+      position: relative
+      transform: scale(1)
     &.v-data-table--dense
       .v-data-table__mobile-row
         min-height: 22px
@@ -679,4 +702,22 @@ export default {
                 opacity: 1
 .disable-mouse
   pointer-events: none
+.slotGroup
+  position: relative
+.slotGroup-actions
+  position: absolute
+  right: 0
+  top: 0
+  height: calc(100% + 1px)
+  padding: 10px 8px
+    left: 60px
+  margin-top: -1px !important
+  transition: .3s all
+  z-index: 10
+  td:not(.slotGroup-default) ~ &
+    --color: white
+    background: linear-gradient(to left, var(--color), var(--color), var(--color), transparent)
+    tr:not(:hover) &
+      opacity: 0
+      visibility: hidden
 </style>
