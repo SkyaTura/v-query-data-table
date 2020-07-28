@@ -121,7 +121,7 @@ v-card(flat color="transparent" v-else)
     v-model="selected"
     ref="table"
     :options="computedOptions"
-    @update:options="options = $event"
+    @update:options="updateOptions"
   )
     template(v-for="header in dataTableAttrs.headers" v-slot:[header.slot]="")
       .customHeader
@@ -141,7 +141,7 @@ v-card(flat color="transparent" v-else)
                   v-icon.invertable(v-bind="attrs" v-on="on" :class="{ 'invertable-inverted': getHeaderSort(header).desc }") arrow_upward
           span.customHeader-actions-group(
             :class="{ grouped: getHeaderGroup(header).grouped }"
-            v-if="header.groupable !== false && !disallowGroups"
+            v-if="header.groupable !== false && !disallowGroups && settings.showGroupBy"
             @click.prevent.stop="setGroupBy(header)"
           )
             v-tooltip(top)
@@ -166,6 +166,25 @@ v-card(flat color="transparent" v-else)
                 span &nbsp;{{ getGroupHeader(props).value }}
       v-row.slotGroup-actions.ma-0.text-no-wrap(align="center" v-if="!hideRowGroupExpansion || !hideRowGroupClose")
         v-spacer
+        span.customHeader-actions-sort(v-if="groupHeader.sortable !== false" :class="{ sorted: groupHeaderSort.sorted }")
+          v-tooltip(top)
+            span Ordenar grupo
+            template(v-slot:activator="{ on, attrs }")
+              v-btn(
+                icon
+                small
+                v-bind="attrs"
+                v-on="on"
+                @click="sortGroupHeader"
+              )
+                v-badge(
+                  overlap
+                  color="transparent"
+                  :value="groupHeaderSort.sorted"
+                )
+                  template(v-slot:badge="")
+                    span.primary--text.darken-1--text {{ groupHeaderSort.index }}
+                  v-icon.invertable(size="16" :class="{ 'invertable-inverted': groupHeaderSort.desc }") arrow_upward
         v-tooltip(top v-if="!hideRowGroupClose")
           span Desagrupar
           template(v-slot:activator="{ on, attrs }")
@@ -433,24 +452,39 @@ export default {
         bulk: bulk.reduce(actionReducer('bulk'), []),
       }
     },
+    groupHeader() {
+      const [value] = this.options.groupBy
+      return this.headers.find((item) => item.value === value)
+    },
+    groupHeaderSort() {
+      const [value] = this.options.groupBy
+      const { sortBy, sortDesc } = this.options
+      const sortIndex = sortBy.indexOf(value)
+      const desc = sortIndex < 0 ? false : !!sortDesc[sortIndex]
+      return {
+        desc,
+        sorted: sortIndex > -1,
+        index: sortIndex < 0 ? '' : sortIndex + 1,
+      }
+    },
   },
   watch: {
     settings: {
       deep: true,
       handler: 'setSettings',
     },
-    options: {
+    computedOptions: {
       deep: true,
       handler(newValue, oldValue) {
+        this.$emit('update:query', newValue)
+        this.refresh()
         if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return
         const [groupBy] = newValue.groupBy
         if (groupBy) {
           const sortIndex = newValue.sortBy.indexOf(groupBy)
           const sortDesc = newValue.sortDesc[sortIndex]
-          newValue.groupDesc = [sortDesc || false]
+          this.options.groupDesc = [sortDesc || false]
         }
-        this.$emit('update:query', newValue)
-        this.refresh()
       },
     },
     query: {
@@ -612,6 +646,39 @@ export default {
       this.cache = new Map()
       return this.refresh()
     },
+    updateOptions(newValue) {
+      // eslint-disable-next-line no-unused-vars
+      const { page, itemsPerPage, pageCount, ...options } = newValue
+      Object.assign(this.options, options)
+    },
+    sortGroupHeader() {
+      const { sortBy, sortDesc, groupBy } = this.options
+      const [value] = groupBy
+      const sortIndex = sortBy.indexOf(value)
+      // Add if doesn't exists
+      if (sortIndex < 0) {
+        Object.assign(this.options, {
+          sortBy: [...sortBy, value],
+          sortDesc: [...sortDesc, false],
+        })
+        return
+      }
+      // Remove if is sorted descending
+      if (sortDesc[sortIndex]) {
+        const removeFilter = (_, index) => index !== sortIndex
+        Object.assign(this.options, {
+          sortBy: sortBy.filter(removeFilter),
+          sortDesc: sortDesc.filter(removeFilter),
+        })
+        return
+      }
+      // Descend if is sorted ascending
+      Object.assign(this.options, {
+        sortDesc: sortDesc.map((desc, index) =>
+          index !== sortIndex ? desc : true
+        ),
+      })
+    },
   },
 }
 </script>
@@ -714,6 +781,9 @@ export default {
   margin-top: -1px !important
   transition: .3s all
   z-index: 10
+  .VQueryDataTable.v-data-table--dense &
+    padding-top: 3px
+    padding-bottom: 3px
   td:not(.slotGroup-default) ~ &
     --color: white
     background: linear-gradient(to left, var(--color), var(--color), var(--color), transparent)
