@@ -61,6 +61,10 @@ export default {
           text: 'Dessert (100g serving)',
           align: 'left',
           value: 'name',
+          pickable: false,
+          $extra: {
+            transformItem: (value) => value.toUpperCase(),
+          },
         },
         {
           text: 'Calories',
@@ -84,6 +88,18 @@ export default {
         { text: 'Protein (g)', value: 'protein' },
         { text: 'Iron (%)', value: 'iron' },
         { text: 'Ações', value: '_actions' },
+        {
+          text: 'Tipo',
+          value: 'kind',
+          $extra: {
+            visible: true,
+            transformItem: {
+              hot: 'Quente',
+              room_temperature: 'Temperatura Ambiente',
+              cold: 'Gelado',
+            },
+          },
+        },
       ],
       fetch: fakeApi,
     },

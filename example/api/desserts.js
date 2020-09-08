@@ -8,6 +8,7 @@ const db = [
     carbs: 24,
     protein: 4.0,
     iron: '1%',
+    kind: 'cold',
   },
   {
     name: 'Ice cream sandwich',
@@ -16,6 +17,7 @@ const db = [
     carbs: 37,
     protein: 4.3,
     iron: '1%',
+    kind: 'cold',
   },
   {
     name: 'Eclair',
@@ -24,6 +26,7 @@ const db = [
     carbs: 23,
     protein: 6.0,
     iron: '7%',
+    kind: 'cold',
   },
   {
     name: 'Cupcake',
@@ -32,6 +35,7 @@ const db = [
     carbs: 67,
     protein: 4.3,
     iron: '8%',
+    kind: 'room_temperature',
   },
   {
     name: 'Gingerbread',
@@ -40,6 +44,7 @@ const db = [
     carbs: 49,
     protein: 3.9,
     iron: '16%',
+    kind: 'hot',
   },
   {
     name: 'Jelly bean',
@@ -48,6 +53,7 @@ const db = [
     carbs: 94,
     protein: 0.0,
     iron: '0%',
+    kind: 'room_temperature',
   },
   {
     name: 'Lollipop',
@@ -56,6 +62,7 @@ const db = [
     carbs: 98,
     protein: 0,
     iron: '2%',
+    kind: 'room_temperature',
   },
   {
     name: 'Honeycomb',
@@ -64,6 +71,7 @@ const db = [
     carbs: 87,
     protein: 6.5,
     iron: '45%',
+    kind: 'room_temperature',
   },
   {
     name: 'Donut',
@@ -72,6 +80,7 @@ const db = [
     carbs: 51,
     protein: 4.9,
     iron: '22%',
+    kind: 'hot',
   },
   {
     name: 'KitKat',
@@ -80,6 +89,7 @@ const db = [
     carbs: 65,
     protein: 7,
     iron: '6%',
+    kind: 'room_temperature',
   },
 ]
 
@@ -90,12 +100,60 @@ export default (payload) =>
     const {
       sortBy = [],
       sortDesc = [],
+      filter = '',
+      getFilterList = '',
       page = 1,
       itemsPerPage = 10,
       search = '',
     } = payload
 
-    let items = JSON.parse(JSON.stringify(searcher.search(search)))
+    if (getFilterList) {
+      const data = db
+        .map((item) => item[getFilterList])
+        .reduce(
+          (acc, value, index, self) =>
+            self.indexOf(value) !== index
+              ? acc
+              : [
+                  ...acc,
+                  {
+                    value,
+                    count: self.filter((item) => item === value).length,
+                  },
+                ],
+          []
+        )
+      setTimeout(() => {
+        resolve({
+          data,
+          totalCount: data.length,
+          resultCount: data.length,
+        })
+      }, Math.random() * 300)
+      return
+    }
+
+    const filterParams = Object.entries(
+      filter
+        .split(',')
+        .filter((item) => item !== '')
+        .map((item) => item.replace(')', '').split('('))
+        .reduce(
+          (acc, [key, value]) => ({
+            ...acc,
+            [key]: [...(acc[key] || []), value?.toString()],
+          }),
+          {}
+        )
+    )
+    let items = JSON.parse(
+      JSON.stringify(searcher.search(search))
+    ).filter((item) =>
+      filterParams.every(([key, values]) =>
+        values.includes(item[key]?.toString())
+      )
+    )
+    console.log(filterParams, items)
 
     if (sortBy.length === 1 && sortDesc.length === 1) {
       items = items.sort((a, b) => {

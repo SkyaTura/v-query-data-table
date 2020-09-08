@@ -2,6 +2,42 @@
 v-card(flat color="transparent" v-if="loading.firstTime && loading.active")
   v-skeleton-loader(type="table")
 v-card(flat color="transparent" v-else)
+  v-navigation-drawer.filterDrawer-parent(
+    app
+    right
+    temporary
+    v-model="showFilterDrawer"
+  )
+    v-row.ma-0.flex-column.filterDrawer
+      .title.pa-3 Filtros da Tabela
+      v-divider
+      v-row.ma-0.filterDrawer-wrapper
+        v-row.ma-0.pa-3.filterDrawer-content
+          template(v-for="row in computedHeaders")
+            v-autocomplete.flex-grow-0.my-2(
+              hide-details
+              filled
+              multiple
+              small-chips
+              v-model="filter.values[row.value]"
+              v-if="row.pickable !== false"
+              item-text="text"
+              item-value="value"
+              :loading="filter.loading[row.value]"
+              :items="sortFilterItems[row.value]"
+              :label="row.text"
+              @focus="populateFilter(row.value)"
+            )
+              template(v-slot:item="{ item, on, attrs }")
+                v-list-item(v-on="on" v-bind="attrs")
+                  v-list-item-content
+                    v-list-item-title {{ item.text }}
+                  v-list-item-action
+                    v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
+              template(v-slot:selection="{ item, index }")
+                v-chip(v-if="index < 3") {{ index < 2 || filter.values[row.value].length <= 3 ? item.text : `e outros ${filter.values[row.value].length - 2}` }}
+          v-row.mt-4(justify="center")
+            v-btn(@click="clearFilters") Limpar
   v-dialog(v-model="goToPageDialog" max-width="300px")
     v-card
       v-card-title Ir para a página
@@ -30,19 +66,23 @@ v-card(flat color="transparent" v-else)
           :order="$vuetify.breakpoint.xsOnly ? 1 : 0"
           v-if="!hideSearch"
         )
-          v-text-field(
-            label="Buscar"
-            v-model="search"
-            append-icon="search"
-            clearable
-            dense
-            flat
-            hide-details
-            outlined
-            rounded
-            solo
-            single-line
-          )
+          v-row.ma-0
+            v-btn(text @click="showFilterDrawer = true")
+              v-icon filter_alt
+              span.ml-2 Filtrar
+            v-text-field(
+              label="Buscar"
+              v-model="search"
+              append-icon="search"
+              clearable
+              dense
+              flat
+              hide-details
+              outlined
+              rounded
+              solo
+              single-line
+            )
       slot(name="header.actions")
         v-row.shrink.pa-0.hidden-sm-and-down
           template(v-if="validActions.quick.length && !hideActions")
@@ -261,7 +301,7 @@ v-card(flat color="transparent" v-else)
 
 </template>
 
-<script>
+<script lang="ts">
 import ColumnTemplateChip from './ColumnTemplateChip.vue'
 
 export default {
@@ -290,11 +330,18 @@ export default {
     overrideQuery: { type: Object, default: () => ({}) },
   },
   data: () => ({
+    showFilterDrawer: false,
     cache: new Map(),
     goToPageDialog: false,
     goToPageInput: 1,
     serverItemsLength: -1,
     colletionLength: -1,
+    filter: {
+      items: {},
+      values: {},
+      search: {},
+      loading: {},
+    },
     options: {
       page: 1,
       itemsPerPage: 10,
@@ -321,6 +368,40 @@ export default {
     },
   }),
   computed: {
+    sortFilterItems() {
+      const { transformableHeaders } = this
+      const { items, values } = this.filter
+      return Object.entries(items)
+        .map(([field, itemValues]) => [
+          field,
+          itemValues
+            .map((item) => {
+              const value = item.value
+              const transformItem = transformableHeaders.find(
+                ([itemKey]) => itemKey === field
+              )
+              if (!transformItem) return { ...item, text: item.value }
+              const transform = transformItem[1]
+              const getNewValue = () => {
+                if (typeof transform === 'function') return transform(value)
+                if (typeof transform === 'object')
+                  return transform[value] || value
+                return value
+              }
+              return { ...item, text: getNewValue() }
+            })
+            .sort((a, b) => {
+              const A = (values[field] || []).includes(a.value)
+              const B = (values[field] || []).includes(b.value)
+              if (A && !B) return -1
+              if (!A && B) return 1
+              if (a.value > b.value) return 1
+              if (a.value < b.value) return -1
+              return 0
+            }),
+        ])
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+    },
     computedOptions() {
       const { options, overrideQuery } = this
       return { ...options, ...overrideQuery }
@@ -337,7 +418,25 @@ export default {
       return { startIndex, endIndex }
     },
     shownItems() {
-      return this.items || this.currentItems
+      const { transformableHeaders } = this
+      const shown = this.items || this.currentItems
+      return shown.map((item) =>
+        transformableHeaders.reduce((acc, [key, transform]) => {
+          const oldValue = acc[key]
+          const getNewValue = () => {
+            if (typeof transform === 'function') return transform(oldValue)
+            if (typeof transform === 'object')
+              return transform[oldValue] || oldValue
+            return oldValue
+          }
+          return { ...acc, [key]: getNewValue() }
+        }, item)
+      )
+    },
+    transformableHeaders() {
+      return this.computedHeaders
+        .filter((item) => item.$extra.transformItem)
+        .map((item) => [item.value, item.$extra.transformItem])
     },
     slots() {
       return Object.keys(this.$scopedSlots)
@@ -346,7 +445,7 @@ export default {
     },
     dataTableAttrs() {
       const {
-        computedHeaders,
+        shownHeaders,
         dataTableOptions,
         shownItems: items,
         loading,
@@ -368,7 +467,7 @@ export default {
       const overrides = {
         items,
         hideDefaultFooter: true,
-        headers: computedHeaders,
+        headers: shownHeaders,
         loading: loading.active,
         class: {
           ...(dataTableOptions.class || {}),
@@ -387,26 +486,42 @@ export default {
         overrides
       )
     },
+    shownHeaders() {
+      return this.computedHeaders.filter((item) => item.$extra.visible)
+    },
     computedHeaders() {
       const { headers, hideActions } = this
       const common = {
         align: 'center',
       }
       const defaults = {
-        _actions: { filterable: false, sortable: false, groupable: false },
+        _actions: {
+          pickable: false,
+          filterable: false,
+          sortable: false,
+          groupable: false,
+        },
       }
       const templateDefaults = {
         chips: { small: true },
       }
       return headers
         .map((header) => {
-          const { $custom = {} } = header
+          const { $extra = {}, $custom = {} } = header
           const { template } = $custom
           const headerDefaults = defaults[header.value] || {}
           const templateOptions = templateDefaults[template] || {}
+
+          const {
+            visible = true,
+            filterable = true,
+            transformItem = null,
+          } = $extra
+
           return Object.assign({}, common, headerDefaults, header, {
             slot: `header.${header.value}`,
             $custom: { ...templateOptions, ...$custom },
+            $extra: { visible, filterable, transformItem },
           })
         })
         .filter((item) => item.value !== '_actions' || !hideActions)
@@ -469,6 +584,26 @@ export default {
     },
   },
   watch: {
+    'filter.values': {
+      deep: true,
+      handler() {
+        const { values } = this.filter
+        this.options = {
+          ...this.options,
+          filter: Object.entries(values)
+            .reduce(
+              (acc, [field, items]) => [
+                ...acc,
+                ...items.map((item) => [field, item], []),
+              ],
+              []
+            )
+            .filter((v) => v[1] !== '')
+            .map(([field, value]) => `${field}(${value})`)
+            .join(','),
+        }
+      },
+    },
     settings: {
       deep: true,
       handler: 'setSettings',
@@ -490,6 +625,7 @@ export default {
     query: {
       deep: true,
       handler(newValue) {
+        if (JSON.stringify(newValue) === JSON.stringify(this.options)) return
         this.options = newValue
       },
     },
@@ -513,6 +649,49 @@ export default {
     this.loadSettings()
   },
   methods: {
+    async populateFilter(field) {
+      const { filter, fetch, items } = this
+      if (typeof fetch !== 'function') {
+        const values = items
+          .map((item) => item[field])
+          .reduce(
+            (acc, value, index, self) =>
+              self.indexOf(value) !== index
+                ? acc
+                : [
+                    ...acc,
+                    {
+                      value,
+                      count: self.filter((item) => item === value).length,
+                    },
+                  ],
+            []
+          )
+        filter.items = {
+          ...filter.items,
+          [field]: values,
+        }
+        return
+      }
+      filter.loading = {
+        ...filter.loading,
+        [field]: true,
+      }
+      try {
+        const response = await fetch({ getFilterList: field })
+        const values = response.data
+        filter.items = {
+          ...filter.items,
+          [field]: values,
+        }
+      } catch (e) {
+        console.error(e)
+      }
+      filter.loading = {
+        ...filter.loading,
+        [field]: false,
+      }
+    },
     onGroup({ groupBy }) {
       const run = () => {
         const { table } = this.$refs
@@ -679,6 +858,10 @@ export default {
         ),
       })
     },
+    clearFilters() {
+      const { filter } = this
+      filter.values = Object.keys(filter.values).map((item) => [item, []])
+    },
   },
 }
 </script>
@@ -790,4 +973,20 @@ export default {
     tr:not(:hover) &
       opacity: 0
       visibility: hidden
+.filterDrawer
+  height: 100vh
+  width: 100%
+  flex-flow: column
+  &-parent
+    min-width: 350px
+    max-width: 100vw
+  &-wrapper
+    flex: 1 0 0
+    overflow-y: auto
+    align-items: center
+  &-content
+    height: auto
+    min-height: 75%
+    flex-flow: column
+    justify-content: space-around
 </style>
