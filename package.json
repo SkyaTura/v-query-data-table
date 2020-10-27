@@ -1,7 +1,7 @@
 {
   "name": "v-query-data-table",
   "description": "A Vuetify Data Table wrapper with easy API querying",
-  "version": "2.1.7",
+  "version": "2.1.11",
   "author": "Antonio Eduardo <antonio@skyatura.com.br>",
   "repository": "https://github.com/SkyaTura/v-query-data-table",
   "license": "ISC",
@@ -14,10 +14,10 @@
   "scripts": {
     "dev": "npm run dev:example & npm run dev:lib",
     "dev:example": "npm run serve",
-    "dev:lib": "tsc --watch",
+    "dev:lib": "nodemon --watch \"src\" --watch \"rollup.config.js\" -e js,vue --exec \"npm run build\"",
     "serve": "vue-cli-service serve",
     "build:example": "vue-cli-service build",
-    "build": "tsc",
+    "build": "rollup --config",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {

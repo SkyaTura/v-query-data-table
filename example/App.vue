@@ -67,9 +67,20 @@ export default {
           },
         },
         {
+          text: 'Tipo',
+          value: 'kind',
+          $extra: {
+            visible: false,
+            transformItem: {
+              hot: 'Quente',
+              room_temperature: 'Temperatura Ambiente',
+              cold: 'Gelado',
+            },
+          },
+        },
+        {
           text: 'Calories',
           align: 'center',
-          filterable: true,
           value: 'calories',
           $custom: {
             template: 'chips',
@@ -83,23 +94,11 @@ export default {
             },
           },
         },
-        { text: 'Fat (g)', value: 'fat' },
+        { text: 'Fat (g)', value: 'fat', $extra: { filterable: false } },
         { text: 'Carbs (g)', value: 'carbs' },
         { text: 'Protein (g)', value: 'protein' },
         { text: 'Iron (%)', value: 'iron' },
         { text: 'Ações', value: '_actions' },
-        {
-          text: 'Tipo',
-          value: 'kind',
-          $extra: {
-            visible: true,
-            transformItem: {
-              hot: 'Quente',
-              room_temperature: 'Temperatura Ambiente',
-              cold: 'Gelado',
-            },
-          },
-        },
       ],
       fetch: fakeApi,
     },

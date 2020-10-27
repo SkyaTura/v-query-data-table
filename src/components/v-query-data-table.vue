@@ -9,7 +9,7 @@ v-card(flat color="transparent" v-else)
     v-model="showFilterDrawer"
   )
     v-row.ma-0.flex-column.filterDrawer
-      .title.pa-3 Filtros da Tabela
+      .title.py-3.px-5 Filtros da Tabela
       v-divider
       v-row.ma-0.filterDrawer-wrapper
         v-row.ma-0.pa-3.filterDrawer-content
@@ -20,7 +20,7 @@ v-card(flat color="transparent" v-else)
               multiple
               small-chips
               v-model="filter.values[row.value]"
-              v-if="row.pickable !== false"
+              v-if="row.$extra.filterable !== false"
               item-text="text"
               item-value="value"
               :loading="filter.loading[row.value]"
@@ -36,8 +36,8 @@ v-card(flat color="transparent" v-else)
                     v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
               template(v-slot:selection="{ item, index }")
                 v-chip(v-if="index < 3") {{ index < 2 || filter.values[row.value].length <= 3 ? item.text : `e outros ${filter.values[row.value].length - 2}` }}
-          v-row.mt-4(justify="center")
-            v-btn(@click="clearFilters") Limpar
+          v-row.mx-0.mt-4(justify="end")
+            v-btn(text @click="clearFilters") Limpar filtros
   v-dialog(v-model="goToPageDialog" max-width="300px")
     v-card
       v-card-title Ir para a página
@@ -250,31 +250,33 @@ v-card(flat color="transparent" v-else)
     template(v-slot:item._actions="payload" v-if="!hideActions")
       template(v-if="$vuetify.breakpoint.smAndUp")
         .text-no-wrap
-          v-tooltip(
-            top
-            v-for="(action, index) in validActions.single"
-            :disabled="!action.text"
-            :key="action.name"
-          )
-            template(v-slot:activator="{ on }")
-              v-icon(
-                small
-                v-on="on"
-                :class="[index ? 'ml-1' : '', getIconClasses(action)]"
-                @click="action.handler(payload)"
-              ) {{ action.icon }}
-            span {{ action.text }}
+          template(v-for="(action, index) in validActions.single")
+            v-tooltip(
+              top
+              v-if="actionCondition(payload)([index, action])"
+              :disabled="!action.text"
+              :key="action.name"
+            )
+              template(v-slot:activator="{ on }")
+                v-icon(
+                  small
+                  v-on="on"
+                  :class="[index ? 'ml-1' : '', getIconClasses(action)]"
+                  @click="action.handler(payload)"
+                ) {{ action.icon }}
+              span {{ action.text }}
       template(v-else)
-        v-btn.ml-3(
-          small
-          text
-          v-for="action in validActions.single"
-          :key="action.name"
-          @click="action.handler(payload)"
-          v-bind="{ color: action.color || 'primary', ...action.options }"
-        )
-          v-icon(small v-if="action.icon") {{ action.icon }}
-          span {{ action.text }}
+        template(v-for="action in validActions.single")
+          v-btn.ml-3(
+            small
+            text
+            v-if="actionCondition(payload)([index, action])"
+            :key="action.name"
+            @click="action.handler(payload)"
+            v-bind="{ color: action.color || 'primary', ...action.options }"
+          )
+            v-icon(small v-if="action.icon") {{ action.icon }}
+            span {{ action.text }}
     template(v-for="slot in slots" v-slot:[slot]="props")
       slot(:name="`table.${slot}`" v-bind="props")
 
@@ -496,10 +498,14 @@ export default {
       }
       const defaults = {
         _actions: {
-          pickable: false,
           filterable: false,
           sortable: false,
           groupable: false,
+          $extra: {
+            visible: true,
+            filterable: false,
+            transformItem: null,
+          },
         },
       }
       const templateDefaults = {
@@ -507,10 +513,17 @@ export default {
       }
       return headers
         .map((header) => {
-          const { $extra = {}, $custom = {} } = header
+          const { $custom = {} } = header
           const { template } = $custom
           const headerDefaults = defaults[header.value] || {}
           const templateOptions = templateDefaults[template] || {}
+
+          const newHeader = Object.assign({}, common, headerDefaults, header, {
+            slot: `header.${header.value}`,
+            $custom: { ...templateOptions, ...$custom },
+          })
+
+          const { $extra = {} } = newHeader
 
           const {
             visible = true,
@@ -518,11 +531,10 @@ export default {
             transformItem = null,
           } = $extra
 
-          return Object.assign({}, common, headerDefaults, header, {
-            slot: `header.${header.value}`,
-            $custom: { ...templateOptions, ...$custom },
+          return {
+            ...newHeader,
             $extra: { visible, filterable, transformItem },
-          })
+          }
         })
         .filter((item) => item.value !== '_actions' || !hideActions)
     },
@@ -543,9 +555,10 @@ export default {
     },
     validActions() {
       const { actions = {} } = this
+      const checkAction = this.actionCondition()
       const single = Object.entries(actions.single || {})
-      const table = Object.entries(actions.table || {})
-      const bulk = Object.entries(actions.bulk || {})
+      const table = Object.entries(actions.table || {}).filter(checkAction)
+      const bulk = Object.entries(actions.bulk || {}).filter(checkAction)
       const actionReducer = (type) => (acc, [name, options]) => {
         const handler =
           typeof options.handler === 'function'
@@ -649,6 +662,15 @@ export default {
     this.loadSettings()
   },
   methods: {
+    actionCondition(item) {
+      // eslint-disable-next-line no-unused-vars
+      return ([index, props]) => {
+        if (!('condition' in props)) return true
+        const { condition } = props
+        if (typeof condition === 'function') return condition(item)
+        return !!condition
+      }
+    },
     async populateFilter(field) {
       const { filter, fetch, items } = this
       if (typeof fetch !== 'function') {
@@ -860,7 +882,7 @@ export default {
     },
     clearFilters() {
       const { filter } = this
-      filter.values = Object.keys(filter.values).map((item) => [item, []])
+      filter.values = {}
     },
   },
 }
@@ -980,13 +1002,14 @@ export default {
   &-parent
     min-width: 350px
     max-width: 100vw
+    border-radius: 0px !important
   &-wrapper
     flex: 1 0 0
     overflow-y: auto
-    align-items: center
+    align-items: flex-start
   &-content
     height: auto
     min-height: 75%
     flex-flow: column
-    justify-content: space-around
+    justify-content: flex-start
 </style>

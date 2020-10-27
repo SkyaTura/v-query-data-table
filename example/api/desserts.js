@@ -153,7 +153,6 @@ export default (payload) =>
         values.includes(item[key]?.toString())
       )
     )
-    console.log(filterParams, items)
 
     if (sortBy.length === 1 && sortDesc.length === 1) {
       items = items.sort((a, b) => {
