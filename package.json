@@ -1,5 +1,5 @@
 {
-  "name": "v-query-data-table-v2",
+  "name": "v-query-table-v2",
   "description": "A Vuetify Data Table wrapper with easy API querying, forked from https://github.com/SkyaTura/v-query-data-table",
   "version": "1.0.0",
   "author": "Gabriel de Vargas Coelho",
