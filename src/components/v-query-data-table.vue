@@ -11,8 +11,10 @@ v-card(flat color="transparent" v-else)
     v-row.ma-0.flex-column.filterDrawer
       .title.py-3.px-5 Filtros da Tabela
       v-divider
+      slot(name="filter-header")
       v-row.ma-0.filterDrawer-wrapper
         v-row.ma-0.pa-3.filterDrawer-content
+          slot(name="filter-prepend")
           template(v-for="row in computedHeaders")
             v-autocomplete.flex-grow-0.my-2(
               hide-details
@@ -36,8 +38,11 @@ v-card(flat color="transparent" v-else)
                     v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
               template(v-slot:selection="{ item, index }")
                 v-chip(v-if="index < 3") {{ index < 2 || filter.values[row.value].length <= 3 ? item.text : `e outros ${filter.values[row.value].length - 2}` }}
+          slot(name="filter-append")
           v-row.mx-0.mt-4(justify="end")
+            slot(name="filter-actions-prepend")
             v-btn(text @click="clearFilters") Limpar filtros
+            slot(name="filter-actions-append")
   v-dialog(v-model="goToPageDialog" max-width="300px")
     v-card
       v-card-title Ir para a página
@@ -51,88 +56,91 @@ v-card(flat color="transparent" v-else)
       v-card-actions
         v-spacer
         v-btn(text color="primary" @click="goToPageDialog = false") Cancelar
+
   slot(name="header")
-    v-card-title.align-center.pr-0
-      slot(name="header.title")
-        slot(name="header.title.prepend")
-        .display-1 {{ title }}
-        slot(name="header.title.append")
-      v-spacer
-      slot(name="header.search")
-        v-col.py-0(
-          cols="12"
-          sm="5"
-          md="4"
-          :order="$vuetify.breakpoint.xsOnly ? 1 : 0"
-          v-if="!hideSearch"
-        )
-          v-row.ma-0
-            v-btn(text @click="showFilterDrawer = true")
-              v-icon filter_alt
-              span.ml-2 Filtrar
-            v-text-field(
-              label="Buscar"
-              v-model="search"
-              append-icon="search"
-              clearable
-              dense
-              flat
-              hide-details
-              outlined
-              rounded
-              solo
-              single-line
-            )
-      slot(name="header.actions")
-        v-row.shrink.pa-0.hidden-sm-and-down
-          template(v-if="validActions.quick.length && !hideActions")
-            v-btn.ml-3(
-              v-for="action in validActions.quick"
-              :key="action.name"
-              @click="action.handler"
-              v-bind="{ color: action.color || 'primary', ...action.options }"
-            )
-              v-icon {{ action.icon }}
-              span {{ action.text }}
-        v-menu(bottom left offset-x v-if="!hideMenu")
-          template(v-slot:activator="{ on }")
-            v-btn.ml-5(icon v-on="on")
-              v-icon more_vert
-          v-list
-            template(v-if="validActions.table.length && !hideActions")
-              template(v-for="(action, index) in validActions.table")
-                v-divider(:key="action.name" v-if="action.divider")
-                v-subheader(:key="action.name" v-else-if="action.subheader") {{ action.text }}
-                v-list-item(:key="action.name" v-else @click="action.handler")
-                  v-list-item-avatar.mr-0
+    v-card-title.px-0.pt-10.pb-4.pb-md-8
+      v-container.pa-0.ma-0
+        v-row.pa-0.ma-0
+          v-col.pa-0.ma-0(cols=12 sm=3)
+            slot(name="header.title")
+              slot(name="header.title.prepend")
+              .display-1 {{ title }}
+              slot(name="header.title.append")
+          v-spacer
+          v-col.pa-0.ma-0(cols=12 sm=9)
+            v-row.pa-0.ma-0(align="center" justify="end")
+              v-col.pa-0.ma-0.my-2.my-sm-0(cols=12 sm=3 align="end")
+                v-btn(icon text @click="showFilterDrawer = true" style="background: #e4f6d5")
+                  v-icon(color="#79b651") filter_alt
+
+                v-menu(bottom left offset-x v-if="!hideMenu")
+                  template(v-slot:activator="{ on }")
+                    v-btn.ml-2(icon v-on="on" style="background: #e4f6d5")
+                      v-icon(color="#79b651") more_vert
+                  v-list
+                    template(v-if="validActions.table.length && !hideActions")
+                      template(v-for="(action, index) in validActions.table")
+                        v-divider(:key="action.name" v-if="action.divider")
+                        v-subheader(:key="action.name" v-else-if="action.subheader") {{ action.text }}
+                        v-list-item(:key="action.name" v-else @click="action.handler")
+                          v-list-item-avatar.mr-0
+                            v-icon {{ action.icon }}
+                          v-list-item-title {{ action.text }}
+                      v-divider
+                    v-list-item(@click="clearCache")
+                      v-list-item-avatar.mr-0
+                        v-icon refresh
+                      v-list-item-title Atualizar
+                    //- TODO: Adicionar layout de impressão
+                      v-list-item.hidden-sm-and-down(@click="")
+                        v-list-item-avatar.mr-0
+                          v-icon print
+                        v-list-item-title Imprimir
+                    template(v-if="!disallowDense || !disallowGroups || pageCount > 1")
+                      v-divider
+                      v-subheader Opções de visualização
+                      v-list-item(v-if="pageCount > 1" @click="goToPageDialog = true")
+                        v-list-item-avatar.mr-0
+                          v-icon find_in_page
+                        v-list-item-title Ir para a página
+                      v-list-item(v-if="!disallowDense" @click.stop="settings.dense = !settings.dense")
+                        v-switch.my-0(hide-details dense read-only :input-value="settings.dense")
+                        v-list-item-title Listagem densa
+                      v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.showGroupBy = !settings.showGroupBy")
+                        v-switch.my-0(hide-details dense read-only :input-value="settings.showGroupBy")
+                        v-list-item-title Permitir agrupar
+                      v-list-item.hidden-sm-and-down(v-if="!disallowGroups && !disallowKeepGroupedColumns" @click.stop="settings.keepGroupedColumns = !settings.keepGroupedColumns")
+                        v-switch.my-0(hide-details dense read-only :input-value="settings.keepGroupedColumns")
+                        v-list-item-title Manter colunas agrupadas
+
+              v-col.pa-0.ma-0.px-sm-2(cols=12 sm=4 md=4 align="end")
+                v-text-field(
+                  label="Pesquisar"
+                  v-model="search"
+                  append-icon="search"
+                  clearable
+                  dense
+                  flat
+                  hide-details
+                  outlined
+                  rounded
+                  solo
+                  single-line
+                  background-color="#e4f6d5"
+                  color="#8ac165"
+                )
+
+              v-col.pa-0.ma-0.mt-2.mt-sm-0(cols=12 sm=4 md=3)
+                template(v-if="validActions.tableQuick.length && !hideActions")
+                  v-btn(
+                    v-for="action in validActions.tableQuick"
+                    :key="action.name"
+                    @click="action.handler"
+                    v-bind="{ color: action.color || 'primary', ...action.options }"
+                    style="width: 100%"
+                  )
                     v-icon {{ action.icon }}
-                  v-list-item-title {{ action.text }}
-              v-divider
-            v-list-item(@click="clearCache")
-              v-list-item-avatar.mr-0
-                v-icon refresh
-              v-list-item-title Atualizar
-            //- TODO: Adicionar layout de impressão
-              v-list-item.hidden-sm-and-down(@click="")
-                v-list-item-avatar.mr-0
-                  v-icon print
-                v-list-item-title Imprimir
-            template(v-if="!disallowDense || !disallowGroups || pageCount > 1")
-              v-divider
-              v-subheader Opções de visualização
-              v-list-item(v-if="pageCount > 1" @click="goToPageDialog = true")
-                v-list-item-avatar.mr-0
-                  v-icon find_in_page
-                v-list-item-title Ir para a página
-              v-list-item(v-if="!disallowDense" @click.stop="settings.dense = !settings.dense")
-                v-switch.my-0(hide-details dense read-only :input-value="settings.dense")
-                v-list-item-title Listagem densa
-              v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.showGroupBy = !settings.showGroupBy")
-                v-switch.my-0(hide-details dense read-only :input-value="settings.showGroupBy")
-                v-list-item-title Permitir agrupar
-              v-list-item.hidden-sm-and-down(v-if="!disallowGroups && !disallowKeepGroupedColumns" @click.stop="settings.keepGroupedColumns = !settings.keepGroupedColumns")
-                v-switch.my-0(hide-details dense read-only :input-value="settings.keepGroupedColumns")
-                v-list-item-title Manter colunas agrupadas
+                    span {{ action.text }}
   slot(name="body.top")
   v-expansion-panels.bulk-actions(:value="selected.length ? 0 : -1")
     v-expansion-panel
@@ -250,7 +258,7 @@ v-card(flat color="transparent" v-else)
     template(v-slot:item._actions="payload" v-if="!hideActions")
       template(v-if="$vuetify.breakpoint.smAndUp")
         .text-no-wrap
-          template(v-for="(action, index) in validActions.single")
+          template(v-for="(action, index) in validActions.singleQuick")
             v-tooltip(
               top
               v-if="actionCondition(payload)([index, action])"
@@ -265,6 +273,17 @@ v-card(flat color="transparent" v-else)
                   @click="action.handler(payload)"
                 ) {{ action.icon }}
               span {{ action.text }}
+          v-menu(v-if="wrapSingleActions")
+            template(v-slot:activator="{ on, attrs }")
+              v-btn(icon v-bind="attrs" v-on="on" small)
+                v-icon more_horiz
+            v-list(dense)
+              template(v-if="validActions.single.length")
+                template(v-for="(action, index) in validActions.single")
+                  v-list-item(dense :key="action.name" v-if="actionCondition(payload)([index, action])" @click="action.handler(payload)")
+                    v-list-item-avatar.mr-0
+                      v-icon(:class="getIconClasses(action)") {{ action.icon }}
+                    v-list-item-title(:class="getIconClasses(action)") {{ action.text }}
       template(v-else)
         template(v-for="action in validActions.single")
           v-btn.ml-3(
@@ -319,6 +338,7 @@ export default {
     hideRowGroupClose: { type: Boolean, default: false },
     hideRowGroupExpansion: { type: Boolean, default: false },
     disallowKeepGroupedColumns: { type: Boolean, default: false },
+    wrapSingleActions: { type: Boolean, default: false },
     hideActions: { type: Boolean, default: false },
     hideMenu: { type: Boolean, default: false },
     hideSearch: { type: Boolean, default: false },
@@ -554,7 +574,7 @@ export default {
       )
     },
     validActions() {
-      const { actions = {} } = this
+      const { wrapSingleActions, actions = {} } = this
       const checkAction = this.actionCondition()
       const single = Object.entries(actions.single || {})
       const table = Object.entries(actions.table || {}).filter(checkAction)
@@ -572,8 +592,11 @@ export default {
       const limitFilter = (max) => (item, index) => index < max
       return {
         single: single.reduce(actionReducer('single'), []),
+        singleQuick: single
+          .filter((item) => item[1].quick || !wrapSingleActions)
+          .reduce(actionReducer('single'), []),
         table: table.reduce(actionReducer('table'), []),
-        quick: table
+        tableQuick: table
           .filter(quickFilter)
           .filter(limitFilter(2))
           .reduce(actionReducer('table'), []),
@@ -907,6 +930,8 @@ export default {
     transform: rotate(-180deg)
 .VQueryDataTable
   ::v-deep
+    .v-data-table-header
+      background: #ededed
     .v-row-group__header
       position: relative
       transform: scale(1)
