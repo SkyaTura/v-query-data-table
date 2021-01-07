@@ -11,8 +11,10 @@ v-card(flat color="transparent" v-else)
     v-row.ma-0.flex-column.filterDrawer
       .title.py-3.px-5 Filtros da Tabela
       v-divider
+      slot(name="filter-header")
       v-row.ma-0.filterDrawer-wrapper
         v-row.ma-0.pa-3.filterDrawer-content
+          slot(name="filter-prepend")
           template(v-for="row in computedHeaders")
             v-autocomplete.flex-grow-0.my-2(
               hide-details
@@ -36,8 +38,11 @@ v-card(flat color="transparent" v-else)
                     v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
               template(v-slot:selection="{ item, index }")
                 v-chip(v-if="index < 3") {{ index < 2 || filter.values[row.value].length <= 3 ? item.text : `e outros ${filter.values[row.value].length - 2}` }}
+          slot(name="filter-append")
           v-row.mx-0.mt-4(justify="end")
+            slot(name="filter-actions-prepend")
             v-btn(text @click="clearFilters") Limpar filtros
+            slot(name="filter-actions-append")
   v-dialog(v-model="goToPageDialog" max-width="300px")
     v-card
       v-card-title Ir para a página
@@ -85,9 +90,9 @@ v-card(flat color="transparent" v-else)
             )
       slot(name="header.actions")
         v-row.shrink.pa-0.hidden-sm-and-down
-          template(v-if="validActions.quick.length && !hideActions")
+          template(v-if="validActions.tableQuick.length && !hideActions")
             v-btn.ml-3(
-              v-for="action in validActions.quick"
+              v-for="action in validActions.tableQuick"
               :key="action.name"
               @click="action.handler"
               v-bind="{ color: action.color || 'primary', ...action.options }"
@@ -250,7 +255,7 @@ v-card(flat color="transparent" v-else)
     template(v-slot:item._actions="payload" v-if="!hideActions")
       template(v-if="$vuetify.breakpoint.smAndUp")
         .text-no-wrap
-          template(v-for="(action, index) in validActions.single")
+          template(v-for="(action, index) in validActions.singleQuick")
             v-tooltip(
               top
               v-if="actionCondition(payload)([index, action])"
@@ -265,6 +270,17 @@ v-card(flat color="transparent" v-else)
                   @click="action.handler(payload)"
                 ) {{ action.icon }}
               span {{ action.text }}
+          v-menu(v-if="wrapSingleActions")
+            template(v-slot:activator="{ on, attrs }")
+              v-btn(icon v-bind="attrs" v-on="on" small)
+                v-icon more_horiz
+            v-list(dense)
+              template(v-if="validActions.single.length")
+                template(v-for="(action, index) in validActions.single")
+                  v-list-item(dense :key="action.name" v-if="actionCondition(payload)([index, action])" @click="action.handler(payload)")
+                    v-list-item-avatar.mr-0
+                      v-icon(:class="getIconClasses(action)") {{ action.icon }}
+                    v-list-item-title(:class="getIconClasses(action)") {{ action.text }}
       template(v-else)
         template(v-for="action in validActions.single")
           v-btn.ml-3(
@@ -319,6 +335,7 @@ export default {
     hideRowGroupClose: { type: Boolean, default: false },
     hideRowGroupExpansion: { type: Boolean, default: false },
     disallowKeepGroupedColumns: { type: Boolean, default: false },
+    wrapSingleActions: { type: Boolean, default: false },
     hideActions: { type: Boolean, default: false },
     hideMenu: { type: Boolean, default: false },
     hideSearch: { type: Boolean, default: false },
@@ -554,7 +571,7 @@ export default {
       )
     },
     validActions() {
-      const { actions = {} } = this
+      const { wrapSingleActions, actions = {} } = this
       const checkAction = this.actionCondition()
       const single = Object.entries(actions.single || {})
       const table = Object.entries(actions.table || {}).filter(checkAction)
@@ -572,8 +589,11 @@ export default {
       const limitFilter = (max) => (item, index) => index < max
       return {
         single: single.reduce(actionReducer('single'), []),
+        singleQuick: single
+          .filter((item) => item[1].quick || !wrapSingleActions)
+          .reduce(actionReducer('single'), []),
         table: table.reduce(actionReducer('table'), []),
-        quick: table
+        tableQuick: table
           .filter(quickFilter)
           .filter(limitFilter(2))
           .reduce(actionReducer('table'), []),
