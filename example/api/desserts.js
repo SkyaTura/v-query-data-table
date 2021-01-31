@@ -95,8 +95,8 @@ const db = [
 
 const searcher = new FuzzySearch(db, ['name'])
 
-export default (payload) =>
-  new Promise((resolve) => {
+export default payload =>
+  new Promise(resolve => {
     const {
       sortBy = [],
       sortDesc = [],
@@ -109,7 +109,7 @@ export default (payload) =>
 
     if (getFilterList) {
       const data = db
-        .map((item) => item[getFilterList])
+        .map(item => item[getFilterList])
         .reduce(
           (acc, value, index, self) =>
             self.indexOf(value) !== index
@@ -118,7 +118,7 @@ export default (payload) =>
                   ...acc,
                   {
                     value,
-                    count: self.filter((item) => item === value).length,
+                    count: self.filter(item => item === value).length,
                   },
                 ],
           []
@@ -136,8 +136,8 @@ export default (payload) =>
     const filterParams = Object.entries(
       filter
         .split(',')
-        .filter((item) => item !== '')
-        .map((item) => item.replace(')', '').split('('))
+        .filter(item => item !== '')
+        .map(item => item.replace(')', '').split('('))
         .reduce(
           (acc, [key, value]) => ({
             ...acc,
@@ -148,7 +148,7 @@ export default (payload) =>
     )
     let items = JSON.parse(
       JSON.stringify(searcher.search(search))
-    ).filter((item) =>
+    ).filter(item =>
       filterParams.every(([key, values]) =>
         values.includes(item[key]?.toString())
       )
@@ -163,11 +163,10 @@ export default (payload) =>
           if (sortA < sortB) return 1
           if (sortA > sortB) return -1
           return 0
-        } else {
-          if (sortA < sortB) return -1
-          if (sortA > sortB) return 1
-          return 0
         }
+        if (sortA < sortB) return -1
+        if (sortA > sortB) return 1
+        return 0
       })
     }
     const total = items.length
@@ -179,8 +178,8 @@ export default (payload) =>
     setTimeout(() => {
       resolve({
         data: items,
-        resultCount: total,
+        resultCount: items.length,
         totalCount: db.length,
       })
-    }, Math.random() * 3)
+    }, Math.random() * 300)
   })
