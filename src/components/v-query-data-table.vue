@@ -130,8 +130,8 @@ v-card(flat color="transparent" v-else)
                   color="#8ac165"
                 )
 
-              v-col.pa-0.ma-0.mt-2.mt-sm-0(cols=12 sm=4 md=3)
-                template(v-if="validActions.tableQuick.length && !hideActions")
+              v-col.pa-0.ma-0.mt-2.mt-sm-0(cols=12 sm=4 md=3 v-if="validActions.tableQuick.length && !hideActions")
+                template
                   v-btn(
                     v-for="action in validActions.tableQuick"
                     :key="action.name"
