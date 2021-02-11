@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import FuzzySearch from 'fuzzy-search'
 
 const db = [
@@ -9,6 +10,7 @@ const db = [
     protein: 4.0,
     iron: '1%',
     kind: 'cold',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
   },
   {
     name: 'Ice cream sandwich',
@@ -18,6 +20,7 @@ const db = [
     protein: 4.3,
     iron: '1%',
     kind: 'cold',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
   },
   {
     name: 'Eclair',
@@ -27,6 +30,7 @@ const db = [
     protein: 6.0,
     iron: '7%',
     kind: 'cold',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
   },
   {
     name: 'Cupcake',
@@ -36,6 +40,7 @@ const db = [
     protein: 4.3,
     iron: '8%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
   },
   {
     name: 'Gingerbread',
@@ -45,6 +50,7 @@ const db = [
     protein: 3.9,
     iron: '16%',
     kind: 'hot',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
   },
   {
     name: 'Jelly bean',
@@ -54,6 +60,7 @@ const db = [
     protein: 0.0,
     iron: '0%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
   },
   {
     name: 'Lollipop',
@@ -63,6 +70,7 @@ const db = [
     protein: 0,
     iron: '2%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
   },
   {
     name: 'Honeycomb',
@@ -72,6 +80,7 @@ const db = [
     protein: 6.5,
     iron: '45%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
   },
   {
     name: 'Donut',
@@ -81,6 +90,7 @@ const db = [
     protein: 4.9,
     iron: '22%',
     kind: 'hot',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
   },
   {
     name: 'KitKat',
@@ -90,13 +100,14 @@ const db = [
     protein: 7,
     iron: '6%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
   },
 ]
 
 const searcher = new FuzzySearch(db, ['name'])
 
-export default payload =>
-  new Promise(resolve => {
+export default (payload) =>
+  new Promise((resolve) => {
     const {
       sortBy = [],
       sortDesc = [],
@@ -109,7 +120,7 @@ export default payload =>
 
     if (getFilterList) {
       const data = db
-        .map(item => item[getFilterList])
+        .map((item) => item[getFilterList])
         .reduce(
           (acc, value, index, self) =>
             self.indexOf(value) !== index
@@ -118,7 +129,7 @@ export default payload =>
                   ...acc,
                   {
                     value,
-                    count: self.filter(item => item === value).length,
+                    count: self.filter((item) => item === value).length,
                   },
                 ],
           []
@@ -136,8 +147,8 @@ export default payload =>
     const filterParams = Object.entries(
       filter
         .split(',')
-        .filter(item => item !== '')
-        .map(item => item.replace(')', '').split('('))
+        .filter((item) => item !== '')
+        .map((item) => item.replace(')', '').split('('))
         .reduce(
           (acc, [key, value]) => ({
             ...acc,
@@ -148,7 +159,7 @@ export default payload =>
     )
     let items = JSON.parse(
       JSON.stringify(searcher.search(search))
-    ).filter(item =>
+    ).filter((item) =>
       filterParams.every(([key, values]) =>
         values.includes(item[key]?.toString())
       )
@@ -169,7 +180,6 @@ export default payload =>
         return 0
       })
     }
-    const total = items.length
 
     if (itemsPerPage > 0) {
       items = items.slice((page - 1) * itemsPerPage, page * itemsPerPage)

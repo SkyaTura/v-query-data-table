@@ -1,7 +1,12 @@
 <template lang="pug">
-v-row.mt-5(v-if="!options.disablePagination" justify="center")
+v-row.mt-5(justify="center" v-if="!options.disablePagination")
   v-col
-    v-pagination.pagination(v-model="options.query.page" :length="options.pagination.pagesCount" flat :disabled="options.loading.active")
+    v-pagination.pagination(
+      flat
+      v-model="options.query.page"
+      :length="options.pagination.pagesCount"
+      :disabled="options.loading.active"
+    )
     .text-center.text-caption.grey--text.text--darken-1 Exibindo de {{ showingFrom }} até {{ showingUntil }} de {{ options.pagination.totalCount }} registros
 </template>
 

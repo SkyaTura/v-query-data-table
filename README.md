@@ -27,3 +27,13 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+## TODO List:
+
+- responsivo
+- filtros
+- componentes customizaveis
+  - toggle
+  - editable field
+- not found
+- no items

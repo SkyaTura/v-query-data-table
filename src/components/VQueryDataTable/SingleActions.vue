@@ -1,0 +1,45 @@
+<template lang="pug">
+.singleActions
+  template(v-for="(action, value) in options.singleActions")
+    v-btn(
+      icon
+      v-if="action.quick"
+      :color="action.color"
+      :key="value"
+      @click="$emit(`action-single-${value}`, payload)"
+    )
+      v-icon {{ action.icon }}
+  v-menu(offset-y)
+    template(#activator="{ attrs, on }")
+      v-btn(color="primary" icon v-bind="attrs" v-on="on")
+        v-icon {{ icons.mdiDotsHorizontal }}
+    v-list
+      template(
+        v-for="(action, value) in options.singleActions"
+        v-if="!options.hideTableActions && !options.hideAllActions"
+      )
+        v-list-item(
+          :color="action.color"
+          :key="value"
+          @click="$emit(`action-single-${value}`, payload)"
+        )
+          v-list-item-icon
+            v-icon {{ action.icon }}
+          v-list-item-content
+            v-list-item-title {{ action.text }}
+</template>
+
+<script>
+import { mdiDotsHorizontal } from '@mdi/js'
+
+export default {
+  name: 'SingleActions',
+  props: {
+    options: { type: Object, required: true },
+    payload: { type: Object, required: true },
+  },
+  data: () => ({
+    icons: { mdiDotsHorizontal },
+  }),
+}
+</script>

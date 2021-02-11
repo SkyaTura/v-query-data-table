@@ -1,5 +1,5 @@
 <template lang="pug">
-v-navigation-drawer(app, temporary, right, v-model="filtersDrawer")
+v-navigation-drawer(app right temporary v-model="filtersDrawer")
   v-list
     v-list-item
       v-list-item-content

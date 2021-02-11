@@ -1,18 +1,14 @@
 <template lang="pug">
-v-menu(
-  offset-y,
-  activator="#VQueryDataTableToolbarMenu",
-  :dense="options.dense"
-)
+v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
   v-list
     template(
-      v-for="action in options.tableActions",
+      v-for="(action, value) in options.tableActions"
       v-if="!options.hideTableActions && !options.hideAllActions"
     )
       v-list-item(
-        :key="action.value",
-        :color="action.color",
-        @click="$emit(`action-table-${action.value}`)"
+        :color="action.color"
+        :key="value"
+        @click="$emit(`action-table-${value}`)"
       )
         v-list-item-icon
           v-icon {{ action.icon }}
@@ -24,14 +20,19 @@ v-menu(
         v-icon refresh
       v-list-item-content
         v-list-item-title Atualizar
-    v-list-item(v-if="!options.disallowDense", @click="options.toggleDense()")
+    v-list-item(v-if="!options.disallowDense" @click="options.toggleDense()")
       v-list-item-icon
         v-icon {{ options.datatable.dense ? 'unfold_more' : 'unfold_less' }}
       v-list-item-content
         v-list-item-title Listagem {{ options.datatable.dense ? 'normal' : 'densa' }}
-    v-menu(offset-x, open-on-hover)
+    v-list-item(@click="options.toggleKeepGroupedColumns()")
+      v-list-item-icon
+        v-icon folder
+      v-list-item-content
+        v-list-item-title Manter colunas agrupadas
+    v-menu(offset-x open-on-hover)
       template(#activator="{ attrs, on }")
-        v-list-item(v-bind="attrs", v-on="on")
+        v-list-item(v-bind="attrs" v-on="on")
           v-list-item-icon
             v-icon toc
           v-list-item-content
@@ -40,8 +41,8 @@ v-menu(
         v-list-item-group(v-model="options.query.itemsPerPage")
           template(v-for="itemsPerPage in [5, 10, 25, 50, 100]")
             v-list-item(
-              :key="itemsPerPage",
-              :value="itemsPerPage",
+              :key="itemsPerPage"
+              :value="itemsPerPage"
               @click="setItemsPerPage(itemsPerPage)"
             )
               v-list-item-content

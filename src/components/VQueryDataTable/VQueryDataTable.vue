@@ -1,81 +1,52 @@
 <template lang="pug">
-v-card(flat, color="transparent", v-if="loading.firstTime && loading.active")
+v-card(color="transparent" flat v-if="loading.firstTime && loading.active")
   v-skeleton-loader(type="table")
 v-card.VQueryDataTable(
-  flat,
-  color="transparent",
-  v-else,
+  color="transparent"
+  flat
+  v-else
   :style="{ '--x-color': options.toolbarFieldsBackground }"
 )
-  v-form(:disabled="loading.active")
-    slot(name="header")
-      TableHeader(:options="options", v-on="$listeners")
+  slot(name="header" v-bind="options")
+    TableHeader(v-on="$listeners" :options="options")
 
-    slot(name="body")
-      p.px-5.py-3.mb-10.grey--text.text--darken-1(v-if="options.description") {{ options.description }}
+  slot(name="body" v-bind="options")
+    p.px-5.py-3.mb-10.grey--text.text--darken-1(v-if="options.description") {{ options.description }}
 
-    DataTable.px-5(
-      :options="options",
-      v-model="selected",
-      :query.sync="iQuery"
-    )
+  BulkActions(:options="options")
 
-    slot(name="footer")
-      TableFooter(:options="options", :query="query")
+  DataTable.px-5(v-model="selected" :options="options" :query.sync="iQuery")
 
-    v-tooltip(left, v-if="fab")
-      span {{ fab[1].text }}
-      template(#activator="{ attrs, on }")
-        v-fab-transition
-          v-btn(
-            fab,
-            right,
-            fixed,
-            bottom,
-            v-bind="attrs",
-            v-on="on",
-            :color="fab ? fab[1].color : ''",
-            :disabled="loading.active",
-            v-show="!hideTableFAB && !hideAllActions",
-            @click="$emit(`action-table-${fab[0]}`)"
-          )
-            v-icon {{ fab[1].icon }}
-    template(v-if="showDebug")
-      .text-h6 Debug
-      pre {{ options }}
+  slot(name="footer" v-bind="options")
+    TableFooter(:options="options" :query="query")
+
+  TableFab(:options="options")
+
+  template(v-if="showDebug")
+    .text-h6 Debug
+    pre {{ selected }}
+    pre {{ options }}
 </template>
 
 <script>
-/*
-  TODO List:
-  - filtros
-  - componentes customizaveis
-    - chips
-    - avatar
-    - toggle
-    - editable field
-  - bulk actions
- */
-
-import TableHeader from "./TableHeader";
-import TableFooter from "./TableFooter";
-import DataTable from "./DataTable";
-
-const delay = (duration) =>
-  new Promise((resolve) => setTimeout(resolve, duration));
+import TableHeader from './TableHeader.vue'
+import TableFab from './TableFab.vue'
+import TableFooter from './TableFooter.vue'
+import BulkActions from './BulkActions.vue'
+import DataTable from './DataTable.vue'
 
 export default {
-  name: "VQueryDataTable",
-  components: { TableHeader, TableFooter, DataTable },
+  name: 'VQueryDataTable',
+  components: { BulkActions, TableHeader, TableFooter, DataTable, TableFab },
   inheritAttrs: false,
   props: {
     showDebug: { type: Boolean, default: false },
 
-    title: { type: String, default: "" },
-    description: { type: String, default: "" },
+    title: { type: String, default: '' },
+    description: { type: String, default: '' },
 
-    toolbarFieldsBackground: { type: String, default: "grey" },
-    toolbarFieldsColor: { type: String, default: "primary" },
+    toolbarFieldsBackground: { type: String, default: 'grey' },
+    toolbarFieldsColor: { type: String, default: 'primary' },
 
     hideHeader: { type: Boolean, default: false },
     hideSearch: { type: Boolean, default: false },
@@ -86,6 +57,8 @@ export default {
     hideTableFAB: { type: Boolean, default: false },
     hideSingleActions: { type: Boolean, default: false },
     hideAllActions: { type: Boolean, default: false },
+    hideRowGroupClose: { type: Boolean, default: false },
+    hideRowGroupExpansion: { type: Boolean, default: false },
 
     disablePagination: { type: Boolean, default: false },
     disableSorting: { type: Boolean, default: false },
@@ -106,6 +79,7 @@ export default {
 
     fetch: { type: Function, default: null },
     query: { type: Object, default: null },
+    itemsMap: { type: Function, default: (item) => item },
   },
   data: () => ({
     loading: {
@@ -113,16 +87,19 @@ export default {
       firstTime: true,
     },
 
-    dense: localStorage?.getItem("v-query-data-table:dense") === "true",
+    dense: localStorage?.getItem('v-query-data-table:dense') === 'true',
+    keepGroupedColumns:
+      localStorage?.getItem('v-query-data-table:keepGroupedColumns') === 'true',
 
     fetchedItems: [],
     totalCount: 0,
     resultCount: 0,
     cache: new Map(),
     iQuery: {
+      search: '',
       page: 1,
       itemsPerPage: parseInt(
-        localStorage?.getItem("v-query-data-table:itemsPerPage") ?? 10,
+        localStorage?.getItem('v-query-data-table:itemsPerPage') ?? 10,
         10
       ),
       sortBy: [],
@@ -136,84 +113,107 @@ export default {
     selected: [],
 
     filtersDrawer: false,
-
-    // Options
-    defaultOptions: {
-      title: "",
-      description: "",
-
-      toolbarFieldsBackground: "grey",
-      toolbarFieldsColor: "primary",
-
-      hideSearch: false,
-      hideFilter: false,
-      hideMenu: false,
-
-      hideTableQuickActions: false,
-      hideTableActions: false,
-      hideTableFAB: false,
-      hideSingleActions: false,
-      hideAllActions: false,
-
-      disablePagination: false,
-      disableSorting: false,
-
-      datatable: {},
-
-      tableActions: {},
-      singleActions: {},
-      bulkActions: {},
-    },
   }),
   computed: {
     queryJSON() {
-      return JSON.stringify(this.iQuery);
-    },
-    fab() {
-      return Object.entries(this.options.tableActions).find(
-        ([value, item]) => item.fab
-      );
+      return JSON.stringify(this.iQuery)
     },
     oldActions() {
-      const { single, table, bulk } = this.actions;
+      const { single, table, bulk } = this.actions
       return {
         singleActions: single || {},
         tableActions: table || {},
         bulkActions: bulk || {},
-      };
+      }
     },
     computedHeaders() {
-      const { disableSorting, headers } = this;
-      return headers.map((header) => ({
-        ...header,
-      }));
+      const { disableSorting, headers } = this
+      const actionsDefaults = {
+        sortable: false,
+        groupable: false,
+      }
+      return headers
+        .map((header) => ({
+          ...(header.value === '_actions' ? actionsDefaults : {}),
+          ...header,
+          ...(disableSorting ? { sortable: false } : {}),
+          itemSlot: `item.${header.value}`,
+          headerSlot: `header.${header.value}`,
+          $custom: {
+            template: 'default',
+            ...header.$custom,
+          },
+          $extra: {
+            visible: true,
+            filterable: true,
+            transformItem: null,
+            ...header.$extra,
+          },
+        }))
+        .filter((header) => {
+          if (header.value !== '_actions') return true
+          return !this.hideSingleActions && !this.hideAllActions
+        })
+    },
+    transformableHeaders() {
+      return this.computedHeaders
+        .filter((item) => item.$extra.transformItem)
+        .map((item) => [item.value, item.$extra.transformItem])
+    },
+    computedItems() {
+      const items = this.items || this.fetchedItems
+      return items
+        .map((item) =>
+          this.transformableHeaders.reduce(
+            (acc, [key, transform]) => {
+              const oldValue = acc[key]
+              const getNewValue = () => {
+                if (typeof transform === 'function') return transform(oldValue)
+                if (typeof transform === 'object')
+                  return transform[oldValue] || oldValue
+                return oldValue
+              }
+              return { ...acc, [key]: getNewValue() }
+            },
+            { $raw: item, ...item }
+          )
+        )
+        .map((item, index, self) => {
+          const mapped = this.itemsMap(item, index, self)
+          return { $raw: item.$raw, ...mapped }
+        })
     },
     options() {
-      const { iQuery } = this;
       return {
-        ...this.defaultOptions,
         ...this.oldActions,
         ...this.$props,
         loading: this.loading,
+        dense: this.dense,
         headers: this.computedHeaders,
-        query: iQuery,
+        query: this.iQuery,
         clearCache: () => this.clearCache(),
         refresh: () => this.refresh(),
         cleanRefresh: () => this.cleanRefresh(),
         toggleDense: () => this.toggleDense(),
+        setSearch: (newValue) => this.setSearch(newValue),
+        selected: this.selected,
         pagination: {
           pagesCount: Math.ceil(this.totalCount / this.iQuery.itemsPerPage),
           resultCount: this.resultCount,
           totalCount: this.totalCount,
         },
         datatable: {
-          ...this.defaultOptions.datatable,
-          disableSort: this.disableSort,
+          // disableSort: this.disableSort,
           disablePagination: this.disablePagination,
           dense: this.disallowDense ? false : this.dense,
           ...this.datatable,
-          items: this.items || this.fetchedItems,
+          items: this.computedItems,
           loading: this.loading.active,
+          showSelect: true,
+          hideDefaultFooter: true,
+          headers: this.computedHeaders,
+          disabled: this.loading.active,
+          value: this.selected,
           options: {
             ...this.iQuery,
             ...this.datatable.options,
@@ -221,16 +221,16 @@ export default {
             mustSort: this.mustSort,
           },
         },
-      };
+      }
     },
   },
   watch: {
     queryJSON: {
       deep: true,
       handler(newValue, oldValue) {
-        if (newValue === oldValue) return;
-        this.refresh();
-        this.$emit("update:query", JSON.parse(newValue) || {});
+        if (newValue === oldValue) return
+        this.refresh()
+        this.$emit('update:query', JSON.parse(newValue) || {})
       },
     },
     query: {
@@ -245,56 +245,75 @@ export default {
           groupDesc: [],
           multiSort: false,
           mustSort: false,
-        };
+        }
       },
     },
   },
   mounted() {
-    this.refresh();
+    this.refresh()
   },
   methods: {
+    setSearch(newValue) {
+      this.search = newValue
+    },
     toggleDense() {
-      const dense = !this.dense;
-      localStorage?.setItem("v-query-data-table:dense", dense);
-      this.dense = dense;
+      const dense = !this.dense
+      localStorage?.setItem('v-query-data-table:dense', dense)
+      this.dense = dense
+    },
+    toggleKeepGroupedColumns() {
+      const keepGroupedColumns = !this.keepGroupedColumns
+      localStorage?.setItem(
+        'v-query-data-table:keepGroupedColumns',
+        keepGroupedColumns
+      )
+      this.keepGroupedColumns = keepGroupedColumns
     },
     clearCache() {
-      this.cache = new Map();
+      this.cache = new Map()
     },
     async getItems() {
-      const { queryJSON } = this;
-      const fromCache = this.cache.get(queryJSON);
-      if (fromCache) return fromCache;
-      const response = await this.fetch(JSON.parse(queryJSON));
-      this.cache.set(queryJSON, response);
-      return response;
+      const { queryJSON } = this
+      const fromCache = this.cache.get(queryJSON)
+      if (fromCache) return fromCache
+      const response = await this.fetch(JSON.parse(queryJSON))
+      this.cache.set(queryJSON, response)
+      return response
     },
     cleanRefresh() {
-      this.clearCache();
-      this.refresh();
+      this.clearCache()
+      this.refresh()
     },
     async refresh() {
-      this.loading.active = true;
-      if (typeof this.fetch === "function") {
+      this.loading.active = true
+      if (typeof this.fetch === 'function') {
         try {
-          const response = await this.getItems();
+          const response = await this.getItems()
 
-          if (!response.data) throw new Error("Invalid fetch result");
+          if (!response.data) throw new Error('Invalid fetch result')
 
-          this.resultCount = response.resultCount ?? response.data.length;
-          this.totalCount = response.totalCount ?? response.data.length;
-          this.fetchedItems = response.data;
+          this.resultCount = response.resultCount ?? response.data.length
+          this.totalCount = response.totalCount ?? response.data.length
+          this.fetchedItems = response.data
         } catch (e) {
-          console.error(e);
+          console.error(e)
 
-          this.fetchedItems = [];
-          this.resultCount = 0;
-          this.totalCount = 0;
+          this.fetchedItems = []
+          this.resultCount = 0
+          this.totalCount = 0
         }
       }
-      this.loading.firstTime = false;
-      this.loading.active = false;
+      this.loading.firstTime = false
+      this.loading.active = false
     },
   },
-};
+}
 </script>
+
+<style lang="sass" scoped>
+.bulk-actions
+  ::v-deep
+    .v-expansion-panel
+      &::before
+        box-shadow: none
+</style>

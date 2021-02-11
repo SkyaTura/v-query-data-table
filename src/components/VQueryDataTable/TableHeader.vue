@@ -1,9 +1,9 @@
 <template lang="pug">
 div(v-if="!options.hideHeader")
-  TableMenu(:options="options" v-on="$listeners")
-  TableDrawer(ref="tableDrawer" :options="options" v-on="$listeners")
+  TableMenu(v-on="$listeners" :options="options")
+  TableDrawer(ref="tableDrawer" v-on="$listeners" :options="options")
 
-  v-toolbar(flat color="transparent")
+  v-toolbar(color="transparent" flat)
     v-card-title.align-center.px-0
       slot(name="header.title")
         slot(name="header.title.prepend")
@@ -11,44 +11,52 @@ div(v-if="!options.hideHeader")
         slot(name="header.title.append")
     v-spacer
     v-btn.toolbar-item(
-      icon,
-      @click="$refs.tableDrawer.open()",
+      icon
       v-if="!options.hideFilter"
-      :disabled="options.loading.active"
       :color="options.toolbarFieldsColor"
+      @click="$refs.tableDrawer.open()"
+      :disabled="options.loading.active"
     )
       v-icon {{ icons.mdiFilter }}
     v-btn#VQueryDataTableToolbarMenu.toolbar-item(
-      icon,
+      icon
       v-if="!options.hideMenu"
       :color="options.toolbarFieldsColor"
       :disabled="options.loading.active"
     )
       v-icon {{ icons.mdiDotsHorizontal }}
     v-text-field.shrink.toolbar-item(
-      solo,
-      flat,
-      filled,
+      dense
+      filled
+      flat
+      hide-details
+      placeholder="Pesquisar..."
+      rounded
+      solo
       v-if="!options.hideSearch"
-      placeholder="Pesquisar...",
-      rounded,
-      :color="options.toolbarFieldsColor",
-      :disabled="options.loading.active"
-      dense,
-      hide-details,
+      v-model="options.query.search"
       :append-icon="icons.mdiMagnify"
+      :color="options.toolbarFieldsColor"
     )
-    .shrink.ml-3(v-if="!options.hideTableQuickActions && !options.hideAllActions")
+    .shrink.ml-3(
+      v-if="!options.hideTableActions && !options.hideTableQuickActions && !options.hideAllActions"
+    )
       template(v-for="(action, value) in options.tableActions")
-        v-btn(:key="value" :color="action.color" v-if="action.quick" @click="$emit(`action-table-${value}`)" :disabled="options.loading.active")
+        v-btn(
+          v-if="action.quick"
+          :color="action.color"
+          :key="value"
+          @click="$emit(`action-table-${value}`)"
+          :disabled="options.loading.active"
+        )
           v-icon.mr-2(v-if="action.icon") {{ action.icon }}
           | {{ action.text }}
 </template>
 
 <script>
 import { mdiFilter, mdiDotsHorizontal, mdiMagnify } from '@mdi/js'
-import TableDrawer from './TableDrawer'
-import TableMenu from './TableMenu'
+import TableDrawer from './TableDrawer.vue'
+import TableMenu from './TableMenu.vue'
 
 export default {
   name: 'TableHeader',
