@@ -1,0 +1,68 @@
+{
+  "name": "v-query-data-table",
+  "description": "A Vuetify Data Table wrapper with easy API querying",
+  "version": "2.1.12",
+  "author": "Antonio Eduardo <antonio@skyatura.com.br>",
+  "repository": "https://github.com/SkyaTura/v-query-data-table",
+  "license": "ISC",
+  "main": "lib/bundle.umd.js",
+  "module": "lib/bundle.esm.js",
+  "unpkg": "lib/bundle.umd.js",
+  "browser": {
+    "./sfc": "lib/bundle.umd.js"
+  },
+  "scripts": {
+    "dev": "npm run dev:example & npm run dev:lib",
+    "dev:example": "npm run serve",
+    "dev:lib": "nodemon --watch \"src\" --watch \"rollup.config.js\" -e js,vue --exec \"npm run build\"",
+    "serve": "vue-cli-service serve",
+    "build:example": "vue-cli-service build",
+    "build": "rollup --config",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "mongoose": "^5.10.2",
+    "regenerator-runtime": "^0.13.7",
+    "vue-runtime-helpers": "^1.1.2"
+  },
+  "devDependencies": {
+    "@emiolo/babel-config": "^1.1.0",
+    "@emiolo/eslint-config": "^1.1.9",
+    "@nuxt/types": "^2.14.4",
+    "@rollup/plugin-alias": "^3.1.1",
+    "@rollup/plugin-babel": "^5.1.0",
+    "@rollup/plugin-buble": "^0.21.3",
+    "@rollup/plugin-commonjs": "^14.0.0",
+    "@vue/babel-preset-app": "^4.4.6",
+    "@vue/cli-plugin-babel": "^4.4.6",
+    "@vue/cli-plugin-eslint": "^4.4.6",
+    "@vue/cli-service": "^4.4.6",
+    "@vue/compiler-sfc": "^3.0.0-rc.4",
+    "@vue/component-compiler-utils": "^3.2.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "cross-env": "^7.0.2",
+    "eslint": "^7.5.0",
+    "fuzzy-search": "^3.2.1",
+    "minimist": "^1.2.5",
+    "nodemon": "^2.0.4",
+    "pug": "^3.0.0",
+    "pug-plain-loader": "^1.0.0",
+    "rollup": "^2.23.0",
+    "rollup-plugin-vue": "^5.1.9",
+    "sass": "^1.26.10",
+    "sass-loader": "^9.0.2",
+    "typescript": "^4.0.2",
+    "vue": "^2.6.11",
+    "vue-cli-plugin-vuetify": "^2.0.7",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify": "^2.3.6",
+    "vuetify-loader": "^1.6.0"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.11",
+    "vue-router": "latest",
+    "vuex": "latest",
+    "vuetify": "^2.3.6"
+  }
+}
