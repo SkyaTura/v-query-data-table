@@ -196,4 +196,59 @@ describe('TableHeader.vue', () => {
     await component.findAll('.toolbar-item').at(0).trigger('click')
     expect(component.findComponent({ ref: 'tableDrawer' }).classes('v-navigation-drawer--open')).toBeTruthy()
   })
+
+  it('verify the emitted function when quick action is clicked', async () => {
+    const vuetify = new Vuetify()
+
+    const component = mount(TableHeader, {
+      vuetify,
+      propsData: {
+        options: {
+          ...props,
+          dense: false,
+          datatable: {
+            dense: false
+          },
+          tableActions: {
+            add: {
+              icon: 'add',
+              text: 'Novo item',
+              quick: true,
+              color: 'primary'
+            },
+            delete: {
+              icon: 'delete',
+              text: 'Excluir',
+              quick: true,
+              color: 'red'
+            }
+          }
+        }
+      },
+      data() {
+        return {
+          icons: {
+            mdiFilter,
+            mdiDotsHorizontal,
+            mdiMagnify,
+          },
+        }
+      },
+    })
+
+    expect(component.emitted()).not.toHaveProperty('action-table-add')
+    expect(component.emitted()).not.toHaveProperty('action-table-delete')
+
+    const container = component.find('.shrink.ml-3')
+    const addButton = container.findAll('.v-btn').at(0)
+    const deleteButton = container.findAll('.v-btn').at(1)
+
+    addButton.trigger('click')
+    await component.vm.$nextTick()
+    expect(component.emitted()).toHaveProperty('action-table-add')
+
+    deleteButton.trigger('click')
+    await component.vm.$nextTick()
+    expect(component.emitted()).toHaveProperty('action-table-delete')
+  })
 })
