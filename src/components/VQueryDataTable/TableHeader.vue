@@ -1,7 +1,7 @@
 <template lang="pug">
 div(v-if="!options.hideHeader")
   TableMenu(v-on="$listeners" :options="options")
-  TableDrawer(ref="tableDrawer" v-on="$listeners" :options="options")
+  TableDrawer(v-on="$listeners" :options="options")
 
   v-toolbar(color="transparent" flat)
     v-card-title.align-center.px-0
@@ -12,9 +12,9 @@ div(v-if="!options.hideHeader")
     v-spacer
     v-btn.toolbar-item(
       icon
-      v-if="!options.hideFilter"
+      v-if="!options.hideFilter && options.fetch"
       :color="options.toolbarFieldsColor"
-      @click="$refs.tableDrawer.open()"
+      @click="options.filter.drawer = true"
       :disabled="options.loading.active"
     )
       v-icon {{ icons.mdiFilter }}
@@ -44,7 +44,7 @@ div(v-if="!options.hideHeader")
       template(v-for="(action, value) in options.tableActions")
         v-btn(
           v-if="action.quick"
-          :color="action.color"
+          :color="action.color || 'primary'"
           :key="value"
           @click="$emit(`action-table-${value}`)"
           :disabled="options.loading.active"
