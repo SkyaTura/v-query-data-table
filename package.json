@@ -1,4 +1,5 @@
 {
+
   "name": "v-query-data-table",
   "description": "A Vuetify Data Table wrapper with easy API querying",
   "version": "2.1.12",

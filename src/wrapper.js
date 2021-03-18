@@ -4,7 +4,7 @@ import component from './components/v-query-data-table.vue'
 export function install(Vue) {
   if (install.installed) return
   install.installed = true
-  Vue.component('VQueryDataTable', component)
+  Vue.component('VQueryDataTableV2', component)
 }
 
 // Cria a definição do módulo para Vue.use()

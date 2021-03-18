@@ -1,3 +1,6 @@
+# v-query-data-table-v2
+Projeto modificado do v-query-data-table para atender as necessidades de um projeto interno da emiolo
+
 # v-query-data-table
 > [Live Demo](https://v-query-data-table.emiolo.com.br/)
 
