@@ -1,9 +1,10 @@
 {
-  "name": "v-query-table-v2",
-  "description": "A Vuetify Data Table wrapper with easy API querying, forked from https://github.com/SkyaTura/v-query-data-table",
-  "version": "1.0.0",
-  "author": "Gabriel de Vargas Coelho",
-  "repository": "https://github.com/GaibVargas/v-query-data-table",
+
+  "name": "v-query-data-table",
+  "description": "A Vuetify Data Table wrapper with easy API querying",
+  "version": "2.1.12",
+  "author": "Antonio Eduardo <antonio@skyatura.com.br>",
+  "repository": "https://github.com/SkyaTura/v-query-data-table",
   "license": "ISC",
   "main": "lib/bundle.umd.js",
   "module": "lib/bundle.esm.js",
