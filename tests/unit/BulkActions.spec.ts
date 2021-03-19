@@ -6,7 +6,9 @@ describe('BulkActions.vue', () => {
   let wrapper: Wrapper<Vue & { [key: string]: any }>
 
   const props = {
-    selected: [1, 2],
+    values: {
+      selected: [1, 2],
+    },
     bulkActions: {
       remove: {
         icon: "delete",
@@ -37,7 +39,9 @@ describe('BulkActions.vue', () => {
       propsData: {
         options: {
           ...props,
-          selected: []
+          values:{
+            selected: []
+          }
         }
       }
     })
@@ -51,7 +55,9 @@ describe('BulkActions.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-        selected: [1, 2, 3]
+        values: {
+          selected: [1, 2, 3]
+        }
       }
     })
     await wrapper.vm.$nextTick()
@@ -63,7 +69,9 @@ describe('BulkActions.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-        selected: [1]
+        values: {
+          selected: [1]
+        }
       }
     })
     await wrapper.vm.$nextTick()
@@ -103,7 +111,7 @@ describe('BulkActions.vue', () => {
     deleteButton.trigger('click')
     await wrapper.vm.$nextTick()
     expect(wrapper.emitted('action-bulk-remove')).toBeTruthy()
-    expect(wrapper.emitted('action-bulk-remove')).toEqual([[props.selected]])
+    expect(wrapper.emitted('action-bulk-remove')).toEqual([[props.values.selected]])
   })
 
   it('verify the exhibition of button icon', async () => {

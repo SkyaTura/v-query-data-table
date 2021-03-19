@@ -1,4 +1,4 @@
-import { mount, shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount, Wrapper } from '@vue/test-utils'
 import { mdiFilter, mdiDotsHorizontal, mdiMagnify } from '@mdi/js'
 import TableHeader from '@/components/VQueryDataTable/TableHeader.vue'
 import Vuetify from 'vuetify'
@@ -34,11 +34,18 @@ describe('TableHeader.vue', () => {
         text: 'Excluir',
         color: 'red'
       }
-    }
+    },
+    filter: {
+      drawer: false,
+    },
+    fetch: true,
   }
 
   beforeAll(() => {
+    const vuetify = new Vuetify()
+
     wrapper = shallowMount(TableHeader, {
+      vuetify,
       propsData: {
         options: {
           ...props
@@ -168,87 +175,49 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify the click on filter button', async () => {
-    const vuetify = new Vuetify()
+    expect(wrapper.vm.options.filter.drawer).toBeFalsy()
 
-    const component = mount(TableHeader, {
-      vuetify,
-      propsData: {
-        options: {
-          ...props,
-          dense: false,
-          datatable: {
-            dense: false
-          }
-        }
-      },
-      data() {
-        return {
-          icons: {
-            mdiFilter,
-            mdiDotsHorizontal,
-            mdiMagnify,
-          },
-        }
-      },
-    })
+    wrapper.findAll('.toolbar-item').at(0).vm.$emit('click')
+    await wrapper.vm.$nextTick()
 
-    expect(component.findComponent({ ref: 'tableDrawer' }).classes('v-navigation-drawer--close')).toBeTruthy()
-    await component.findAll('.toolbar-item').at(0).trigger('click')
-    expect(component.findComponent({ ref: 'tableDrawer' }).classes('v-navigation-drawer--open')).toBeTruthy()
+    expect(wrapper.vm.options.filter.drawer).toBeTruthy()
   })
 
   it('verify the emitted function when quick action is clicked', async () => {
-    const vuetify = new Vuetify()
-
-    const component = mount(TableHeader, {
-      vuetify,
-      propsData: {
-        options: {
-          ...props,
-          dense: false,
-          datatable: {
-            dense: false
+    wrapper.setProps({
+      options: {
+        ...props,
+        tableActions: {
+          add: {
+            icon: 'add',
+            text: 'Novo item',
+            quick: true,
+            color: 'primary'
           },
-          tableActions: {
-            add: {
-              icon: 'add',
-              text: 'Novo item',
-              quick: true,
-              color: 'primary'
-            },
-            delete: {
-              icon: 'delete',
-              text: 'Excluir',
-              quick: true,
-              color: 'red'
-            }
+          delete: {
+            icon: 'delete',
+            text: 'Excluir',
+            quick: true,
+            color: 'red'
           }
         }
-      },
-      data() {
-        return {
-          icons: {
-            mdiFilter,
-            mdiDotsHorizontal,
-            mdiMagnify,
-          },
-        }
-      },
+      }
     })
+    await wrapper.vm.$nextTick()
 
-    expect(component.emitted()).not.toHaveProperty('action-table-add')
-    expect(component.emitted()).not.toHaveProperty('action-table-delete')
+    expect(wrapper.emitted()).not.toHaveProperty('action-table-add')
+    expect(wrapper.emitted()).not.toHaveProperty('action-table-delete')
 
-    const container = component.find('.shrink.ml-3')
-    const addButton = container.findAll('.v-btn').at(0)
-    const deleteButton = container.findAll('.v-btn').at(1)
+    const container = wrapper.findAllComponents({ name: 'v-btn' })
+    const addButton = container.at(container.length - 2) // Get the next-to-last button
+    const deleteButton = container.at(container.length - 1) // Get the last button
 
-    addButton.trigger('click')
-    await component.vm.$nextTick()
-    expect(component.emitted()).toHaveProperty('action-table-add')
+    addButton.vm.$emit('click')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted()).toHaveProperty('action-table-add')
 
-    deleteButton.trigger('click')
-    await component.vm.$nextTick()
-    expect(component.emitted()).toHaveProperty('action-table-delete')
+    deleteButton.vm.$emit('click')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted()).toHaveProperty('action-table-delete')
   })
 })
