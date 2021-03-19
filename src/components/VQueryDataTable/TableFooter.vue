@@ -3,6 +3,7 @@ v-row.mt-5(justify="center" v-if="!options.disablePagination")
   v-col
     v-pagination.pagination(
       flat
+      total-visible="7"
       v-model="options.query.page"
       :length="options.pagination.pagesCount"
       :disabled="options.loading.active"

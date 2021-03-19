@@ -14,8 +14,8 @@ v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
           v-icon {{ action.icon }}
         v-list-item-content
           v-list-item-title {{ action.text }}
-    v-divider
-    v-list-item(@click="options.cleanRefresh()")
+    v-divider(v-if="Object.keys(options.tableActions).length")
+    v-list-item(v-if="options.fetch" @click="options.cleanRefresh()")
       v-list-item-icon
         v-icon refresh
       v-list-item-content
@@ -25,12 +25,15 @@ v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
         v-icon {{ options.datatable.dense ? 'unfold_more' : 'unfold_less' }}
       v-list-item-content
         v-list-item-title Listagem {{ options.datatable.dense ? 'normal' : 'densa' }}
-    v-list-item(@click="options.toggleKeepGroupedColumns()")
+    v-list-item(
+      v-if="!options.disallowGroups && !options.disallowKeepGroupedColumns"
+      @click="options.toggleKeepGroupedColumns()"
+    )
       v-list-item-icon
         v-icon folder
       v-list-item-content
         v-list-item-title Manter colunas agrupadas
-    v-menu(offset-x open-on-hover)
+    v-menu(offset-x open-on-hover v-if="!options.disablePagination")
       template(#activator="{ attrs, on }")
         v-list-item(v-bind="attrs" v-on="on")
           v-list-item-icon

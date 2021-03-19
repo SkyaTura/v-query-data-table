@@ -2,6 +2,7 @@
 v-data-table.VQueryDataTable(
   ref="table"
   v-bind="options.datatable"
+  v-model="options.values.selected"
   v-on="$listeners"
   @update:options="$emit('update:query', $event)"
 )
@@ -9,7 +10,8 @@ v-data-table.VQueryDataTable(
     RowHeader(:header="header" :options="options")
 
   template(#group.header="props")
-    GroupHeader(:options="options" :props="props")
+    slot(name="group.header" v-bind="props")
+      GroupHeader(:options="options" :props="props")
 
   template(#[header.itemSlot]="props" v-for="header in options.headers")
     CellValue(:header="header" :options="options" :props="props")
@@ -24,6 +26,9 @@ v-data-table.VQueryDataTable(
         v-icon.primary--text(size="72") view_list
         .primary--text.text-h5.font-weight-bold Não há itens cadastrados
         div Para exibir informações aqui, você deve cadastrar um novo item.
+
+  template(v-for="slot in options.slots.table" v-slot:[slot]="props")
+    slot(v-bind="props" :name="`table.${slot}`")
 </template>
 
 <script>

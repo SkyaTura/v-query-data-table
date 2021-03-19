@@ -15,12 +15,19 @@ v-card.VQueryDataTable(
 
   BulkActions(:options="options")
 
-  DataTable.px-5(v-model="selected" :options="options" :query.sync="iQuery")
+  DataTable.px-5(:options="options" :query.sync="iQuery")
+    template(v-for="slot in options.slots.others" v-slot:[slot]="props")
+      slot(v-bind="props" :name="slot")
+    template(
+      v-for="slot in options.slots.table"
+      v-slot:[`table.${slot}`]="props"
+    )
+      slot(v-bind="props" :name="`table.${slot}`")
 
   slot(name="footer" v-bind="options")
     TableFooter(:options="options" :query="query")
 
-  TableFab(:options="options")
+  TableFab(v-on="$listeners" :options="options")
 
   template(v-if="showDebug")
     .text-h6 Debug
@@ -76,9 +83,12 @@ export default {
     mustSort: { type: Boolean, default: false },
 
     disallowDense: { type: Boolean, default: false },
+    disallowGroups: { type: Boolean, default: false },
+    disallowKeepGroupedColumns: { type: Boolean, default: false },
 
     fetch: { type: Function, default: null },
     query: { type: Object, default: null },
+    overrideQuery: { type: Object, default: null },
     itemsMap: { type: Function, default: (item) => item },
   },
   data: () => ({
@@ -97,6 +107,7 @@ export default {
     cache: new Map(),
     iQuery: {
       search: '',
+      filter: '',
       page: 1,
       itemsPerPage: parseInt(
         localStorage?.getItem('v-query-data-table:itemsPerPage') ?? 10,
@@ -110,20 +121,30 @@ export default {
       mustSort: false,
     },
 
-    selected: [],
+    values: {
+      selected: [],
+    },
 
-    filtersDrawer: false,
+    filter: {
+      drawer: false,
+      operator: ',',
+      items: {},
+      values: {},
+      search: {},
+      loading: {},
+    },
   }),
   computed: {
     queryJSON() {
       return JSON.stringify(this.iQuery)
     },
     oldActions() {
+      const { singleActions, bulkActions, tableActions } = this
       const { single, table, bulk } = this.actions
       return {
-        singleActions: single || {},
-        tableActions: table || {},
-        bulkActions: bulk || {},
+        singleActions: { ...single, ...singleActions },
+        tableActions: { ...table, ...tableActions },
+        bulkActions: { ...bulk, ...bulkActions },
       }
     },
     computedHeaders() {
@@ -145,7 +166,8 @@ export default {
           },
           $extra: {
             visible: true,
-            filterable: true,
+            filterable: header.value !== '_actions',
+            filterType: 'select',
             transformItem: null,
             ...header.$extra,
           },
@@ -185,10 +207,11 @@ export default {
     },
     options() {
       return {
-        ...this.oldActions,
         ...this.$props,
+        ...this.oldActions,
+        filter: this.filter,
         loading: this.loading,
-        dense: this.dense,
+        dense: this.dense && !this.disallowDense,
         headers: this.computedHeaders,
         query: this.iQuery,
         clearCache: () => this.clearCache(),
@@ -196,29 +219,39 @@ export default {
         cleanRefresh: () => this.cleanRefresh(),
         toggleDense: () => this.toggleDense(),
         setSearch: (newValue) => this.setSearch(newValue),
-        selected: this.selected,
+        values: this.values,
+        slots: {
+          others: Object.keys(this.$scopedSlots).filter(
+            (key) => !key.startsWith('table.')
+          ),
+          table: Object.keys(this.$scopedSlots)
+            .filter((key) => key.startsWith('table.'))
+            .map((key) => key.substring(6)),
+        },
         pagination: {
           pagesCount: Math.ceil(this.totalCount / this.iQuery.itemsPerPage),
           resultCount: this.resultCount,
           totalCount: this.totalCount,
         },
         datatable: {
+          ...this.$attrs,
           // disableSort: this.disableSort,
           disablePagination: this.disablePagination,
           dense: this.disallowDense ? false : this.dense,
           ...this.datatable,
           items: this.computedItems,
           loading: this.loading.active,
-          showSelect: true,
+          showSelect: Object.keys(this.oldActions.bulkActions).length,
           hideDefaultFooter: true,
           headers: this.computedHeaders,
           disabled: this.loading.active,
-          value: this.selected,
+          // value: this.selected,
           options: {
             ...this.iQuery,
             ...this.datatable.options,
             multiSort: this.multiSort,
             mustSort: this.mustSort,
+            ...this.overrideQuery,
           },
         },
       }

@@ -1,11 +1,16 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import Vue from 'vue'
 import Vuetify from 'vuetify'
+import pt from 'vuetify/es5/locale/pt'
 import 'vuetify/dist/vuetify.min.css'
 
 Vue.use(Vuetify)
 
 const opts = {
+  lang: {
+    locales: { pt },
+    current: 'pt',
+  },
   defaultAssets: {
     font: { family: 'Roboto' },
   },

@@ -198,6 +198,9 @@ export default {
           $custom: {
             template: 'avatar',
           },
+          $extra: {
+            filterable: false,
+          },
         },
         {
           text: 'Dessert (100g serving)',
@@ -225,6 +228,9 @@ export default {
           text: 'Calories',
           align: 'center',
           value: 'calories',
+          $extra: {
+            filterType: 'range',
+          },
           $custom: {
             template: 'chips',
             // format: v => (v ? 'Ativo' : 'Inativo'),
