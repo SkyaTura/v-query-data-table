@@ -67,11 +67,9 @@ export default {
       const run = (u) => {
         const { table } = this.$refs
         if (!table) return
-        const { keepGroupedColumns } = this.options
+        const { keepGroupedColumns, disallowKeepGroupedColumns } = this.options
         table.internalGroupBy =
-          keepGroupedColumns && !this.disallowKeepGroupedColumns
-            ? []
-            : groupBy || []
+          keepGroupedColumns && !disallowKeepGroupedColumns ? [] : groupBy || []
       }
       run()
       this.$nextTick(run)
