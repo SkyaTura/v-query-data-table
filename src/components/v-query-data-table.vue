@@ -1,7 +1,7 @@
 <template lang="pug">
-v-card(flat color="transparent" v-if="loading.firstTime && loading.active")
+v-card(color="transparent" flat v-if="loading.firstTime && loading.active")
   v-skeleton-loader(type="table")
-v-card(flat color="transparent" v-else)
+v-card(color="transparent" flat v-else)
   v-navigation-drawer.filterDrawer-parent(
     app
     right
@@ -17,21 +17,21 @@ v-card(flat color="transparent" v-else)
           slot(name="filter-prepend")
           template(v-for="row in computedHeaders")
             v-autocomplete.flex-grow-0.my-2(
-              hide-details
               filled
-              multiple
-              small-chips
-              v-model="filter.values[row.value]"
-              v-if="row.$extra.filterable !== false"
+              hide-details
               item-text="text"
               item-value="value"
-              :loading="filter.loading[row.value]"
+              multiple
+              small-chips
+              v-if="row.$extra.filterable !== false"
+              v-model="filter.values[row.value]"
               :items="sortFilterItems[row.value]"
               :label="row.text"
               @focus="populateFilter(row.value)"
+              :loading="filter.loading[row.value]"
             )
               template(v-slot:item="{ item, on, attrs }")
-                v-list-item(v-on="on" v-bind="attrs")
+                v-list-item(v-bind="attrs" v-on="on")
                   v-list-item-content
                     v-list-item-title {{ item.text }}
                   v-list-item-action
@@ -43,19 +43,19 @@ v-card(flat color="transparent" v-else)
             slot(name="filter-actions-prepend")
             v-btn(text @click="clearFilters") Limpar filtros
             slot(name="filter-actions-append")
-  v-dialog(v-model="goToPageDialog" max-width="300px")
+  v-dialog(max-width="300px" v-model="goToPageDialog")
     v-card
       v-card-title Ir para a página
       v-card-text
         v-select(
           label="Selecione a página"
-          :items="Array(pageCount < 0 || isNaN(pageCount) ? 0 : pageCount).fill(null).map((item, index) => index + 1)"
           v-model="options.page"
+          :items="Array(pageCount < 0 || isNaN(pageCount) ? 0 : pageCount).fill(null).map((item, index) => index + 1)"
           @change="goToPageDialog = false"
         )
       v-card-actions
         v-spacer
-        v-btn(text color="primary" @click="goToPageDialog = false") Cancelar
+        v-btn(color="primary" text @click="goToPageDialog = false") Cancelar
 
   slot(name="header")
     v-card-title.px-0.pt-10.pb-4.pb-md-8
@@ -69,20 +69,33 @@ v-card(flat color="transparent" v-else)
           v-spacer
           v-col.pa-0.ma-0(cols=12 sm=9)
             v-row.pa-0.ma-0(align="center" justify="end")
-              v-col.pa-0.ma-0.my-2.my-sm-0(cols=12 sm=3 align="end")
-                v-btn(icon text @click="showFilterDrawer = true" style="background: #e4f6d5")
-                  v-icon(color="#79b651") filter_alt
+              v-col.pa-0.ma-0.my-2.my-sm-0(align="end" cols=12 sm=3)
+                slot(name="header.filter")
+                  v-btn(
+                    icon
+                    style="background: #e4f6d5"
+                    text
+                    @click="showFilterDrawer = true"
+                  )
+                    v-icon(color="#79b651") filter_alt
 
                 v-menu(bottom left offset-x v-if="!hideMenu")
                   template(v-slot:activator="{ on }")
-                    v-btn.ml-2(icon v-on="on" style="background: #e4f6d5")
+                    v-btn.ml-2(icon style="background: #e4f6d5" v-on="on")
                       v-icon(color="#79b651") more_vert
                   v-list
                     template(v-if="validActions.table.length && !hideActions")
                       template(v-for="(action, index) in validActions.table")
-                        v-divider(:key="action.name" v-if="action.divider")
-                        v-subheader(:key="action.name" v-else-if="action.subheader") {{ action.text }}
-                        v-list-item(:key="action.name" v-else @click="action.handler")
+                        v-divider(v-if="action.divider" :key="action.name")
+                        v-subheader(
+                          v-else-if="action.subheader"
+                          :key="action.name"
+                        ) {{ action.text }}
+                        v-list-item(
+                          v-else
+                          :key="action.name"
+                          @click="action.handler"
+                        )
                           v-list-item-avatar.mr-0
                             v-icon {{ action.icon }}
                           v-list-item-title {{ action.text }}
@@ -93,51 +106,85 @@ v-card(flat color="transparent" v-else)
                       v-list-item-title Atualizar
                     //- TODO: Adicionar layout de impressão
                       v-list-item.hidden-sm-and-down(@click="")
-                        v-list-item-avatar.mr-0
-                          v-icon print
-                        v-list-item-title Imprimir
-                    template(v-if="!disallowDense || !disallowGroups || pageCount > 1")
+                      v-list-item-avatar.mr-0
+                      v-icon print
+                      v-list-item-title Imprimir
+                    template(
+                      v-if="!disallowDense || !disallowGroups || pageCount > 1"
+                    )
                       v-divider
                       v-subheader Opções de visualização
-                      v-list-item(v-if="pageCount > 1" @click="goToPageDialog = true")
+                      v-list-item(
+                        v-if="pageCount > 1"
+                        @click="goToPageDialog = true"
+                      )
                         v-list-item-avatar.mr-0
                           v-icon find_in_page
                         v-list-item-title Ir para a página
-                      v-list-item(v-if="!disallowDense" @click.stop="settings.dense = !settings.dense")
-                        v-switch.my-0(hide-details dense read-only :input-value="settings.dense")
+                      v-list-item(
+                        v-if="!disallowDense"
+                        @click.stop="settings.dense = !settings.dense"
+                      )
+                        v-switch.my-0(
+                          dense
+                          hide-details
+                          read-only
+                          :input-value="settings.dense"
+                        )
                         v-list-item-title Listagem densa
-                      v-list-item.hidden-sm-and-down(v-if="!disallowGroups" @click.stop="settings.showGroupBy = !settings.showGroupBy")
-                        v-switch.my-0(hide-details dense read-only :input-value="settings.showGroupBy")
+                      v-list-item.hidden-sm-and-down(
+                        v-if="!disallowGroups"
+                        @click.stop="settings.showGroupBy = !settings.showGroupBy"
+                      )
+                        v-switch.my-0(
+                          dense
+                          hide-details
+                          read-only
+                          :input-value="settings.showGroupBy"
+                        )
                         v-list-item-title Permitir agrupar
-                      v-list-item.hidden-sm-and-down(v-if="!disallowGroups && !disallowKeepGroupedColumns" @click.stop="settings.keepGroupedColumns = !settings.keepGroupedColumns")
-                        v-switch.my-0(hide-details dense read-only :input-value="settings.keepGroupedColumns")
+                      v-list-item.hidden-sm-and-down(
+                        v-if="!disallowGroups && !disallowKeepGroupedColumns"
+                        @click.stop="settings.keepGroupedColumns = !settings.keepGroupedColumns"
+                      )
+                        v-switch.my-0(
+                          dense
+                          hide-details
+                          read-only
+                          :input-value="settings.keepGroupedColumns"
+                        )
                         v-list-item-title Manter colunas agrupadas
 
-              v-col.pa-0.ma-0.px-sm-2(cols=12 sm=4 md=4 align="end")
+              v-col.pa-0.ma-0.px-sm-2(align="end" cols=12 md=4 sm=4)
                 v-text-field(
-                  label="Pesquisar"
-                  v-model="search"
                   append-icon="search"
+                  background-color="#e4f6d5"
                   clearable
+                  color="#8ac165"
                   dense
                   flat
                   hide-details
+                  label="Pesquisar"
                   outlined
                   rounded
-                  solo
                   single-line
-                  background-color="#e4f6d5"
-                  color="#8ac165"
+                  solo
+                  v-model="search"
                 )
 
-              v-col.pa-0.ma-0.mt-2.mt-sm-0(cols=12 sm=4 md=3 v-if="validActions.tableQuick.length && !hideActions")
+              v-col.pa-0.ma-0.mt-2.mt-sm-0(
+                cols=12
+                md=3
+                sm=4
+                v-if="validActions.tableQuick.length && !hideActions"
+              )
                 template
                   v-btn(
+                    style="width: 100%"
+                    v-bind="{ color: action.color || 'primary', ...action.options }"
                     v-for="action in validActions.tableQuick"
                     :key="action.name"
                     @click="action.handler"
-                    v-bind="{ color: action.color || 'primary', ...action.options }"
-                    style="width: 100%"
                   )
                     v-icon {{ action.icon }}
                     span {{ action.text }}
@@ -145,7 +192,7 @@ v-card(flat color="transparent" v-else)
   v-expansion-panels.bulk-actions(:value="selected.length ? 0 : -1")
     v-expansion-panel
       v-expansion-panel-content
-        slot(name="bulkActions" :selected="selected" :items="shownItems")
+        slot(name="bulkActions" :items="shownItems" :selected="selected")
           v-card-text.pt-0
             .caption(v-if="selected.length <= 1") Ações para o item selecionado:
             .caption(v-else) Ações em massa para os {{ selected.length }} itens selecionados:
@@ -153,10 +200,10 @@ v-card(flat color="transparent" v-else)
               slot(name="bulkActions.prepend")
               v-btn.ml-3(
                 small
+                v-bind="{ color: action.color || 'primary', ...action.options }"
                 v-for="action in validActions.bulk"
                 :key="action.name"
                 @click="action.handler(selected)"
-                v-bind="{ color: action.color || 'primary', ...action.options }"
               )
                 v-icon(small v-if="action.icon") {{ action.icon }}
                 span {{ action.text }}
@@ -165,9 +212,9 @@ v-card(flat color="transparent" v-else)
   //-template(v-if="loading.active")
     v-skeleton-loader(type="table-thead")
   v-data-table.VQueryDataTable(
+    ref="table"
     v-bind="dataTableAttrs"
     v-model="selected"
-    ref="table"
     :options="computedOptions"
     @update:options="updateOptions"
   )
@@ -175,10 +222,13 @@ v-card(flat color="transparent" v-else)
       .customHeader
         span.customHeader-text {{ header.text }}
         span.customHeader-actions
-          span.customHeader-actions-sort(v-if="header.sortable !== false" :class="{ sorted: getHeaderSort(header).sorted }")
+          span.customHeader-actions-sort(
+            v-if="header.sortable !== false"
+            :class="{ sorted: getHeaderSort(header).sorted }"
+          )
             v-badge(
-              overlap
               color="transparent"
+              overlap
               :value="getHeaderSort(header).sorted"
             )
               template(v-slot:badge="")
@@ -186,22 +236,29 @@ v-card(flat color="transparent" v-else)
               v-tooltip(top)
                 span Ordenar
                 template(v-slot:activator="{ on, attrs }")
-                  v-icon.invertable(v-bind="attrs" v-on="on" :class="{ 'invertable-inverted': getHeaderSort(header).desc }") arrow_upward
+                  v-icon.invertable(
+                    v-bind="attrs"
+                    v-on="on"
+                    :class="{ 'invertable-inverted': getHeaderSort(header).desc }"
+                  ) arrow_upward
           span.customHeader-actions-group(
-            :class="{ grouped: getHeaderGroup(header).grouped }"
             v-if="header.groupable !== false && !disallowGroups && settings.showGroupBy"
+            :class="{ grouped: getHeaderGroup(header).grouped }"
             @click.prevent.stop="setGroupBy(header)"
           )
             v-tooltip(top)
               span Agrupar
               template(v-slot:activator="{ on, attrs }")
                 v-icon.customHeader-actions-sortIcon(v-bind="attrs" v-on="on") folder_open
-    template(v-slot:body="" v-if="loading.active")
+    template(v-if="loading.active" v-slot:body="")
       tbody.disable-mouse
         tr
           td(colspan="100%")
             v-skeleton-loader(type="table-tbody")
-    template(v-for="column in templatedColumns" v-slot:[`item.${column.value}`]="props")
+    template(
+      v-for="column in templatedColumns"
+      v-slot:[`item.${column.value}`]="props"
+    )
       template(v-if="column.$custom.template === 'chips'")
         ColumnTemplateChip(v-bind="{ column, props }")
     template(v-slot:group.header="props")
@@ -212,9 +269,15 @@ v-card(flat color="transparent" v-else)
               span(v-if="getGroupHeader(props).value !== undefined")
                 span.font-weight-bold {{ getGroupHeader(props).text }}:
                 span &nbsp;{{ getGroupHeader(props).value }}
-      v-row.slotGroup-actions.ma-0.text-no-wrap(align="center" v-if="!hideRowGroupExpansion || !hideRowGroupClose")
+      v-row.slotGroup-actions.ma-0.text-no-wrap(
+        align="center"
+        v-if="!hideRowGroupExpansion || !hideRowGroupClose"
+      )
         v-spacer
-        span.customHeader-actions-sort(v-if="groupHeader.sortable !== false" :class="{ sorted: groupHeaderSort.sorted }")
+        span.customHeader-actions-sort(
+          v-if="groupHeader.sortable !== false"
+          :class="{ sorted: groupHeaderSort.sorted }"
+        )
           v-tooltip(top)
             span Ordenar grupo
             template(v-slot:activator="{ on, attrs }")
@@ -226,44 +289,37 @@ v-card(flat color="transparent" v-else)
                 @click="sortGroupHeader"
               )
                 v-badge(
-                  overlap
                   color="transparent"
+                  overlap
                   :value="groupHeaderSort.sorted"
                 )
                   template(v-slot:badge="")
                     span.primary--text.darken-1--text {{ groupHeaderSort.index }}
-                  v-icon.invertable(size="16" :class="{ 'invertable-inverted': groupHeaderSort.desc }") arrow_upward
+                  v-icon.invertable(
+                    size="16"
+                    :class="{ 'invertable-inverted': groupHeaderSort.desc }"
+                  ) arrow_upward
         v-tooltip(top v-if="!hideRowGroupClose")
           span Desagrupar
           template(v-slot:activator="{ on, attrs }")
-            v-btn(
-              icon
-              small
-              v-bind="attrs"
-              v-on="on"
-              @click="props.remove"
-            )
+            v-btn(icon small v-bind="attrs" v-on="on" @click="props.remove")
               v-icon(small) close
         v-tooltip(top v-if="!hideRowGroupExpansion")
           span {{ props.isOpen ? 'Recolher' : 'Expandir' }}
           template(v-slot:activator="{ on, attrs }")
-            v-btn(
-              icon
-              small
-              v-bind="attrs"
-              v-on="on"
-              @click="props.toggle"
-            )
-              v-icon.invertable(:class="{ 'invertable-inverted': props.isOpen }") expand_more
-    template(v-slot:item._actions="payload" v-if="!hideActions")
+            v-btn(icon small v-bind="attrs" v-on="on" @click="props.toggle")
+              v-icon.invertable(
+                :class="{ 'invertable-inverted': props.isOpen }"
+              ) expand_more
+    template(v-if="!hideActions" v-slot:item._actions="payload")
       template(v-if="$vuetify.breakpoint.smAndUp")
         .text-no-wrap
           template(v-for="(action, index) in validActions.singleQuick")
             v-tooltip(
               top
               v-if="actionCondition(payload)([index, action])"
-              :disabled="!action.text"
               :key="action.name"
+              :disabled="!action.text"
             )
               template(v-slot:activator="{ on }")
                 v-icon(
@@ -275,12 +331,17 @@ v-card(flat color="transparent" v-else)
               span {{ action.text }}
           v-menu(v-if="wrapSingleActions")
             template(v-slot:activator="{ on, attrs }")
-              v-btn(icon v-bind="attrs" v-on="on" small)
+              v-btn(icon small v-bind="attrs" v-on="on")
                 v-icon more_horiz
             v-list(dense)
               template(v-if="validActions.single.length")
                 template(v-for="(action, index) in validActions.single")
-                  v-list-item(dense :key="action.name" v-if="actionCondition(payload)([index, action])" @click="action.handler(payload)")
+                  v-list-item(
+                    dense
+                    v-if="actionCondition(payload)([index, action])"
+                    :key="action.name"
+                    @click="action.handler(payload)"
+                  )
                     v-list-item-avatar.mr-0
                       v-icon(:class="getIconClasses(action)") {{ action.icon }}
                     v-list-item-title(:class="getIconClasses(action)") {{ action.text }}
@@ -289,37 +350,36 @@ v-card(flat color="transparent" v-else)
           v-btn.ml-3(
             small
             text
+            v-bind="{ color: action.color || 'primary', ...action.options }"
             v-if="actionCondition(payload)([index, action])"
             :key="action.name"
             @click="action.handler(payload)"
-            v-bind="{ color: action.color || 'primary', ...action.options }"
           )
             v-icon(small v-if="action.icon") {{ action.icon }}
             span {{ action.text }}
     template(v-for="slot in slots" v-slot:[slot]="props")
-      slot(:name="`table.${slot}`" v-bind="props")
+      slot(v-bind="props" :name="`table.${slot}`")
 
   v-row.align-center.justify-space-between
     v-col.shrink.text-no-wrap
       template(v-if="!loading.active && serverItemsLength")
         .caption Exibindo de {{ statusBar.startIndex }} até {{ statusBar.endIndex }} de {{ serverItemsLength }} {{ serverItemsLength === 1 ? 'registro' : 'registros' }}
-          template(v-if="serverItemsLength < collectionLength")  de um total de {{ collectionLength }} {{ collectionLength === 1 ? 'filtrado' : 'filtrados' }}
+          template(v-if="serverItemsLength < collectionLength") de um total de {{ collectionLength }} {{ collectionLength === 1 ? 'filtrado' : 'filtrados' }}
     v-col
       v-pagination.pagination(
         color="secondary"
-        :length="pageCount"
-        v-model="options.page"
         total-visible="7"
+        v-model="options.page"
+        :length="pageCount"
       )
     v-col.shrink
       v-select.pageSelect(
         label="Itens por página:"
-        :value="options.itemsPerPage"
         :items="itemsPerPages"
+        :value="options.itemsPerPage"
         @input="changeItemsPerPage"
       )
   slot(name="body.bottom")
-
 </template>
 
 <script lang="ts">
