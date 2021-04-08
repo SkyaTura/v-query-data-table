@@ -413,44 +413,46 @@ export default {
     itemsPerPages: { type: Array, default: () => [5, 10, 25, 50, 100] },
     itemsPerPageProp: {type: Number, default: 10}
   },
-  data: () => ({
-    showFilterDrawer: false,
-    cache: new Map(),
-    goToPageDialog: false,
-    goToPageInput: 1,
-    serverItemsLength: -1,
-    colletionLength: -1,
-    filter: {
-      items: {},
-      values: {},
-      search: {},
-      loading: {},
-    },
-    options: {
-      page: 1,
-      sortBy: [],
-      sortDesc: [],
-      groupBy: [],
-      groupDesc: [],
-      mustSort: false,
-      multiSort: true,
-      pageCount: 1,
-      itemsPerPage: 10,
-    },
-    settings: {
-      dense: false,
-      showGroupBy: true,
-      keepGroupedColumns: true,
-    },
-    selected: [],
-    currentItems: [],
+  data() {
+    return {
+      showFilterDrawer: false,
+      cache: new Map(),
+      goToPageDialog: false,
+      goToPageInput: 1,
+      serverItemsLength: -1,
+      colletionLength: -1,
+      filter: {
+        items: {},
+        values: {},
+        search: {},
+        loading: {},
+      },
+      options: {
+        page: 1,
+        sortBy: [],
+        sortDesc: [],
+        groupBy: [],
+        groupDesc: [],
+        mustSort: false,
+        multiSort: true,
+        pageCount: 1,
+        itemsPerPage: this.itemsPerPageProp,
+      },
+      settings: {
+        dense: false,
+        showGroupBy: true,
+        keepGroupedColumns: true,
+      },
+      selected: [],
+      currentItems: [],
 
-    search: '',
-    loading: {
-      firstTime: true,
-      active: true,
-    },
-  }),
+      search: '',
+      loading: {
+        firstTime: true,
+        active: true,
+      },
+    }
+  },
   computed: {
     sortFilterItems() {
       const { transformableHeaders } = this
@@ -743,7 +745,6 @@ export default {
     },
   },
   mounted() {
-    this.options.itemsPerPage = this.itemsPerPageProp
     this.refresh(true)
     this.loadSettings()
   },
