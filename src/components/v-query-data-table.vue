@@ -411,7 +411,7 @@ export default {
     query: { type: Object, default: () => ({}) },
     overrideQuery: { type: Object, default: () => ({}) },
     itemsPerPages: { type: Array, default: () => [5, 10, 25, 50, 100] },
-    itemsPerPageProp: {type: Number, default: 10}
+    defaultItemsPerPage: { type: Number, default: 10 },
   },
   data() {
     return {
@@ -436,7 +436,7 @@ export default {
         mustSort: false,
         multiSort: true,
         pageCount: 1,
-        itemsPerPage: this.itemsPerPageProp,
+        itemsPerPage: this.defaultItemsPerPage,
       },
       settings: {
         dense: false,
