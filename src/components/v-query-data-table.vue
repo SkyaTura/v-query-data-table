@@ -411,6 +411,7 @@ export default {
     query: { type: Object, default: () => ({}) },
     overrideQuery: { type: Object, default: () => ({}) },
     itemsPerPages: { type: Array, default: () => [5, 10, 25, 50, 100] },
+    itemsPerPageProp: {type: Number, default: 10}
   },
   data: () => ({
     showFilterDrawer: false,
@@ -742,6 +743,7 @@ export default {
     },
   },
   mounted() {
+    this.options.itemsPerPage = this.itemsPerPageProp
     this.refresh(true)
     this.loadSettings()
   },
