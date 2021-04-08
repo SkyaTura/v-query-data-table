@@ -410,6 +410,7 @@ export default {
     noCaching: { type: Boolean, default: false },
     query: { type: Object, default: () => ({}) },
     overrideQuery: { type: Object, default: () => ({}) },
+    itemsPerPages: { type: Array, default: () => [5, 10, 25, 50, 100] },
   },
   data: () => ({
     showFilterDrawer: false,
@@ -426,7 +427,6 @@ export default {
     },
     options: {
       page: 1,
-      itemsPerPage: 10,
       sortBy: [],
       sortDesc: [],
       groupBy: [],
@@ -434,6 +434,7 @@ export default {
       mustSort: false,
       multiSort: true,
       pageCount: 1,
+      itemsPerPage: 10,
     },
     settings: {
       dense: false,
@@ -442,7 +443,7 @@ export default {
     },
     selected: [],
     currentItems: [],
-    itemsPerPages: [5, 10, 25, 50, 100],
+
     search: '',
     loading: {
       firstTime: true,
