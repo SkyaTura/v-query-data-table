@@ -167,7 +167,7 @@ describe('RowHeader.vue', () => {
     expect(responseExpectToBeTrue).toEqual({ grouped: true })
   })
 
-  it('', async () => {
+  it('verify the return value from getHeaderSort', async () => {
     wrapper.setProps({
       options: {
         ...props,
