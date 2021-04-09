@@ -1,6 +1,6 @@
 <template lang="pug">
 v-tooltip(left v-if="fab")
-  span {{ fab[1].text }}
+  span#tooltipText {{ fab[1].text }}
   template(#activator="{ attrs, on }")
     v-fab-transition
       v-btn(

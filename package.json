@@ -6,7 +6,7 @@
     "build": "vue-cli-service build --target lib --name v-query-data-table src/wrapper.js",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
-    "test:unit": "vue-cli-service test:unit --setupTestFrameworkScriptFile=./tests/setup.js",
+    "test:unit": "vue-cli-service test:unit",
     "lint": "eslint -f mo --ext js,vue,pug --ignore-path .gitignore ."
   },
   "dependencies": {
