@@ -83,8 +83,4 @@ describe('DataTable.vue', () => {
 
     expect(wrapper.find('.primary--text').text()).toBe('view_list')
   })
-
-  it('verify emitted function on update options', async () => {
-    
-  })
 })
