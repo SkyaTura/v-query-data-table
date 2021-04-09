@@ -5,7 +5,9 @@ td.slotGroup-default(colspan="100%")
       span(v-if="getGroupHeader(props).value !== undefined")
         span.font-weight-bold {{ getGroupHeader(props).text }}:
         span &nbsp;{{ getGroupHeader(props).value }}
-    template(v-if="!options.hideRowGroupExpansion || !hideRowGroupClose")
+    template(
+      v-if="!options.hideRowGroupExpansion || !options.hideRowGroupClose"
+    )
       v-spacer
       span.customHeader-actions-sort(
         v-if="groupHeader.sortable !== false"
