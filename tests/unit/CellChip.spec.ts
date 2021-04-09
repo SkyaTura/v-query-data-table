@@ -21,7 +21,7 @@ describe('CellChip.vue', () => {
     value: 'Nome',
     text: 'name',
     $custom: {
-      template: 'chip'
+      template: 'chips'
     },
   }
 
@@ -57,7 +57,7 @@ describe('CellChip.vue', () => {
       header: { 
         ...headerProps,
         $custom: {
-          template: 'chip',
+          template: 'chips',
           color: () => {
             return 'green'
           }
@@ -74,7 +74,7 @@ describe('CellChip.vue', () => {
       header: { 
         ...headerProps,
         $custom: {
-          template: 'chip',
+          template: 'chips',
           color: 'blue',
         },
       }
@@ -92,7 +92,7 @@ describe('CellChip.vue', () => {
       props: { ...properties },
       header: { ...headerProps,
         $custom: {
-          template: 'chip',
+          template: 'chips',
           format: (value: string, _: {}) => {
             return value.toUpperCase()
           }
@@ -113,7 +113,7 @@ describe('CellChip.vue', () => {
       header: { 
         ...headerProps,
         $custom: {
-          template: 'chip',
+          template: 'chips',
           color: 'blue',
         },
       }
