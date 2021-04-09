@@ -13,7 +13,6 @@ describe('CellValue.vue', () => {
     $custom: {
       template: ''
     },
-
   }
 
   beforeAll(() => {
