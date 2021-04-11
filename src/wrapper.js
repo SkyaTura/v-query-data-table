@@ -1,26 +1,13 @@
-import component from './components/v-query-data-table.vue'
+import Component from './components/VQueryDataTable'
 
-// Declara a função de instalação executada pelo Vue.use()
-export function install(Vue) {
-  if (install.installed) return
-  install.installed = true
-  Vue.component('VQueryDataTable', component)
+const ComponentLibrary = {
+  install(Vue) {
+    Vue.component(Component.name, Component)
+  },
 }
 
-// Cria a definição do módulo para Vue.use()
-const plugin = { install }
+export default ComponentLibrary
 
-// Auto-instala quando o Vue é encontrado (no navegador via <script>)
-let GlobalVue = null
-if (typeof window !== 'undefined') {
-  GlobalVue = window.Vue
-} else if (typeof global !== 'undefined') {
-  GlobalVue = global.Vue
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(ComponentLibrary)
 }
-if (GlobalVue) {
-  GlobalVue.use(plugin)
-}
-
-component.install = install
-// Para permitir o uso como um módulo exportável (npm/webpack/etc.)
-export default component

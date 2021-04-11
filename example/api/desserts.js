@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import FuzzySearch from 'fuzzy-search'
 
 const db = [
@@ -9,6 +10,7 @@ const db = [
     protein: 4.0,
     iron: '1%',
     kind: 'cold',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
   },
   {
     name: 'Ice cream sandwich',
@@ -18,6 +20,7 @@ const db = [
     protein: 4.3,
     iron: '1%',
     kind: 'cold',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
   },
   {
     name: 'Eclair',
@@ -27,6 +30,7 @@ const db = [
     protein: 6.0,
     iron: '7%',
     kind: 'cold',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
   },
   {
     name: 'Cupcake',
@@ -36,6 +40,7 @@ const db = [
     protein: 4.3,
     iron: '8%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
   },
   {
     name: 'Gingerbread',
@@ -45,6 +50,7 @@ const db = [
     protein: 3.9,
     iron: '16%',
     kind: 'hot',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg',
   },
   {
     name: 'Jelly bean',
@@ -54,6 +60,7 @@ const db = [
     protein: 0.0,
     iron: '0%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
   },
   {
     name: 'Lollipop',
@@ -63,6 +70,7 @@ const db = [
     protein: 0,
     iron: '2%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
   },
   {
     name: 'Honeycomb',
@@ -72,6 +80,7 @@ const db = [
     protein: 6.5,
     iron: '45%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
   },
   {
     name: 'Donut',
@@ -81,6 +90,7 @@ const db = [
     protein: 4.9,
     iron: '22%',
     kind: 'hot',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
   },
   {
     name: 'KitKat',
@@ -90,6 +100,7 @@ const db = [
     protein: 7,
     iron: '6%',
     kind: 'room_temperature',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
   },
 ]
 
@@ -163,14 +174,12 @@ export default (payload) =>
           if (sortA < sortB) return 1
           if (sortA > sortB) return -1
           return 0
-        } else {
-          if (sortA < sortB) return -1
-          if (sortA > sortB) return 1
-          return 0
         }
+        if (sortA < sortB) return -1
+        if (sortA > sortB) return 1
+        return 0
       })
     }
-    const total = items.length
 
     if (itemsPerPage > 0) {
       items = items.slice((page - 1) * itemsPerPage, page * itemsPerPage)
@@ -179,8 +188,8 @@ export default (payload) =>
     setTimeout(() => {
       resolve({
         data: items,
-        resultCount: total,
+        resultCount: items.length,
         totalCount: db.length,
       })
-    }, Math.random() * 3)
+    }, Math.random() * 300)
   })
