@@ -147,7 +147,7 @@ Object.entries(values)
             return transformItem[item.text](item.text)
         }
 
-        return row.$extra?.transformItem[item.text]
+        return transformItem[item.text]
       }
       return item.text
     },
