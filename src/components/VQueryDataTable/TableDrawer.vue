@@ -43,7 +43,7 @@ v-navigation-drawer(
               template(v-slot:item="{ item, on, attrs }")
                 v-list-item(v-bind="attrs" v-on="on")
                   v-list-item-content
-                    v-list-item-title {{ item.text }}
+                    v-list-item-title {{ autocompleteItem(item, row) }}
                   v-list-item-action
                     v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
               template(v-slot:selection="{ item, index }")
@@ -136,6 +136,11 @@ Object.entries(values)
     },
   },
   methods: {
+    autocompleteItem(item, row) {
+      if (row.$extra?.transformItem[item.text])
+        return row.$extra?.transformItem[item.text]
+      return item.text
+    },
     clearFilters() {
       // eslint-disable-next-line vue/no-mutating-props
       this.options.filter.values = {}
