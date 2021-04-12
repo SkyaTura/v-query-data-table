@@ -47,7 +47,7 @@ v-navigation-drawer(
                   v-list-item-action
                     v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
               template(v-slot:selection="{ item, index }")
-                v-chip(v-if="index < 3") {{ index < 2 || options.filter.values[row.value].length <= 3 ? item.text : `e outros ${options.filter.values[row.value].length - 2}` }}
+                v-chip(v-if="index < 3") {{ index < 2 || options.filter.values[row.value].length <= 3 ? autocompleteItem(item, row) : `e outros ${options.filter.values[row.value].length - 2}` }}
         slot(name="filter-append")
         v-row.mx-0.mt-4(justify="end")
           slot(name="filter-actions-prepend")
