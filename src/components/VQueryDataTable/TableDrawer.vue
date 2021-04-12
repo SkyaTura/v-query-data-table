@@ -137,10 +137,17 @@ Object.entries(values)
   },
   methods: {
     autocompleteItem(item, row) {
-      if (row.$extra?.transformItem[item.text]) {
-        const transformItem = row.$extra.transformItem[item.text]
-        if (typeof transformItem === 'string') return transformItem
+      if (row.$extra?.transformItem) {
+        const { transformItem } = row.$extra
+
         if (typeof transformItem === 'function') return transformItem(item.text)
+
+        if (typeof transformItem === 'object') {
+          if (typeof transformItem[item.text] === 'function')
+            return transformItem[item.text](item.text)
+        }
+
+        return row.$extra?.transformItem[item.text]
       }
       return item.text
     },
