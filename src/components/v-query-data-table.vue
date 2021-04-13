@@ -556,12 +556,12 @@ export default {
         .filter((item) => item.value !== '_actions' || !hideActions)
     },
     pageCount() {
-      const { shownItems, options, serverItemsLength } = this
+      const { shownItems, options, collectionLength } = this
       const { itemsPerPage } = options
-      if (serverItemsLength < 0) {
+      if (collectionLength < 0) {
         return Math.ceil(shownItems.length / itemsPerPage)
       }
-      return Math.ceil(serverItemsLength / itemsPerPage)
+      return Math.ceil(collectionLength / itemsPerPage)
     },
     templatedColumns() {
       const { computedHeaders } = this
@@ -840,7 +840,7 @@ export default {
       if (!noCaching && dbHasChange) {
         this.cache = new Map()
       }
-      this.collectionLength = totalCount
+      this.collectionLength = resultCount
       return response
     },
     async refresh(skipCache) {
