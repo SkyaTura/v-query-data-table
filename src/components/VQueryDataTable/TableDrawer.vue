@@ -43,11 +43,11 @@ v-navigation-drawer(
               template(v-slot:item="{ item, on, attrs }")
                 v-list-item(v-bind="attrs" v-on="on")
                   v-list-item-content
-                    v-list-item-title {{ item.text }}
+                    v-list-item-title {{ autocompleteItem(item, row) }}
                   v-list-item-action
                     v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
               template(v-slot:selection="{ item, index }")
-                v-chip(v-if="index < 3") {{ index < 2 || options.filter.values[row.value].length <= 3 ? item.text : `e outros ${options.filter.values[row.value].length - 2}` }}
+                v-chip(v-if="index < 3") {{ index < 2 || options.filter.values[row.value].length <= 3 ? autocompleteItem(item, row) : `e outros ${options.filter.values[row.value].length - 2}` }}
         slot(name="filter-append")
         v-row.mx-0.mt-4(justify="end")
           slot(name="filter-actions-prepend")
@@ -136,6 +136,21 @@ Object.entries(values)
     },
   },
   methods: {
+    autocompleteItem(item, row) {
+      if (row.$extra?.transformItem) {
+        const { transformItem } = row.$extra
+
+        if (typeof transformItem === 'function') return transformItem(item.text)
+
+        if (typeof transformItem === 'object') {
+          if (typeof transformItem[item.text] === 'function')
+            return transformItem[item.text](item.text)
+        }
+
+        return transformItem[item.text]
+      }
+      return item.text
+    },
     clearFilters() {
       // eslint-disable-next-line vue/no-mutating-props
       this.options.filter.values = {}
