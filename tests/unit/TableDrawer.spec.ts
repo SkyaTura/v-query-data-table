@@ -299,4 +299,39 @@ describe('TableDrawer.vue', () => {
 
     expect(wrapper.vm.getFieldMax('calories')).toEqual(0)
   })
+
+  it('verify the changes on options.filter watch', async () => {
+    wrapper.setProps({
+      options: {
+        ...props,
+        filter: {
+          ...props.filter,
+          values: {
+            kind: ['cold'],
+            name: ['cupcake'],
+          },
+        }
+      }
+    })
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.options.query.filter).toEqual('name(cupcake),kind(cold)')
+
+    wrapper.setProps({
+      options: {
+        ...props,
+        filter: {
+          ...props.filter,
+          operator: ';',
+          values: {
+            kind: ['cold'],
+            name: ['cupcake'],
+          },
+        }
+      }
+    })
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.options.query.filter).toEqual('name(cupcake);kind(cold)')
+  })
 })
