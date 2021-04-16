@@ -142,4 +142,161 @@ describe('TableDrawer.vue', () => {
 
     expect(wrapper.vm.options.filter.values).toEqual({})
   })
+
+  it('verify return value of filterableHeaders', () => {
+    expect(wrapper.vm.filterableHeaders).toEqual([
+      {
+        text: "Dessert (100g serving)",
+        value: "name",
+        $extra: {}
+      },
+      {
+        text: "Tipo",
+        value: "kind",
+        $extra: {
+          visible: false,
+          transformItem: {
+            hot: "Quente",
+            room_temperature: "Temperatura Ambiente",
+            cold: "Gelado"
+          }
+        }
+      },
+      {
+        text: "Calories",
+        value: "calories",
+        $extra: {
+          filterType: "range"
+        },
+      },
+      {
+        text: "Carbs (g)",
+        value: "carbs",
+        $extra: {}
+      },
+    ])
+  })
+
+  it('verify return value of sortFilterItems', async () => {
+    wrapper.setProps({
+      options: {
+        ...props,
+        filter: {
+          ...props.filter,
+          items: {
+            kind: [
+              { count: 1, value: 'room_temperature' },
+              { count: 2, value: 'cold' },
+              { count: 3, value: 'hot' },
+            ]
+          },
+          values: {
+            kind: ['room_temperature', 'cold']
+          },
+        }
+      }
+    })
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.sortFilterItems).toEqual({
+      kind: [
+        { count: 2, value: 'cold', text: 'cold' },
+        { count: 1, value: 'room_temperature', text: 'room_temperature' },
+        { count: 3, value: 'hot', text: 'hot' },
+      ]
+    })
+  })
+
+  it('verify return value of autocomplete', () => {
+    const response = wrapper.vm.autocompleteItem(
+      { count: 2, value: 'cold', text: 'cold' }, 
+      {
+        text: "Tipo",
+        value: "kind",
+        $extra: {
+          visible: false,
+          transformItem: {
+            hot: "Quente",
+            room_temperature: "Temperatura Ambiente",
+            cold: "Gelado"
+          }
+        }
+      })
+    expect(response).toEqual('Gelado')
+
+    const response2 = wrapper.vm.autocompleteItem(
+      { count: 2, value: 'cold', text: 'cold' }, 
+      {
+        text: "Tipo",
+        value: "kind",
+        $extra: {
+          visible: false,
+          transformItem: {
+            hot: "Quente",
+            room_temperature: "Temperatura Ambiente",
+            cold: () => 'Gelado'.toUpperCase()
+          }
+        }
+      })
+    expect(response2).toEqual('GELADO')
+
+    const response3 = wrapper.vm.autocompleteItem(
+      { count: 2, value: 'cold', text: 'cold' }, 
+      {
+        text: "Tipo",
+        value: "kind",
+        $extra: {
+          visible: false,
+          transformItem: () => 'Teste'
+        }
+      })
+    expect(response3).toEqual('Teste')
+
+    const response4 = wrapper.vm.autocompleteItem(
+      { count: 2, value: 'cold', text: 'cold' }, 
+      {
+        text: "Tipo",
+        value: "kind",
+        $extra: {
+          visible: false,
+        }
+      })
+    expect(response4).toEqual('cold')
+  })
+
+  it('verify return value of getFieldMin', async () => {
+    expect(wrapper.vm.getFieldMin('calories')).toEqual(0)
+
+    wrapper.setProps({
+      options: {
+        ...props,
+        filter: {
+          ...props.filter,
+          items: {
+            calories: [
+              { count: 1, value: 200 },
+              { count: 2, value: 400 },
+              { count: 3, value: 300 },
+            ]
+          }
+        }
+      }
+    })
+    await wrapper.vm.$nextTick()
+
+    const response = wrapper.vm.getFieldMin('calories')
+    expect(response).toEqual(200)
+  })
+
+  it('verify return value of getFieldMax', async () => {
+    const response = wrapper.vm.getFieldMax('calories')
+    expect(response).toEqual(400)
+
+    wrapper.setProps({
+      options: { ...props }
+    })
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.getFieldMax('calories')).toEqual(0)
+  })
 })
