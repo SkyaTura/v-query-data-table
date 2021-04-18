@@ -233,7 +233,6 @@ export default {
           },
           $custom: {
             template: 'chips',
-            // format: v => (v ? 'Ativo' : 'Inativo'),
             dark: true,
             color(value) {
               const calories = parseInt(value, 10)
