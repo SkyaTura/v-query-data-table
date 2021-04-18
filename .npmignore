@@ -8,3 +8,5 @@ example/
 babel.config.js
 rollup.config.js
 vue.config.js
+old/
+new/
