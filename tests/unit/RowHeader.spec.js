@@ -65,7 +65,7 @@ describe('rowHeader.vue', () => {
     expect(wrapper.find('.customHeader-actions-sort').exists()).toBeTruthy()
   })
 
-  it('verify the class of span container of sort icon', async () => {
+  it('verify the class sorted of span container of sort icon', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -106,7 +106,7 @@ describe('rowHeader.vue', () => {
     expect(wrapper.find('.customHeader-actions-group').exists()).toBeTruthy()
   })
 
-  it('verify the class of span container of sort icon', async () => {
+  it('verify the class grouped of span container of sort icon', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -129,7 +129,7 @@ describe('rowHeader.vue', () => {
     )
   })
 
-  it('verify the class of span container of sort icon', async () => {
+  it('verify the click on sort icon', async () => {
     expect.hasAssertions()
 
     wrapper.vm.setGroupBy = setGroupByMock
@@ -162,7 +162,7 @@ describe('rowHeader.vue', () => {
 
     const responseExpectToBeFalse = wrapper.vm.getHeaderGroup(headerProps)
 
-    expect(responseExpectToBeFalse).toEqual({ grouped: false })
+    expect(responseExpectToBeFalse).toStrictEqual({ grouped: false })
 
     wrapper.setProps({
       options: {
@@ -181,7 +181,7 @@ describe('rowHeader.vue', () => {
 
     const responseExpectToBeTrue = wrapper.vm.getHeaderGroup(headerProps)
 
-    expect(responseExpectToBeTrue).toEqual({ grouped: true })
+    expect(responseExpectToBeTrue).toStrictEqual({ grouped: true })
   })
 
   it('verify the return value from getHeaderSort', async () => {
@@ -205,7 +205,7 @@ describe('rowHeader.vue', () => {
 
     const responseExpectToBeFalse = wrapper.vm.getHeaderSort(headerProps)
 
-    expect(responseExpectToBeFalse).toEqual({
+    expect(responseExpectToBeFalse).toStrictEqual({
       desc: false,
       sorted: false,
       index: '',
@@ -229,7 +229,7 @@ describe('rowHeader.vue', () => {
 
     const responseExpectToBeTrue = wrapper.vm.getHeaderSort(headerProps)
 
-    expect(responseExpectToBeTrue).toEqual({
+    expect(responseExpectToBeTrue).toStrictEqual({
       desc: true,
       sorted: true,
       index: 1,

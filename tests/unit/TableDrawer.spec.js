@@ -78,7 +78,7 @@ describe('tableDrawer.vue', () => {
 
   it('verify filter operator value', async () => {
     expect.hasAssertions()
-    expect(wrapper.vm.options.filter.operator).toEqual(',')
+    expect(wrapper.vm.options.filter.operator).toStrictEqual(',')
 
     const radios = wrapper.findAllComponents({ name: 'v-radio' })
     const radio1 = radios.at(0)
@@ -86,11 +86,11 @@ describe('tableDrawer.vue', () => {
 
     await radio2.vm.$emit('change')
 
-    expect(wrapper.vm.options.filter.operator).toEqual(';')
+    expect(wrapper.vm.options.filter.operator).toStrictEqual(';')
 
     await radio1.vm.$emit('change')
 
-    expect(wrapper.vm.options.filter.operator).toEqual(',')
+    expect(wrapper.vm.options.filter.operator).toStrictEqual(',')
   })
 
   it('verify showing condition of range slider', async () => {
@@ -154,12 +154,12 @@ describe('tableDrawer.vue', () => {
     wrapper.findComponent({ name: 'v-btn' }).trigger('click')
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.options.filter.values).toEqual({})
+    expect(wrapper.vm.options.filter.values).toStrictEqual({})
   })
 
   it('verify return value of filterableHeaders', () => {
     expect.hasAssertions()
-    expect(wrapper.vm.filterableHeaders).toEqual([
+    expect(wrapper.vm.filterableHeaders).toStrictEqual([
       {
         text: 'Dessert (100g serving)',
         value: 'name',
@@ -215,7 +215,7 @@ describe('tableDrawer.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.sortFilterItems).toEqual({
+    expect(wrapper.vm.sortFilterItems).toStrictEqual({
       kind: [
         { count: 2, value: 'cold', text: 'cold' },
         { count: 1, value: 'room_temperature', text: 'room_temperature' },
@@ -243,7 +243,7 @@ describe('tableDrawer.vue', () => {
       }
     )
 
-    expect(response).toEqual('Gelado')
+    expect(response).toStrictEqual('Gelado')
 
     const response2 = wrapper.vm.autocompleteItem(
       { count: 2, value: 'cold', text: 'cold' },
@@ -261,7 +261,7 @@ describe('tableDrawer.vue', () => {
       }
     )
 
-    expect(response2).toEqual('GELADO')
+    expect(response2).toStrictEqual('GELADO')
 
     const response3 = wrapper.vm.autocompleteItem(
       { count: 2, value: 'cold', text: 'cold' },
@@ -275,7 +275,7 @@ describe('tableDrawer.vue', () => {
       }
     )
 
-    expect(response3).toEqual('Teste')
+    expect(response3).toStrictEqual('Teste')
 
     const response4 = wrapper.vm.autocompleteItem(
       { count: 2, value: 'cold', text: 'cold' },
@@ -288,12 +288,12 @@ describe('tableDrawer.vue', () => {
       }
     )
 
-    expect(response4).toEqual('cold')
+    expect(response4).toStrictEqual('cold')
   })
 
   it('verify return value of getFieldMin', async () => {
     expect.hasAssertions()
-    expect(wrapper.vm.getFieldMin('calories')).toEqual(0)
+    expect(wrapper.vm.getFieldMin('calories')).toStrictEqual(0)
 
     wrapper.setProps({
       options: {
@@ -314,7 +314,7 @@ describe('tableDrawer.vue', () => {
 
     const response = wrapper.vm.getFieldMin('calories')
 
-    expect(response).toEqual(200)
+    expect(response).toStrictEqual(200)
   })
 
   it('verify return value of getFieldMax', async () => {
@@ -322,14 +322,14 @@ describe('tableDrawer.vue', () => {
 
     const response = wrapper.vm.getFieldMax('calories')
 
-    expect(response).toEqual(400)
+    expect(response).toStrictEqual(400)
 
     wrapper.setProps({
       options: { ...props },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.getFieldMax('calories')).toEqual(0)
+    expect(wrapper.vm.getFieldMax('calories')).toStrictEqual(0)
   })
 
   it('verify the changes on options.filter watch', async () => {
@@ -349,7 +349,9 @@ describe('tableDrawer.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.options.query.filter).toEqual('name(cupcake),kind(cold)')
+    expect(wrapper.vm.options.query.filter).toStrictEqual(
+      'name(cupcake),kind(cold)'
+    )
 
     wrapper.setProps({
       options: {
@@ -366,6 +368,8 @@ describe('tableDrawer.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.options.query.filter).toEqual('name(cupcake);kind(cold)')
+    expect(wrapper.vm.options.query.filter).toStrictEqual(
+      'name(cupcake);kind(cold)'
+    )
   })
 })

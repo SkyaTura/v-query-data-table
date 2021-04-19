@@ -124,7 +124,7 @@ describe('bulkActions.vue', () => {
     await wrapper.vm.$nextTick()
 
     expect(wrapper.emitted('action-bulk-remove')).toBeTruthy()
-    expect(wrapper.emitted('action-bulk-remove')).toEqual([
+    expect(wrapper.emitted('action-bulk-remove')).toStrictEqual([
       [props.values.selected],
     ])
   })

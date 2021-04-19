@@ -102,6 +102,6 @@ describe('cellValue.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.html()).toEqual('<td>Teste</td>')
+    expect(wrapper.html()).toStrictEqual('<td>Teste</td>')
   })
 })
