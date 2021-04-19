@@ -1,38 +1,35 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import DataTable from '@/components/VQueryDataTable/DataTable.vue'
 import Vuetify from 'vuetify'
 
 describe('DataTable.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+  let wrapper
 
   const props = {
     datatable: {
       disablePagination: false,
       dense: true,
-      items: [
-        { name: 'Teste 1' },
-        { name: 'Teste 2' },
-      ],
+      items: [{ name: 'Teste 1' }, { name: 'Teste 2' }],
     },
     headers: [
       {
         text: 'Ações',
-        value: '_actions'
+        value: '_actions',
       },
       {
         text: 'Teste',
-        value: 'name'
-      }
+        value: 'name',
+      },
     ],
     values: {
       selected: [],
     },
     query: {
-      search: "",
+      search: '',
     },
     slots: {
-      table: []
-    }
+      table: [],
+    },
   }
 
   beforeAll(() => {
@@ -42,8 +39,8 @@ describe('DataTable.vue', () => {
       vuetify,
       propsData: {
         options: {
-          ...props
-        }
+          ...props,
+        },
       },
     })
   })
@@ -54,12 +51,12 @@ describe('DataTable.vue', () => {
         ...props,
         datatable: {
           ...props.datatable,
-          items: []
+          items: [],
         },
         query: {
-          search: 'some text'
-        }
-      }
+          search: 'some text',
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -72,12 +69,12 @@ describe('DataTable.vue', () => {
         ...props,
         datatable: {
           ...props.datatable,
-          items: []
+          items: [],
         },
         query: {
-          search: ''
-        }
-      }
+          search: '',
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 

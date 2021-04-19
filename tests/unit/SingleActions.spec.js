@@ -1,10 +1,10 @@
-import { createLocalVue, mount, Wrapper } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import { mdiDotsHorizontal } from '@mdi/js'
 import SingleActions from '@/components/VQueryDataTable/SingleActions.vue'
 import Vuetify from 'vuetify'
 
 describe('SingleActions.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+  let wrapper
 
   const optionsProps = {
     hideTableActions: false,
@@ -13,13 +13,13 @@ describe('SingleActions.vue', () => {
       modify: {
         icon: 'edit',
         text: 'Editar',
-        quick: true
+        quick: true,
       },
       remove: {
         icon: 'delete',
-        text: 'Remover'
-      }
-    }
+        text: 'Remover',
+      },
+    },
   }
   const payloadProps = {
     value: 'test',
@@ -36,11 +36,11 @@ describe('SingleActions.vue', () => {
       vuetify,
       propsData: {
         options: {
-          ...optionsProps
+          ...optionsProps,
         },
         payload: {
-          ...payloadProps
-        }
+          ...payloadProps,
+        },
       },
       data() {
         return {
@@ -53,7 +53,9 @@ describe('SingleActions.vue', () => {
   })
 
   it('verify showing condition of quick actions', async () => {
-    expect(wrapper.findAllComponents({ name: 'v-btn' }).at(0).text()).toBe('edit')
+    expect(wrapper.findAllComponents({ name: 'v-btn' }).at(0).text()).toBe(
+      'edit'
+    )
 
     wrapper.setProps({
       payload: { ...payloadProps },
@@ -67,19 +69,21 @@ describe('SingleActions.vue', () => {
           remove: {
             icon: 'delete',
             text: 'Remover',
-          }
-        }
-      }
+          },
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findAllComponents({ name: 'v-btn' }).at(0).text()).not.toBe('edit')
+    expect(wrapper.findAllComponents({ name: 'v-btn' }).at(0).text()).not.toBe(
+      'edit'
+    )
   })
 
   it('verify emitted function when quick actions are clicked', async () => {
     wrapper.setProps({
       payload: { ...payloadProps },
-      options: { ...optionsProps }
+      options: { ...optionsProps },
     })
     await wrapper.vm.$nextTick()
 
@@ -102,7 +106,7 @@ describe('SingleActions.vue', () => {
       options: {
         ...optionsProps,
         hideTableActions: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -112,7 +116,7 @@ describe('SingleActions.vue', () => {
   it('verify emitted function when actions are clicked', async () => {
     wrapper.setProps({
       payload: { ...payloadProps },
-      options: {...optionsProps }
+      options: { ...optionsProps },
     })
     await wrapper.vm.$nextTick()
 

@@ -1,15 +1,15 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import TableFooter from '@/components/VQueryDataTable/TableFooter.vue'
 import Vuetify from 'vuetify'
 
 describe('TableFooter.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+  let wrapper
 
   const props = {
     disablePagination: false,
     query: {
       page: 1,
-      itemsPerPage: 10
+      itemsPerPage: 10,
     },
     pagination: {
       pagesCount: 1,
@@ -17,7 +17,7 @@ describe('TableFooter.vue', () => {
       totalCount: 10,
     },
     loading: {
-      active: false
+      active: false,
     },
   }
 
@@ -28,20 +28,22 @@ describe('TableFooter.vue', () => {
       vuetify,
       propsData: {
         options: {
-          ...props
-        }
+          ...props,
+        },
       },
     })
   })
 
   it('verify its showing condition', async () => {
-    expect(wrapper.findComponent({ name: 'v-pagination' }).exists()).toBeTruthy()
+    expect(
+      wrapper.findComponent({ name: 'v-pagination' }).exists()
+    ).toBeTruthy()
 
     wrapper.setProps({
       options: {
         ...props,
-        disablePagination: true
-      }
+        disablePagination: true,
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -52,7 +54,7 @@ describe('TableFooter.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -64,6 +66,8 @@ describe('TableFooter.vue', () => {
   })
 
   it('verify its text', () => {
-    expect(wrapper.find('.text-center').text()).toBe('Exibindo de 1 até 10 de 10 registros')
+    expect(wrapper.find('.text-center').text()).toBe(
+      'Exibindo de 1 até 10 de 10 registros'
+    )
   })
 })

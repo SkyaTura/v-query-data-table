@@ -1,14 +1,14 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import VQueryDataTable from '@/components/VQueryDataTable/VQueryDataTable.vue'
 
 describe('VQueryDataTable.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+  let wrapper
 
   beforeAll(() => {
     wrapper = shallowMount(VQueryDataTable, {
       propsData: {
-        headers: []
-      }
+        headers: [],
+      },
     })
   })
 
@@ -17,11 +17,13 @@ describe('VQueryDataTable.vue', () => {
       loading: {
         active: true,
         firstTime: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findComponent({ name: 'v-skeleton-loader' }).exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'v-skeleton-loader' }).exists()).toBe(
+      true
+    )
   })
 
   it('show table when app is not loading', async () => {
@@ -29,22 +31,24 @@ describe('VQueryDataTable.vue', () => {
       loading: {
         active: false,
         firstTime: false,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findComponent({ name: 'v-card' }).classes('VQueryDataTable')).toBe(true)
+    expect(
+      wrapper.findComponent({ name: 'v-card' }).classes('VQueryDataTable')
+    ).toBe(true)
   })
 
-  it('show description when its not empty', async() => {
+  it('show description when its not empty', async () => {
     wrapper.setData({
       loading: {
         active: false,
         firstTime: false,
-      }
+      },
     })
     wrapper.setProps({
-      description: 'Teste'
+      description: 'Teste',
     })
     await wrapper.vm.$nextTick()
 

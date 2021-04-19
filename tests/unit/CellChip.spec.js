@@ -1,18 +1,18 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import CellChip from '@/components/VQueryDataTable/CellChip.vue'
 import Vuetify from 'vuetify'
 
 describe('CellChip.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+  let wrapper
 
   const properties = {
     header: {
-      value: 'name'
+      value: 'name',
     },
     item: {
-      name: 'Teste Nome'
+      name: 'Teste Nome',
     },
-    value: 'Teste Nome'
+    value: 'Teste Nome',
   }
 
   const optionsProps = {}
@@ -21,7 +21,7 @@ describe('CellChip.vue', () => {
     value: 'Nome',
     text: 'name',
     $custom: {
-      template: 'chips'
+      template: 'chips',
     },
   }
 
@@ -35,17 +35,19 @@ describe('CellChip.vue', () => {
           ...optionsProps,
         },
         props: {
-          ...properties
+          ...properties,
         },
         header: {
           ...headerProps,
-        }
+        },
       },
     })
   })
 
   it('verify text of v-chip', () => {
-    expect(wrapper.findComponent({ name: 'v-chip' }).text()).toBe(properties.value)
+    expect(wrapper.findComponent({ name: 'v-chip' }).text()).toBe(
+      properties.value
+    )
   })
 
   it('verify return of computed color', async () => {
@@ -54,15 +56,15 @@ describe('CellChip.vue', () => {
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { 
+      header: {
         ...headerProps,
         $custom: {
           template: 'chips',
           color: () => {
             return 'green'
-          }
+          },
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -71,13 +73,13 @@ describe('CellChip.vue', () => {
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { 
+      header: {
         ...headerProps,
         $custom: {
           template: 'chips',
           color: 'blue',
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -90,14 +92,15 @@ describe('CellChip.vue', () => {
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { ...headerProps,
+      header: {
+        ...headerProps,
         $custom: {
           template: 'chips',
-          format: (value: string, _: {}) => {
+          format: (value, _) => {
             return value.toUpperCase()
-          }
+          },
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -110,13 +113,13 @@ describe('CellChip.vue', () => {
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { 
+      header: {
         ...headerProps,
         $custom: {
           template: 'chips',
           color: 'blue',
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 

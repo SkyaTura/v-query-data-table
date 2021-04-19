@@ -1,9 +1,9 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import TableMenu from '@/components/VQueryDataTable/TableMenu.vue'
 import Vuetify from 'vuetify'
 
 describe('TableMenu.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+  let wrapper
 
   const cleanRefreshMock = jest.fn()
   const toggleDenseMock = jest.fn()
@@ -17,8 +17,8 @@ describe('TableMenu.vue', () => {
       add: {
         icon: 'add',
         text: 'Novo item',
-        color: 'primary'
-      }
+        color: 'primary',
+      },
     },
     fetch: true,
     cleanRefresh: cleanRefreshMock,
@@ -28,11 +28,11 @@ describe('TableMenu.vue', () => {
     disallowKeepGroupedColumns: false,
     toggleKeepGroupedColumns: toggleKeepGroupedColumnsMock,
     datatable: {
-      dense: false
+      dense: false,
     },
     disablePagination: false,
     query: {
-      itemsPerPage: 10
+      itemsPerPage: 10,
     },
   }
 
@@ -43,8 +43,8 @@ describe('TableMenu.vue', () => {
       vuetify,
       propsData: {
         options: {
-          ...props
-        }
+          ...props,
+        },
       },
     })
   })
@@ -57,7 +57,7 @@ describe('TableMenu.vue', () => {
       options: {
         ...props,
         hideTableActions: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -69,7 +69,7 @@ describe('TableMenu.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -91,7 +91,7 @@ describe('TableMenu.vue', () => {
       options: {
         ...props,
         fetch: false,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -103,7 +103,7 @@ describe('TableMenu.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -123,7 +123,7 @@ describe('TableMenu.vue', () => {
       options: {
         ...props,
         disallowDense: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -135,7 +135,7 @@ describe('TableMenu.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -155,12 +155,12 @@ describe('TableMenu.vue', () => {
       options: {
         ...props,
         datatable: {
-          dense: true
+          dense: true,
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
-    
+
     const newListItem = wrapper.findAllComponents({ name: 'v-list-item' })
     expect(newListItem.at(2).text()).toBe('unfold_moreListagem normal')
   })
@@ -174,7 +174,7 @@ describe('TableMenu.vue', () => {
         ...props,
         disallowGroups: true,
         disallowKeepGroupedColumns: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -186,7 +186,7 @@ describe('TableMenu.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -206,12 +206,14 @@ describe('TableMenu.vue', () => {
       options: {
         ...props,
         disablePagination: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
     const newListItems = wrapper.findAllComponents({ name: 'v-list-item' })
-    expect(newListItems.at(newListItems.length - 1).text()).toBe('folderManter colunas agrupadas')
+    expect(newListItems.at(newListItems.length - 1).text()).toBe(
+      'folderManter colunas agrupadas'
+    )
   })
 
   it('verify the parameter on setItemsPerPage', async (done) => {
@@ -220,7 +222,7 @@ describe('TableMenu.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -235,7 +237,10 @@ describe('TableMenu.vue', () => {
       newListItems.at(listItems.length - 1).vm.$emit('click')
       await wrapper.vm.$nextTick()
 
-      expect(Storage.prototype.setItem).toHaveBeenCalledWith('v-query-data-table:itemsPerPage', 100)
+      expect(Storage.prototype.setItem).toHaveBeenCalledWith(
+        'v-query-data-table:itemsPerPage',
+        100
+      )
       done()
     })
   })

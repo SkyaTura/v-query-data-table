@@ -1,9 +1,9 @@
-import { createLocalVue, mount, Wrapper } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import TableFab from '@/components/VQueryDataTable/TableFab.vue'
 import Vuetify from 'vuetify'
 
 describe('TableFab.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+  let wrapper
 
   const props = {
     tableActions: {
@@ -11,14 +11,14 @@ describe('TableFab.vue', () => {
         icon: 'add',
         text: 'Novo item',
         fab: true,
-        color: 'primary'
+        color: 'primary',
       },
     },
     hideTableFAB: false,
     hideAllActions: false,
     loading: {
       active: false,
-    }
+    },
   }
 
   beforeAll(() => {
@@ -32,8 +32,8 @@ describe('TableFab.vue', () => {
       localVue,
       propsData: {
         options: {
-          ...props
-        }
+          ...props,
+        },
       },
       stubs: {
         transition: true,
@@ -52,10 +52,10 @@ describe('TableFab.vue', () => {
             icon: 'add',
             text: 'Novo item',
             fab: false,
-            color: 'primary'
-          }
-        }
-      }
+            color: 'primary',
+          },
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -66,16 +66,16 @@ describe('TableFab.vue', () => {
     wrapper.setProps({
       options: {
         ...props,
-        hideTableFAB: true
-      }
+        hideTableFAB: true,
+      },
     })
     await wrapper.vm.$nextTick()
     expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeFalsy()
 
     wrapper.setProps({
       options: {
-        ...props
-      }
+        ...props,
+      },
     })
     await wrapper.vm.$nextTick()
     expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeTruthy()
@@ -110,25 +110,25 @@ describe('TableFab.vue', () => {
         icon: 'add',
         text: 'Novo item',
         fab: true,
-        color: 'primary'
+        color: 'primary',
       },
       remove: {
         icon: 'delete',
         text: 'Excluir item',
         fab: true,
-        color: 'primary'
-      }
+        color: 'primary',
+      },
     }
 
     wrapper.setProps({
       options: {
         ...props,
         tableActions: {
-          ...actions
-        }
-      }
+          ...actions,
+        },
+      },
     })
-    
+
     expect(wrapper.vm.fab[0]).toEqual('add')
     expect(wrapper.vm.fab[1]).toEqual(actions.add)
   })
