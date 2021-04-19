@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import CellChip from '@/components/VQueryDataTable/CellChip.vue'
 import Vuetify from 'vuetify'
 
-describe('CellChip.vue', () => {
+describe('cellChip.vue', () => {
   let wrapper
 
   const properties = {
@@ -45,13 +45,15 @@ describe('CellChip.vue', () => {
   })
 
   it('verify text of v-chip', () => {
+    expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-chip' }).text()).toBe(
       properties.value
     )
   })
 
   it('verify return of computed color', async () => {
-    expect(wrapper.vm.color).toBe(undefined)
+    expect.hasAssertions()
+    expect(wrapper.vm.color).toBeUndefined()
 
     wrapper.setProps({
       options: { ...optionsProps },
@@ -87,6 +89,7 @@ describe('CellChip.vue', () => {
   })
 
   it('verify return of computed text', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.text).toBe(properties.value)
 
     wrapper.setProps({
@@ -108,6 +111,7 @@ describe('CellChip.vue', () => {
   })
 
   it('verify return of computed attrs', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.attrs).toEqual({ small: true, color: undefined })
 
     wrapper.setProps({

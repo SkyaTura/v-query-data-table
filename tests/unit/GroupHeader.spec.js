@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import GroupHeader from '@/components/VQueryDataTable/GroupHeader.vue'
 import Vuetify from 'vuetify'
 
-describe('RowHeader.vue', () => {
+describe('rowHeader.vue', () => {
   let wrapper
 
   const props = {
@@ -64,10 +64,13 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify group header text', () => {
+    expect.hasAssertions()
     expect(wrapper.findAll('span').at(0).text()).toBe('Teste:\u00A01')
   })
 
   it('verify showing condition of icons', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -96,6 +99,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify showing condition of sort icon', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -138,6 +143,7 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify class of sort icon', async () => {
+    expect.hasAssertions()
     expect(wrapper.find('.customHeader-actions-sort').classes()).not.toContain(
       'sorted'
     )
@@ -162,6 +168,7 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify class of sort icon', async () => {
+    expect.hasAssertions()
     expect(
       wrapper.findAllComponents({ name: 'v-icon' }).at(0).classes()
     ).not.toContain('invertable-inverted')
@@ -187,6 +194,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify click on close icon', async () => {
+    expect.hasAssertions()
+
     wrapper.findAllComponents({ name: 'v-btn' }).at(1).trigger('click')
     await wrapper.vm.$nextTick()
 
@@ -194,7 +203,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify click on close icon', async () => {
-    expect(wrapper.findAllComponents({ name: 'v-tooltip' }).length).toBe(3)
+    expect.hasAssertions()
+    expect(wrapper.findAllComponents({ name: 'v-tooltip' })).toHaveLength(3)
 
     wrapper.setProps({
       options: {
@@ -207,10 +217,12 @@ describe('RowHeader.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findAllComponents({ name: 'v-tooltip' }).length).toBe(2)
+    expect(wrapper.findAllComponents({ name: 'v-tooltip' })).toHaveLength(2)
   })
 
   it('verify click on close icon', async (done) => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -226,12 +238,16 @@ describe('RowHeader.vue', () => {
 
     requestAnimationFrame(() => {
       const spans = wrapper.findAll('span')
+
       expect(spans.at(spans.length - 2).text()).toEqual('Recolher')
+
       done()
     })
   })
 
   it('verify click on close icon when isOpen is false', async (done) => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -248,12 +264,16 @@ describe('RowHeader.vue', () => {
 
     requestAnimationFrame(() => {
       const spans = wrapper.findAll('span')
+
       expect(spans.at(spans.length - 2).text()).toEqual('Expandir')
+
       done()
     })
   })
 
   it('verify click on expand icon', async () => {
+    expect.hasAssertions()
+
     wrapper.findAllComponents({ name: 'v-btn' }).at(2).trigger('click')
     await wrapper.vm.$nextTick()
 
@@ -261,6 +281,7 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify class of expand icon', async () => {
+    expect.hasAssertions()
     expect(
       wrapper.findAllComponents({ name: 'v-icon' }).at(2).classes()
     ).not.toContain('invertable-inverted')
@@ -282,6 +303,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify the return value from groupHeader', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -300,6 +323,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify the return value from groupHeaderSort', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -318,6 +343,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify the return value from getGroupHeader', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -336,6 +363,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify the result of sortGroupHeader', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -347,6 +376,7 @@ describe('RowHeader.vue', () => {
     await wrapper.vm.$nextTick()
 
     wrapper.vm.sortGroupHeader()
+
     expect(wrapper.vm.$props.options.query).toEqual({
       sortBy: ['test'],
       sortDesc: [false],
@@ -355,6 +385,7 @@ describe('RowHeader.vue', () => {
     })
 
     wrapper.vm.sortGroupHeader()
+
     expect(wrapper.vm.$props.options.query).toEqual({
       sortBy: ['test'],
       sortDesc: [true],
@@ -363,6 +394,7 @@ describe('RowHeader.vue', () => {
     })
 
     wrapper.vm.sortGroupHeader()
+
     expect(wrapper.vm.$props.options.query).toEqual({
       sortBy: [],
       sortDesc: [],

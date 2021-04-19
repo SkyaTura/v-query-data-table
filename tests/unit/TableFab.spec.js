@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import TableFab from '@/components/VQueryDataTable/TableFab.vue'
 import Vuetify from 'vuetify'
 
-describe('TableFab.vue', () => {
+describe('tableFab.vue', () => {
   let wrapper
 
   const props = {
@@ -42,6 +42,7 @@ describe('TableFab.vue', () => {
   })
 
   it('verify its showing condition', async () => {
+    expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-tooltip' }).exists()).toBeTruthy()
 
     wrapper.setProps({
@@ -63,6 +64,8 @@ describe('TableFab.vue', () => {
   })
 
   it("verify the button's condition of exhibition", async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -70,6 +73,7 @@ describe('TableFab.vue', () => {
       },
     })
     await wrapper.vm.$nextTick()
+
     expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeFalsy()
 
     wrapper.setProps({
@@ -78,20 +82,25 @@ describe('TableFab.vue', () => {
       },
     })
     await wrapper.vm.$nextTick()
+
     expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeTruthy()
   })
 
   it('verify the text on tooltip', async (done) => {
+    expect.hasAssertions()
+
     wrapper.findComponent({ name: 'v-btn' }).trigger('mouseenter')
     await wrapper.vm.$nextTick()
 
     requestAnimationFrame(() => {
       expect(wrapper.find('#tooltipText').text()).toEqual('Novo item')
+
       done()
     })
   })
 
   it('verify the emitted function on button click', async () => {
+    expect.hasAssertions()
     expect(wrapper.emitted()).not.toHaveProperty('action-table-add')
 
     wrapper.findComponent({ name: 'v-btn' }).trigger('click')
@@ -101,10 +110,13 @@ describe('TableFab.vue', () => {
   })
 
   it('verify the showed icon', () => {
+    expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-icon' }).text()).toEqual('add')
   })
 
   it('verify the return of fab', () => {
+    expect.hasAssertions()
+
     const actions = {
       add: {
         icon: 'add',

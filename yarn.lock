@@ -1234,10 +1234,10 @@
     "mem" "^8.0.0"
     "php-parser" "3.0.2"
 
-"@prettier/plugin-pug@^1.13.3":
-  "integrity" "sha512-Tw4Sg6dvPDKrZ2kunAcqRYsecbHVZVluSwJrXp9XtQaIXRlBAR+yI4aRIAXj2Fnulhz3Rakyv/GLmejj43GkCw=="
-  "resolved" "https://registry.npmjs.org/@prettier/plugin-pug/-/plugin-pug-1.13.3.tgz"
-  "version" "1.13.3"
+"@prettier/plugin-pug@^1.13.3", "@prettier/plugin-pug@^1.13.5":
+  "integrity" "sha512-6t9cDDm2aPn6Q8Q8i8DLf9KkyqcrFV3zGA9t88kobLTdZOFV5f2aSJVKap1oz0Lhyo7PilrjtxndiP1DBVzRjg=="
+  "resolved" "https://registry.npmjs.org/@prettier/plugin-pug/-/plugin-pug-1.13.5.tgz"
+  "version" "1.13.5"
   dependencies:
     "pug-lexer" "^5.0.0"
 

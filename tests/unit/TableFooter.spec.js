@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import TableFooter from '@/components/VQueryDataTable/TableFooter.vue'
 import Vuetify from 'vuetify'
 
-describe('TableFooter.vue', () => {
+describe('tableFooter.vue', () => {
   let wrapper
 
   const props = {
@@ -35,6 +35,7 @@ describe('TableFooter.vue', () => {
   })
 
   it('verify its showing condition', async () => {
+    expect.hasAssertions()
     expect(
       wrapper.findComponent({ name: 'v-pagination' }).exists()
     ).toBeTruthy()
@@ -51,6 +52,8 @@ describe('TableFooter.vue', () => {
   })
 
   it('verify the return value of showingFrom', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -62,10 +65,12 @@ describe('TableFooter.vue', () => {
   })
 
   it('verify the return value of showingUntil', () => {
+    expect.hasAssertions()
     expect(wrapper.vm.showingUntil).toBe(10)
   })
 
   it('verify its text', () => {
+    expect.hasAssertions()
     expect(wrapper.find('.text-center').text()).toBe(
       'Exibindo de 1 até 10 de 10 registros'
     )

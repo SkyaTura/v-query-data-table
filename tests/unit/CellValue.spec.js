@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import CellValue from '@/components/VQueryDataTable/CellValue.vue'
 import Vuetify from 'vuetify'
 
-describe('CellValue.vue', () => {
+describe('cellValue.vue', () => {
   let wrapper
 
   const properties = {
@@ -33,6 +33,8 @@ describe('CellValue.vue', () => {
   })
 
   it('verify showing condition of SingleActions', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       props: {
         ...properties,
@@ -50,6 +52,8 @@ describe('CellValue.vue', () => {
   })
 
   it('verify showing condition of CellAvatar', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       props: {
         ...properties,
@@ -67,6 +71,8 @@ describe('CellValue.vue', () => {
   })
 
   it('verify showing condition of CellChip', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       props: {
         ...properties,
@@ -84,6 +90,8 @@ describe('CellValue.vue', () => {
   })
 
   it('verify showing condition of default text', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       props: {
         ...properties,

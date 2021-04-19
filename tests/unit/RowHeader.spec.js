@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import RowHeader from '@/components/VQueryDataTable/RowHeader.vue'
 import Vuetify from 'vuetify'
 
-describe('RowHeader.vue', () => {
+describe('rowHeader.vue', () => {
   let wrapper
 
   const setGroupByMock = jest.fn()
@@ -43,10 +43,12 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify header text', () => {
+    expect.hasAssertions()
     expect(wrapper.find('.customHeader-text').text()).toBe('Teste')
   })
 
   it('verify sort icon showing condition', async () => {
+    expect.hasAssertions()
     expect(wrapper.find('.customHeader-actions-sort').exists()).toBeFalsy()
 
     wrapper.setProps({
@@ -64,6 +66,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify the class of span container of sort icon', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -85,6 +89,7 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify group icon showing condition', async () => {
+    expect.hasAssertions()
     expect(wrapper.find('.customHeader-actions-group').exists()).toBeFalsy()
 
     wrapper.setProps({
@@ -102,6 +107,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify the class of span container of sort icon', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -123,6 +130,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify the class of span container of sort icon', async () => {
+    expect.hasAssertions()
+
     wrapper.vm.setGroupBy = setGroupByMock
     wrapper.find('.customHeader-actions-group').trigger('click')
     await wrapper.vm.$nextTick()
@@ -134,6 +143,8 @@ describe('RowHeader.vue', () => {
   })
 
   it('verify the return value from getHeaderGroup', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -150,6 +161,7 @@ describe('RowHeader.vue', () => {
     await wrapper.vm.$nextTick()
 
     const responseExpectToBeFalse = wrapper.vm.getHeaderGroup(headerProps)
+
     expect(responseExpectToBeFalse).toEqual({ grouped: false })
 
     wrapper.setProps({
@@ -168,10 +180,13 @@ describe('RowHeader.vue', () => {
     await wrapper.vm.$nextTick()
 
     const responseExpectToBeTrue = wrapper.vm.getHeaderGroup(headerProps)
+
     expect(responseExpectToBeTrue).toEqual({ grouped: true })
   })
 
   it('verify the return value from getHeaderSort', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -189,6 +204,7 @@ describe('RowHeader.vue', () => {
     await wrapper.vm.$nextTick()
 
     const responseExpectToBeFalse = wrapper.vm.getHeaderSort(headerProps)
+
     expect(responseExpectToBeFalse).toEqual({
       desc: false,
       sorted: false,
@@ -212,6 +228,7 @@ describe('RowHeader.vue', () => {
     await wrapper.vm.$nextTick()
 
     const responseExpectToBeTrue = wrapper.vm.getHeaderSort(headerProps)
+
     expect(responseExpectToBeTrue).toEqual({
       desc: true,
       sorted: true,

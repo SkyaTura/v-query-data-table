@@ -3,7 +3,7 @@ import { mdiDotsHorizontal } from '@mdi/js'
 import SingleActions from '@/components/VQueryDataTable/SingleActions.vue'
 import Vuetify from 'vuetify'
 
-describe('SingleActions.vue', () => {
+describe('singleActions.vue', () => {
   let wrapper
 
   const optionsProps = {
@@ -53,6 +53,7 @@ describe('SingleActions.vue', () => {
   })
 
   it('verify showing condition of quick actions', async () => {
+    expect.hasAssertions()
     expect(wrapper.findAllComponents({ name: 'v-btn' }).at(0).text()).toBe(
       'edit'
     )
@@ -81,6 +82,8 @@ describe('SingleActions.vue', () => {
   })
 
   it('verify emitted function when quick actions are clicked', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       payload: { ...payloadProps },
       options: { ...optionsProps },
@@ -96,6 +99,8 @@ describe('SingleActions.vue', () => {
   })
 
   it('verify showing condition of actions', async () => {
+    expect.hasAssertions()
+
     wrapper.findAllComponents({ name: 'v-btn' }).at(1).trigger('click')
     await wrapper.vm.$nextTick()
 
@@ -114,6 +119,8 @@ describe('SingleActions.vue', () => {
   })
 
   it('verify emitted function when actions are clicked', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       payload: { ...payloadProps },
       options: { ...optionsProps },

@@ -1,20 +1,21 @@
-import Mongoose from 'mongoose'
-import Express from 'express'
+/* eslint-disable */
+import Mongoose from "mongoose";
+import Express from "express";
 
 export default async () => {
-  const connection = Mongoose.connect(
-    'mongodb://root:example@localhost/admin',
+  const connection = await Mongoose.connect(
+    "mongodb://root:example@localhost/admin",
     {
-      dbName: 'DataTable',
+      dbName: "DataTable",
       useNewUrlParser: true,
       useCreateIndex: true,
       useFindAndModify: false,
       useUnifiedTopology: true,
     }
-  )
-  const app = Express()
+  );
+  const app = Express();
 
-  app.listen(8081, () => console.log('Listening'))
+  app.listen(8081, () => console.log("Listening"));
 
-  return app
-}
+  return app;
+};

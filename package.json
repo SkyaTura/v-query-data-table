@@ -19,6 +19,7 @@
   "devDependencies": {
     "@emiolo/eslint-config": "^1.2.6",
     "@emiolo/mongoose-query-data-table": "^0.0.7",
+    "@prettier/plugin-pug": "^1.13.5",
     "@vue/cli-plugin-babel": "~4.5.12",
     "@vue/cli-plugin-unit-jest": "^4.5.12",
     "@vue/cli-service": "^4.5.12",

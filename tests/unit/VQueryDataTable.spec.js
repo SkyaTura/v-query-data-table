@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import VQueryDataTable from '@/components/VQueryDataTable/VQueryDataTable.vue'
 
-describe('VQueryDataTable.vue', () => {
+describe('vQueryDataTable.vue', () => {
   let wrapper
 
   beforeAll(() => {
@@ -13,6 +13,8 @@ describe('VQueryDataTable.vue', () => {
   })
 
   it('show skeleton when app is loading', async () => {
+    expect.hasAssertions()
+
     wrapper.setData({
       loading: {
         active: true,
@@ -27,6 +29,8 @@ describe('VQueryDataTable.vue', () => {
   })
 
   it('show table when app is not loading', async () => {
+    expect.hasAssertions()
+
     wrapper.setData({
       loading: {
         active: false,
@@ -41,6 +45,8 @@ describe('VQueryDataTable.vue', () => {
   })
 
   it('show description when its not empty', async () => {
+    expect.hasAssertions()
+
     wrapper.setData({
       loading: {
         active: false,

@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import CellAvatar from '@/components/VQueryDataTable/CellAvatar.vue'
 import Vuetify from 'vuetify'
 
-describe('CellAvatar.vue', () => {
+describe('cellAvatar.vue', () => {
   let wrapper
 
   const properties = {
@@ -48,12 +48,14 @@ describe('CellAvatar.vue', () => {
   })
 
   it('verify showing of image', () => {
+    expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-img' }).attributes('src')).toBe(
       properties.value
     )
   })
 
   it('verify return of computed image', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.image).toBe(properties.value)
 
     wrapper.setProps({
@@ -77,6 +79,7 @@ describe('CellAvatar.vue', () => {
   })
 
   it('verify return of computed attrs', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.attrs).toEqual({ size: 48 })
 
     wrapper.setProps({

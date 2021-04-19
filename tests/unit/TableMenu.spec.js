@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import TableMenu from '@/components/VQueryDataTable/TableMenu.vue'
 import Vuetify from 'vuetify'
 
-describe('TableMenu.vue', () => {
+describe('tableMenu.vue', () => {
   let wrapper
 
   const cleanRefreshMock = jest.fn()
@@ -50,7 +50,10 @@ describe('TableMenu.vue', () => {
   })
 
   it('verify table actions showing condition', async () => {
+    expect.hasAssertions()
+
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(listItems.at(0).text()).toBe('addNovo item')
 
     wrapper.setProps({
@@ -62,10 +65,13 @@ describe('TableMenu.vue', () => {
     await wrapper.vm.$nextTick()
 
     const newListItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(newListItems.at(0).text()).not.toBe('addNovo item')
   })
 
   it('verify the emitted function when bulk action is clicked', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -84,7 +90,10 @@ describe('TableMenu.vue', () => {
   })
 
   it('verify showing condition of refresh item', async () => {
+    expect.hasAssertions()
+
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(listItems.at(1).text()).toBe('refreshAtualizar')
 
     wrapper.setProps({
@@ -96,10 +105,13 @@ describe('TableMenu.vue', () => {
     await wrapper.vm.$nextTick()
 
     const newListItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(newListItems.at(1).text()).not.toBe('refreshAtualizar')
   })
 
   it('verify if function is called when refresh is clicked', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -116,7 +128,10 @@ describe('TableMenu.vue', () => {
   })
 
   it('verify showing condition of toggle dense item', async () => {
+    expect.hasAssertions()
+
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(listItems.at(2).text()).toBe('unfold_lessListagem densa')
 
     wrapper.setProps({
@@ -128,10 +143,13 @@ describe('TableMenu.vue', () => {
     await wrapper.vm.$nextTick()
 
     const newListItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(newListItems.at(2).text()).not.toBe('unfold_lessListagem densa')
   })
 
   it('verify if function is called when toggle dense item is clicked', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -148,7 +166,10 @@ describe('TableMenu.vue', () => {
   })
 
   it('verify the text on toggle dense item', async () => {
+    expect.hasAssertions()
+
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(listItems.at(2).text()).toBe('unfold_lessListagem densa')
 
     wrapper.setProps({
@@ -162,11 +183,15 @@ describe('TableMenu.vue', () => {
     await wrapper.vm.$nextTick()
 
     const newListItem = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(newListItem.at(2).text()).toBe('unfold_moreListagem normal')
   })
 
   it('verify showing condition of group item', async () => {
+    expect.hasAssertions()
+
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(listItems.at(3).text()).toBe('folderManter colunas agrupadas')
 
     wrapper.setProps({
@@ -179,10 +204,13 @@ describe('TableMenu.vue', () => {
     await wrapper.vm.$nextTick()
 
     const newListItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(newListItems.at(3).text()).not.toBe('folderManter colunas agrupadas')
   })
 
   it('verify if function is called when group item is clicked', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -199,7 +227,10 @@ describe('TableMenu.vue', () => {
   })
 
   it('verify showing condition of pagination item', async () => {
+    expect.hasAssertions()
+
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(listItems.at(listItems.length - 1).text()).toBe('100')
 
     wrapper.setProps({
@@ -211,13 +242,17 @@ describe('TableMenu.vue', () => {
     await wrapper.vm.$nextTick()
 
     const newListItems = wrapper.findAllComponents({ name: 'v-list-item' })
+
     expect(newListItems.at(newListItems.length - 1).text()).toBe(
       'folderManter colunas agrupadas'
     )
   })
 
+  // eslint-disable-next-line jest/no-done-callback
   it('verify the parameter on setItemsPerPage', async (done) => {
-    Storage.prototype.setItem = jest.fn()
+    expect.hasAssertions()
+
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation()
 
     wrapper.setProps({
       options: {
@@ -241,6 +276,7 @@ describe('TableMenu.vue', () => {
         'v-query-data-table:itemsPerPage',
         100
       )
+
       done()
     })
   })

@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import TableDrawer from '@/components/VQueryDataTable/TableDrawer.vue'
 import Vuetify from 'vuetify'
 
-describe('TableDrawer.vue', () => {
+describe('tableDrawer.vue', () => {
   let wrapper
 
   const props = {
@@ -77,6 +77,7 @@ describe('TableDrawer.vue', () => {
   })
 
   it('verify filter operator value', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.options.filter.operator).toEqual(',')
 
     const radios = wrapper.findAllComponents({ name: 'v-radio' })
@@ -84,13 +85,16 @@ describe('TableDrawer.vue', () => {
     const radio2 = radios.at(1)
 
     await radio2.vm.$emit('change')
+
     expect(wrapper.vm.options.filter.operator).toEqual(';')
 
     await radio1.vm.$emit('change')
+
     expect(wrapper.vm.options.filter.operator).toEqual(',')
   })
 
   it('verify showing condition of range slider', async () => {
+    expect.hasAssertions()
     expect(
       wrapper.findComponent({ name: 'v-range-slider' }).exists()
     ).toBeTruthy()
@@ -132,13 +136,19 @@ describe('TableDrawer.vue', () => {
   })
 
   it('verify showing condition of autocompletes', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({ options: { ...props } })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findAllComponents({ name: 'v-autocomplete' }).length).toBe(3)
+    expect(wrapper.findAllComponents({ name: 'v-autocomplete' })).toHaveLength(
+      3
+    )
   })
 
   it('verify click on clear filters', async () => {
+    expect.hasAssertions()
+
     wrapper.vm.options.filter.values = { name: 'ice cream' }
 
     wrapper.findComponent({ name: 'v-btn' }).trigger('click')
@@ -148,6 +158,7 @@ describe('TableDrawer.vue', () => {
   })
 
   it('verify return value of filterableHeaders', () => {
+    expect.hasAssertions()
     expect(wrapper.vm.filterableHeaders).toEqual([
       {
         text: 'Dessert (100g serving)',
@@ -182,6 +193,8 @@ describe('TableDrawer.vue', () => {
   })
 
   it('verify return value of sortFilterItems', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -212,6 +225,8 @@ describe('TableDrawer.vue', () => {
   })
 
   it('verify return value of autocomplete', () => {
+    expect.hasAssertions()
+
     const response = wrapper.vm.autocompleteItem(
       { count: 2, value: 'cold', text: 'cold' },
       {
@@ -227,6 +242,7 @@ describe('TableDrawer.vue', () => {
         },
       }
     )
+
     expect(response).toEqual('Gelado')
 
     const response2 = wrapper.vm.autocompleteItem(
@@ -244,6 +260,7 @@ describe('TableDrawer.vue', () => {
         },
       }
     )
+
     expect(response2).toEqual('GELADO')
 
     const response3 = wrapper.vm.autocompleteItem(
@@ -257,6 +274,7 @@ describe('TableDrawer.vue', () => {
         },
       }
     )
+
     expect(response3).toEqual('Teste')
 
     const response4 = wrapper.vm.autocompleteItem(
@@ -269,10 +287,12 @@ describe('TableDrawer.vue', () => {
         },
       }
     )
+
     expect(response4).toEqual('cold')
   })
 
   it('verify return value of getFieldMin', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.getFieldMin('calories')).toEqual(0)
 
     wrapper.setProps({
@@ -293,11 +313,15 @@ describe('TableDrawer.vue', () => {
     await wrapper.vm.$nextTick()
 
     const response = wrapper.vm.getFieldMin('calories')
+
     expect(response).toEqual(200)
   })
 
   it('verify return value of getFieldMax', async () => {
+    expect.hasAssertions()
+
     const response = wrapper.vm.getFieldMax('calories')
+
     expect(response).toEqual(400)
 
     wrapper.setProps({
@@ -309,6 +333,8 @@ describe('TableDrawer.vue', () => {
   })
 
   it('verify the changes on options.filter watch', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,

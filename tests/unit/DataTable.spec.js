@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import DataTable from '@/components/VQueryDataTable/DataTable.vue'
 import Vuetify from 'vuetify'
 
-describe('DataTable.vue', () => {
+describe('dataTable.vue', () => {
   let wrapper
 
   const props = {
@@ -46,6 +46,8 @@ describe('DataTable.vue', () => {
   })
 
   it('verify message when search return no data', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -64,6 +66,8 @@ describe('DataTable.vue', () => {
   })
 
   it('verify message when its has no data', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
