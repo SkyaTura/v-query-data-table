@@ -1,9 +1,9 @@
-import { createLocalVue, mount, Wrapper } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import TableFab from '@/components/VQueryDataTable/TableFab.vue'
 import Vuetify from 'vuetify'
 
-describe('TableFab.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+describe('tableFab.vue', () => {
+  let wrapper
 
   const props = {
     tableActions: {
@@ -11,14 +11,14 @@ describe('TableFab.vue', () => {
         icon: 'add',
         text: 'Novo item',
         fab: true,
-        color: 'primary'
+        color: 'primary',
       },
     },
     hideTableFAB: false,
     hideAllActions: false,
     loading: {
       active: false,
-    }
+    },
   }
 
   beforeAll(() => {
@@ -32,8 +32,8 @@ describe('TableFab.vue', () => {
       localVue,
       propsData: {
         options: {
-          ...props
-        }
+          ...props,
+        },
       },
       stubs: {
         transition: true,
@@ -42,6 +42,7 @@ describe('TableFab.vue', () => {
   })
 
   it('verify its showing condition', async () => {
+    expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-tooltip' }).exists()).toBeTruthy()
 
     wrapper.setProps({
@@ -52,10 +53,10 @@ describe('TableFab.vue', () => {
             icon: 'add',
             text: 'Novo item',
             fab: false,
-            color: 'primary'
-          }
-        }
-      }
+            color: 'primary',
+          },
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -63,35 +64,44 @@ describe('TableFab.vue', () => {
   })
 
   it("verify the button's condition of exhibition", async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
-        hideTableFAB: true
-      }
+        hideTableFAB: true,
+      },
     })
     await wrapper.vm.$nextTick()
+
     expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeFalsy()
 
     wrapper.setProps({
       options: {
-        ...props
-      }
+        ...props,
+      },
     })
     await wrapper.vm.$nextTick()
+
     expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeTruthy()
   })
 
+  // eslint-disable-next-line jest/no-done-callback
   it('verify the text on tooltip', async (done) => {
+    expect.hasAssertions()
+
     wrapper.findComponent({ name: 'v-btn' }).trigger('mouseenter')
     await wrapper.vm.$nextTick()
 
     requestAnimationFrame(() => {
-      expect(wrapper.find('#tooltipText').text()).toEqual('Novo item')
+      expect(wrapper.find('#tooltipText').text()).toStrictEqual('Novo item')
+
       done()
     })
   })
 
   it('verify the emitted function on button click', async () => {
+    expect.hasAssertions()
     expect(wrapper.emitted()).not.toHaveProperty('action-table-add')
 
     wrapper.findComponent({ name: 'v-btn' }).trigger('click')
@@ -101,35 +111,40 @@ describe('TableFab.vue', () => {
   })
 
   it('verify the showed icon', () => {
-    expect(wrapper.findComponent({ name: 'v-icon' }).text()).toEqual('add')
+    expect.hasAssertions()
+    expect(wrapper.findComponent({ name: 'v-icon' }).text()).toStrictEqual(
+      'add'
+    )
   })
 
   it('verify the return of fab', () => {
+    expect.hasAssertions()
+
     const actions = {
       add: {
         icon: 'add',
         text: 'Novo item',
         fab: true,
-        color: 'primary'
+        color: 'primary',
       },
       remove: {
         icon: 'delete',
         text: 'Excluir item',
         fab: true,
-        color: 'primary'
-      }
+        color: 'primary',
+      },
     }
 
     wrapper.setProps({
       options: {
         ...props,
         tableActions: {
-          ...actions
-        }
-      }
+          ...actions,
+        },
+      },
     })
-    
-    expect(wrapper.vm.fab[0]).toEqual('add')
-    expect(wrapper.vm.fab[1]).toEqual(actions.add)
+
+    expect(wrapper.vm.fab[0]).toStrictEqual('add')
+    expect(wrapper.vm.fab[1]).toStrictEqual(actions.add)
   })
 })

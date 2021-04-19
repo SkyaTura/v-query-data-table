@@ -1,10 +1,10 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import { mdiFilter, mdiDotsHorizontal, mdiMagnify } from '@mdi/js'
 import TableHeader from '@/components/VQueryDataTable/TableHeader.vue'
 import Vuetify from 'vuetify'
 
-describe('TableHeader.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+describe('tableHeader.vue', () => {
+  let wrapper
 
   const props = {
     hideHeader: false,
@@ -20,20 +20,20 @@ describe('TableHeader.vue', () => {
       active: false,
     },
     query: {
-      search: ''
+      search: '',
     },
     tableActions: {
       add: {
         icon: 'add',
         text: 'Novo item',
         quick: true,
-        color: 'primary'
+        color: 'primary',
       },
       delete: {
         icon: 'delete',
         text: 'Excluir',
-        color: 'red'
-      }
+        color: 'red',
+      },
     },
     filter: {
       drawer: false,
@@ -48,8 +48,8 @@ describe('TableHeader.vue', () => {
       vuetify,
       propsData: {
         options: {
-          ...props
-        }
+          ...props,
+        },
       },
       data() {
         return {
@@ -64,7 +64,8 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify initial data', () => {
-    expect(wrapper.vm.icons).toEqual({
+    expect.hasAssertions()
+    expect(wrapper.vm.icons).toStrictEqual({
       mdiFilter,
       mdiDotsHorizontal,
       mdiMagnify,
@@ -72,13 +73,14 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify its showing condition', async () => {
+    expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-toolbar' }).exists()).toBeTruthy()
 
     wrapper.setProps({
       options: {
         ...props,
         hideHeader: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -86,33 +88,38 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify its title', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
         title: 'Teste',
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
     expect(wrapper.find('.text-h4.font-weight-bold').text()).toBe('Teste')
   })
 
-  it('verify value of search input', async () => {
+  it('verify value of search input', () => {
+    expect.hasAssertions()
     expect(wrapper.vm.options.query.search).toBe('')
 
     wrapper.findComponent({ name: 'v-text-field' }).vm.$emit('input', 'Teste')
+
     expect(wrapper.vm.options.query.search).toBe('Teste')
   })
 
   it('verify showing condition of filter and three dots button', async () => {
+    expect.hasAssertions()
     expect(wrapper.findAll('.toolbar-item')).toHaveLength(3)
 
     wrapper.setProps({
-      options:{
+      options: {
         ...props,
         hideFilter: true,
-        hideMenu: true
-      }
+        hideMenu: true,
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -120,13 +127,16 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify showing condition of search input', async () => {
-    expect(wrapper.findComponent({ name: 'v-text-field' }).exists()).toBeTruthy()
+    expect.hasAssertions()
+    expect(
+      wrapper.findComponent({ name: 'v-text-field' }).exists()
+    ).toBeTruthy()
 
     wrapper.setProps({
-      options:{
+      options: {
         ...props,
-        hideSearch: true
-      }
+        hideSearch: true,
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -134,6 +144,7 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify exhibition of multiples quick actions', async () => {
+    expect.hasAssertions()
     expect(wrapper.findAll('.shrink.ml-3 v-btn-stub')).toHaveLength(1)
 
     wrapper.setProps({
@@ -144,16 +155,16 @@ describe('TableHeader.vue', () => {
             icon: 'add',
             text: 'Novo item',
             quick: true,
-            color: 'primary'
+            color: 'primary',
           },
           delete: {
             icon: 'delete',
             text: 'Excluir',
             quick: true,
-            color: 'red'
-          }
-        }
-      }
+            color: 'red',
+          },
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -161,13 +172,14 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify showing condition of quick actions', async () => {
+    expect.hasAssertions()
     expect(wrapper.find('.shrink.ml-3').exists()).toBeTruthy()
 
     wrapper.setProps({
       options: {
         ...props,
-        hideTableQuickActions: true
-      }
+        hideTableQuickActions: true,
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -175,6 +187,7 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify the click on filter button', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.options.filter.drawer).toBeFalsy()
 
     wrapper.findAll('.toolbar-item').at(0).vm.$emit('click')
@@ -184,6 +197,8 @@ describe('TableHeader.vue', () => {
   })
 
   it('verify the emitted function when quick action is clicked', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -192,16 +207,16 @@ describe('TableHeader.vue', () => {
             icon: 'add',
             text: 'Novo item',
             quick: true,
-            color: 'primary'
+            color: 'primary',
           },
           delete: {
             icon: 'delete',
             text: 'Excluir',
             quick: true,
-            color: 'red'
-          }
-        }
-      }
+            color: 'red',
+          },
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -214,10 +229,12 @@ describe('TableHeader.vue', () => {
 
     addButton.vm.$emit('click')
     await wrapper.vm.$nextTick()
+
     expect(wrapper.emitted()).toHaveProperty('action-table-add')
 
     deleteButton.vm.$emit('click')
     await wrapper.vm.$nextTick()
+
     expect(wrapper.emitted()).toHaveProperty('action-table-delete')
   })
 })

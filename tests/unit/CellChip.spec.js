@@ -1,18 +1,18 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import CellChip from '@/components/VQueryDataTable/CellChip.vue'
 import Vuetify from 'vuetify'
 
-describe('CellChip.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+describe('cellChip.vue', () => {
+  let wrapper
 
   const properties = {
     header: {
-      value: 'name'
+      value: 'name',
     },
     item: {
-      name: 'Teste Nome'
+      name: 'Teste Nome',
     },
-    value: 'Teste Nome'
+    value: 'Teste Nome',
   }
 
   const optionsProps = {}
@@ -21,7 +21,7 @@ describe('CellChip.vue', () => {
     value: 'Nome',
     text: 'name',
     $custom: {
-      template: 'chips'
+      template: 'chips',
     },
   }
 
@@ -35,34 +35,38 @@ describe('CellChip.vue', () => {
           ...optionsProps,
         },
         props: {
-          ...properties
+          ...properties,
         },
         header: {
           ...headerProps,
-        }
+        },
       },
     })
   })
 
   it('verify text of v-chip', () => {
-    expect(wrapper.findComponent({ name: 'v-chip' }).text()).toBe(properties.value)
+    expect.hasAssertions()
+    expect(wrapper.findComponent({ name: 'v-chip' }).text()).toBe(
+      properties.value
+    )
   })
 
   it('verify return of computed color', async () => {
-    expect(wrapper.vm.color).toBe(undefined)
+    expect.hasAssertions()
+    expect(wrapper.vm.color).toBeUndefined()
 
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { 
+      header: {
         ...headerProps,
         $custom: {
           template: 'chips',
           color: () => {
             return 'green'
-          }
+          },
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -71,13 +75,13 @@ describe('CellChip.vue', () => {
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { 
+      header: {
         ...headerProps,
         $custom: {
           template: 'chips',
           color: 'blue',
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -85,19 +89,21 @@ describe('CellChip.vue', () => {
   })
 
   it('verify return of computed text', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.text).toBe(properties.value)
 
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { ...headerProps,
+      header: {
+        ...headerProps,
         $custom: {
           template: 'chips',
-          format: (value: string, _: {}) => {
+          format: (value, _) => {
             return value.toUpperCase()
-          }
+          },
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -105,21 +111,22 @@ describe('CellChip.vue', () => {
   })
 
   it('verify return of computed attrs', async () => {
-    expect(wrapper.vm.attrs).toEqual({ small: true, color: undefined })
+    expect.hasAssertions()
+    expect(wrapper.vm.attrs).toStrictEqual({ small: true, color: undefined })
 
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { 
+      header: {
         ...headerProps,
         $custom: {
           template: 'chips',
           color: 'blue',
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.attrs).toEqual({ small: true, color: 'blue' })
+    expect(wrapper.vm.attrs).toStrictEqual({ small: true, color: 'blue' })
   })
 })

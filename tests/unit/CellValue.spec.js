@@ -1,17 +1,17 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import CellValue from '@/components/VQueryDataTable/CellValue.vue'
 import Vuetify from 'vuetify'
 
-describe('CellValue.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+describe('cellValue.vue', () => {
+  let wrapper
 
   const properties = {
-    value: 'Teste'
+    value: 'Teste',
   }
   const headerProps = {
     value: 'test',
     $custom: {
-      template: ''
+      template: '',
     },
   }
 
@@ -23,41 +23,47 @@ describe('CellValue.vue', () => {
       propsData: {
         options: {},
         props: {
-          ...properties
+          ...properties,
         },
         header: {
           ...headerProps,
-        }
+        },
       },
     })
   })
 
   it('verify showing condition of SingleActions', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       props: {
-        ...properties
+        ...properties,
       },
       header: {
         ...headerProps,
-        value: '_actions'
-      }
+        value: '_actions',
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findComponent({ name: 'SingleActions' }).exists()).toBeTruthy()
+    expect(
+      wrapper.findComponent({ name: 'SingleActions' }).exists()
+    ).toBeTruthy()
   })
 
   it('verify showing condition of CellAvatar', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       props: {
-        ...properties
+        ...properties,
       },
       header: {
         ...headerProps,
         $custom: {
-          template: 'avatar'
-        }
-      }
+          template: 'avatar',
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -65,16 +71,18 @@ describe('CellValue.vue', () => {
   })
 
   it('verify showing condition of CellChip', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       props: {
-        ...properties
+        ...properties,
       },
       header: {
         ...headerProps,
         $custom: {
-          template: 'chips'
-        }
-      }
+          template: 'chips',
+        },
+      },
     })
     await wrapper.vm.$nextTick()
 
@@ -82,16 +90,18 @@ describe('CellValue.vue', () => {
   })
 
   it('verify showing condition of default text', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       props: {
-        ...properties
+        ...properties,
       },
       header: {
         ...headerProps,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.html()).toEqual('<td>Teste</td>')
+    expect(wrapper.html()).toStrictEqual('<td>Teste</td>')
   })
 })

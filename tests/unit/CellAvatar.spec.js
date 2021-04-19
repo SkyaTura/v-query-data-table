@@ -1,30 +1,30 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import CellAvatar from '@/components/VQueryDataTable/CellAvatar.vue'
 import Vuetify from 'vuetify'
 
-describe('CellAvatar.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+describe('cellAvatar.vue', () => {
+  let wrapper
 
   const properties = {
     header: {
-      value: 'avatar'
+      value: 'avatar',
     },
     item: {
       avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-      name: 'Teste Nome'
+      name: 'Teste Nome',
     },
-    value: 'https://cdn.vuetifyjs.com/images/lists/1.jpg'
+    value: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
   }
 
   const optionsProps = {
-    dense: false
+    dense: false,
   }
 
   const headerProps = {
     value: 'avatar',
     text: 'Avatar',
     $custom: {
-      template: 'avatar'
+      template: 'avatar',
     },
   }
 
@@ -38,53 +38,60 @@ describe('CellAvatar.vue', () => {
           ...optionsProps,
         },
         props: {
-          ...properties
+          ...properties,
         },
         header: {
           ...headerProps,
-        }
+        },
       },
     })
   })
 
   it('verify showing of image', () => {
-    expect(wrapper.findComponent({ name: 'v-img' }).attributes('src')).toBe(properties.value)
+    expect.hasAssertions()
+    expect(wrapper.findComponent({ name: 'v-img' }).attributes('src')).toBe(
+      properties.value
+    )
   })
 
   it('verify return of computed image', async () => {
+    expect.hasAssertions()
     expect(wrapper.vm.image).toBe(properties.value)
 
     wrapper.setProps({
       options: { ...optionsProps },
       props: { ...properties },
-      header: { 
+      header: {
         ...headerProps,
         $custom: {
           template: 'avatar',
           format: () => {
             return 'https://cdn.vuetifyjs.com/images/lists/2.jpg'
-          }
+          },
         },
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.image).toBe('https://cdn.vuetifyjs.com/images/lists/2.jpg')
+    expect(wrapper.vm.image).toBe(
+      'https://cdn.vuetifyjs.com/images/lists/2.jpg'
+    )
   })
 
   it('verify return of computed attrs', async () => {
-    expect(wrapper.vm.attrs).toEqual({ size: 48 })
+    expect.hasAssertions()
+    expect(wrapper.vm.attrs).toStrictEqual({ size: 48 })
 
     wrapper.setProps({
       props: { ...properties },
       header: { ...headerProps },
       options: {
         ...optionsProps,
-        dense: true
+        dense: true,
       },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.attrs).toEqual({ size: 32 })
+    expect(wrapper.vm.attrs).toStrictEqual({ size: 32 })
   })
 })

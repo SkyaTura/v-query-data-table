@@ -1,0 +1,96 @@
+name: CI
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        name: 'Build: node-14, ubuntu-latest'
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Set node version to 14
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 14
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build
+              run: npm run build
+
+
+    test:
+        runs-on: ubuntu-latest
+        name: 'Test: node-14, ubuntu-latest'
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+
+            - name: Set node version to 14
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 14
+
+            - name: Prepare
+              run: npm ci
+
+            - name: Test
+              run: npx jest --ci --silent --reporters=default --reporters=jest-junit
+
+            - name: Upload test artifact
+              uses: actions/upload-artifact@v2
+              with:
+                  name: JUnit_ubuntu-latest_14_${{ github.sha }}
+                  path: junit.xml
+
+
+    lint:
+        runs-on: ubuntu-latest
+        name: 'Lint: node-14, ubuntu-latest'
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+
+            - name: Set node version to 14
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 14
+
+            - name: Prepare
+              run: npm ci
+
+            - name: Lint
+              run: npm run lint
+
+    audit:
+        runs-on: ubuntu-latest
+        name: 'Audit: node-14, ubuntu-latest'
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 0
+
+            - name: Set node version to 14
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 14
+
+            - name: Prepare
+              run: npm install
+
+            - name: Audit dependencies
+              run: npm audit
+
+            - name: Check outdated dependencies
+              if: github.ref == 'refs/heads/main'
+              run: npm outdated

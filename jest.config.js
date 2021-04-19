@@ -8,4 +8,5 @@ module.exports = {
     },
   },
   setupFilesAfterEnv: ['./tests/setup.js'],
+  verbose: true,
 }

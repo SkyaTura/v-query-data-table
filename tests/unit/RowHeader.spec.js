@@ -1,9 +1,9 @@
-import { shallowMount, Wrapper } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
 import RowHeader from '@/components/VQueryDataTable/RowHeader.vue'
 import Vuetify from 'vuetify'
 
-describe('RowHeader.vue', () => {
-  let wrapper: Wrapper<Vue & { [key: string]: any }>
+describe('rowHeader.vue', () => {
+  let wrapper
 
   const setGroupByMock = jest.fn()
 
@@ -16,7 +16,7 @@ describe('RowHeader.vue', () => {
       sortDesc: [],
       groupBy: [],
       groupDesc: [],
-    }
+    },
   }
 
   const headerProps = {
@@ -36,17 +36,19 @@ describe('RowHeader.vue', () => {
           ...props,
         },
         header: {
-          ...headerProps
-        }
+          ...headerProps,
+        },
       },
     })
   })
 
   it('verify header text', () => {
+    expect.hasAssertions()
     expect(wrapper.find('.customHeader-text').text()).toBe('Teste')
   })
 
   it('verify sort icon showing condition', async () => {
+    expect.hasAssertions()
     expect(wrapper.find('.customHeader-actions-sort').exists()).toBeFalsy()
 
     wrapper.setProps({
@@ -55,34 +57,39 @@ describe('RowHeader.vue', () => {
       },
       header: {
         ...headerProps,
-        sortable: true
-      }
+        sortable: true,
+      },
     })
     await wrapper.vm.$nextTick()
 
     expect(wrapper.find('.customHeader-actions-sort').exists()).toBeTruthy()
   })
 
-  it('verify the class of span container of sort icon', async () => {
+  it('verify the class sorted of span container of sort icon', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
         query: {
           ...props.query,
-          sortBy: ['test']
-        }
+          sortBy: ['test'],
+        },
       },
       header: {
         ...headerProps,
-        sortable: true
-      }
+        sortable: true,
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.find('.customHeader-actions-sort').classes()).toContain('sorted')
+    expect(wrapper.find('.customHeader-actions-sort').classes()).toContain(
+      'sorted'
+    )
   })
 
   it('verify group icon showing condition', async () => {
+    expect.hasAssertions()
     expect(wrapper.find('.customHeader-actions-group').exists()).toBeFalsy()
 
     wrapper.setProps({
@@ -92,82 +99,94 @@ describe('RowHeader.vue', () => {
       header: {
         ...headerProps,
         groupable: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
     expect(wrapper.find('.customHeader-actions-group').exists()).toBeTruthy()
   })
 
-  it('verify the class of span container of sort icon', async () => {
+  it('verify the class grouped of span container of sort icon', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
         query: {
           ...props.query,
-          groupBy: ['test']
-        }
+          groupBy: ['test'],
+        },
       },
       header: {
         ...headerProps,
         groupable: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.find('.customHeader-actions-group').classes()).toContain('grouped')
+    expect(wrapper.find('.customHeader-actions-group').classes()).toContain(
+      'grouped'
+    )
   })
 
-  it('verify the class of span container of sort icon', async () => {
+  it('verify the click on sort icon', async () => {
+    expect.hasAssertions()
+
     wrapper.vm.setGroupBy = setGroupByMock
     wrapper.find('.customHeader-actions-group').trigger('click')
     await wrapper.vm.$nextTick()
 
     expect(setGroupByMock).toHaveBeenCalledWith({
       ...headerProps,
-      groupable: true
+      groupable: true,
     })
   })
 
   it('verify the return value from getHeaderGroup', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
         query: {
           ...props.query,
-          groupBy: []
-        }
+          groupBy: [],
+        },
       },
       header: {
         ...headerProps,
         groupable: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
     const responseExpectToBeFalse = wrapper.vm.getHeaderGroup(headerProps)
-    expect(responseExpectToBeFalse).toEqual({ grouped: false })
+
+    expect(responseExpectToBeFalse).toStrictEqual({ grouped: false })
 
     wrapper.setProps({
       options: {
         ...props,
         query: {
           ...props.query,
-          groupBy: ['test']
-        }
+          groupBy: ['test'],
+        },
       },
       header: {
         ...headerProps,
         groupable: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
     const responseExpectToBeTrue = wrapper.vm.getHeaderGroup(headerProps)
-    expect(responseExpectToBeTrue).toEqual({ grouped: true })
+
+    expect(responseExpectToBeTrue).toStrictEqual({ grouped: true })
   })
 
   it('verify the return value from getHeaderSort', async () => {
+    expect.hasAssertions()
+
     wrapper.setProps({
       options: {
         ...props,
@@ -175,20 +194,21 @@ describe('RowHeader.vue', () => {
           ...props.query,
           sortBy: [],
           sortDesc: [],
-        }
+        },
       },
       header: {
         ...headerProps,
         sortable: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
     const responseExpectToBeFalse = wrapper.vm.getHeaderSort(headerProps)
-    expect(responseExpectToBeFalse).toEqual({
+
+    expect(responseExpectToBeFalse).toStrictEqual({
       desc: false,
       sorted: false,
-      index: ''
+      index: '',
     })
 
     wrapper.setProps({
@@ -198,20 +218,21 @@ describe('RowHeader.vue', () => {
           ...props.query,
           sortBy: ['test'],
           sortDesc: [true],
-        }
+        },
       },
       header: {
         ...headerProps,
         sortable: true,
-      }
+      },
     })
     await wrapper.vm.$nextTick()
 
     const responseExpectToBeTrue = wrapper.vm.getHeaderSort(headerProps)
-    expect(responseExpectToBeTrue).toEqual({
+
+    expect(responseExpectToBeTrue).toStrictEqual({
       desc: true,
       sorted: true,
-      index: 1
+      index: 1,
     })
   })
 })
