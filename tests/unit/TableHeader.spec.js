@@ -65,7 +65,7 @@ describe('tableHeader.vue', () => {
 
   it('verify initial data', () => {
     expect.hasAssertions()
-    expect(wrapper.vm.icons).toEqual({
+    expect(wrapper.vm.icons).toStrictEqual({
       mdiFilter,
       mdiDotsHorizontal,
       mdiMagnify,

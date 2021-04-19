@@ -86,6 +86,7 @@ describe('tableFab.vue', () => {
     expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeTruthy()
   })
 
+  // eslint-disable-next-line jest/no-done-callback
   it('verify the text on tooltip', async (done) => {
     expect.hasAssertions()
 
@@ -93,7 +94,7 @@ describe('tableFab.vue', () => {
     await wrapper.vm.$nextTick()
 
     requestAnimationFrame(() => {
-      expect(wrapper.find('#tooltipText').text()).toEqual('Novo item')
+      expect(wrapper.find('#tooltipText').text()).toStrictEqual('Novo item')
 
       done()
     })
@@ -111,7 +112,9 @@ describe('tableFab.vue', () => {
 
   it('verify the showed icon', () => {
     expect.hasAssertions()
-    expect(wrapper.findComponent({ name: 'v-icon' }).text()).toEqual('add')
+    expect(wrapper.findComponent({ name: 'v-icon' }).text()).toStrictEqual(
+      'add'
+    )
   })
 
   it('verify the return of fab', () => {
@@ -141,7 +144,7 @@ describe('tableFab.vue', () => {
       },
     })
 
-    expect(wrapper.vm.fab[0]).toEqual('add')
-    expect(wrapper.vm.fab[1]).toEqual(actions.add)
+    expect(wrapper.vm.fab[0]).toStrictEqual('add')
+    expect(wrapper.vm.fab[1]).toStrictEqual(actions.add)
   })
 })

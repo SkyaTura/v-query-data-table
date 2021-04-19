@@ -80,7 +80,7 @@ describe('cellAvatar.vue', () => {
 
   it('verify return of computed attrs', async () => {
     expect.hasAssertions()
-    expect(wrapper.vm.attrs).toEqual({ size: 48 })
+    expect(wrapper.vm.attrs).toStrictEqual({ size: 48 })
 
     wrapper.setProps({
       props: { ...properties },
@@ -92,6 +92,6 @@ describe('cellAvatar.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.attrs).toEqual({ size: 32 })
+    expect(wrapper.vm.attrs).toStrictEqual({ size: 32 })
   })
 })

@@ -124,7 +124,7 @@ describe('tableMenu.vue', () => {
     refreshItem.vm.$emit('click')
     await wrapper.vm.$nextTick()
 
-    expect(cleanRefreshMock).toHaveBeenCalled()
+    expect(cleanRefreshMock).toHaveBeenCalledTimes(1)
   })
 
   it('verify showing condition of toggle dense item', async () => {
@@ -162,7 +162,7 @@ describe('tableMenu.vue', () => {
     denseItem.vm.$emit('click')
     await wrapper.vm.$nextTick()
 
-    expect(toggleDenseMock).toHaveBeenCalled()
+    expect(toggleDenseMock).toHaveBeenCalledTimes(1)
   })
 
   it('verify the text on toggle dense item', async () => {
@@ -223,7 +223,7 @@ describe('tableMenu.vue', () => {
     groupItem.vm.$emit('click')
     await wrapper.vm.$nextTick()
 
-    expect(toggleKeepGroupedColumnsMock).toHaveBeenCalled()
+    expect(toggleKeepGroupedColumnsMock).toHaveBeenCalledTimes(1)
   })
 
   it('verify showing condition of pagination item', async () => {

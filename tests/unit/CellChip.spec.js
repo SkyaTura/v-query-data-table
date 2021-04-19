@@ -112,7 +112,7 @@ describe('cellChip.vue', () => {
 
   it('verify return of computed attrs', async () => {
     expect.hasAssertions()
-    expect(wrapper.vm.attrs).toEqual({ small: true, color: undefined })
+    expect(wrapper.vm.attrs).toStrictEqual({ small: true, color: undefined })
 
     wrapper.setProps({
       options: { ...optionsProps },
@@ -127,6 +127,6 @@ describe('cellChip.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.attrs).toEqual({ small: true, color: 'blue' })
+    expect(wrapper.vm.attrs).toStrictEqual({ small: true, color: 'blue' })
   })
 })
