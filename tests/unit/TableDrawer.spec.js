@@ -76,7 +76,7 @@ describe('tableDrawer.vue', () => {
     })
   })
 
-  it('verify filter operator value', async () => {
+  it('filter.operator should change value when radio button is clicked', async () => {
     expect.hasAssertions()
     expect(wrapper.vm.options.filter.operator).toStrictEqual(',')
 
@@ -93,7 +93,7 @@ describe('tableDrawer.vue', () => {
     expect(wrapper.vm.options.filter.operator).toStrictEqual(',')
   })
 
-  it('verify showing condition of range slider', async () => {
+  it('v-range-slider should exists if a header have filterType equal to range', async () => {
     expect.hasAssertions()
     expect(
       wrapper.findComponent({ name: 'v-range-slider' }).exists()
@@ -135,7 +135,7 @@ describe('tableDrawer.vue', () => {
     ).toBeFalsy()
   })
 
-  it('verify showing condition of autocompletes', async () => {
+  it('should have 3 v-autocomplete to default props config', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({ options: { ...props } })
@@ -146,7 +146,7 @@ describe('tableDrawer.vue', () => {
     )
   })
 
-  it('verify click on clear filters', async () => {
+  it('filter.values should be empty when clear filter button is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.vm.options.filter.values = { name: 'ice cream' }
@@ -192,7 +192,7 @@ describe('tableDrawer.vue', () => {
     ])
   })
 
-  it('verify return value of sortFilterItems', async () => {
+  it('sortFilterItems should return on alphabetical order the values wich is filtered', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -224,7 +224,7 @@ describe('tableDrawer.vue', () => {
     })
   })
 
-  it('verify return value of autocomplete', () => {
+  it('autocompleteItem should return value according to transformItem or text', () => {
     expect.hasAssertions()
 
     const response = wrapper.vm.autocompleteItem(
@@ -291,7 +291,7 @@ describe('tableDrawer.vue', () => {
     expect(response4).toStrictEqual('cold')
   })
 
-  it('verify return value of getFieldMin', async () => {
+  it('getFieldMin should return the min value of selected item', async () => {
     expect.hasAssertions()
     expect(wrapper.vm.getFieldMin('calories')).toStrictEqual(0)
 
@@ -317,7 +317,7 @@ describe('tableDrawer.vue', () => {
     expect(response).toStrictEqual(200)
   })
 
-  it('verify return value of getFieldMax', async () => {
+  it('getFieldMax should return the max value of seleted item', async () => {
     expect.hasAssertions()
 
     const response = wrapper.vm.getFieldMax('calories')
@@ -332,7 +332,7 @@ describe('tableDrawer.vue', () => {
     expect(wrapper.vm.getFieldMax('calories')).toStrictEqual(0)
   })
 
-  it('verify the changes on options.filter watch', async () => {
+  it('options.filter should return a string according to values filtered', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({

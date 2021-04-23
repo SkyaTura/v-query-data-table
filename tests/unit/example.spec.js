@@ -2,7 +2,7 @@ import { shallowMount } from '@vue/test-utils'
 import VQueryDataTable from '@/components/VQueryDataTable/VQueryDataTable.vue'
 
 describe('vQueryDataTable.vue', () => {
-  it('verify if VQueryDataTable exists', () => {
+  it('component VQueryDataTable should exists', () => {
     expect.hasAssertions()
 
     const wrapper = shallowMount(VQueryDataTable, {

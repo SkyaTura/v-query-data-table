@@ -49,7 +49,7 @@ describe('tableMenu.vue', () => {
     })
   })
 
-  it('verify table actions showing condition', async () => {
+  it('v-list-item should exists when hideTableActions is false', async () => {
     expect.hasAssertions()
 
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
@@ -69,7 +69,7 @@ describe('tableMenu.vue', () => {
     expect(newListItems.at(0).text()).not.toBe('addNovo item')
   })
 
-  it('verify the emitted function when bulk action is clicked', async () => {
+  it('action-table-add should be emitted when button is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -89,7 +89,7 @@ describe('tableMenu.vue', () => {
     expect(wrapper.emitted('action-table-add')).toBeTruthy()
   })
 
-  it('verify showing condition of refresh item', async () => {
+  it('refresh item should exists when fetch exists', async () => {
     expect.hasAssertions()
 
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
@@ -109,7 +109,7 @@ describe('tableMenu.vue', () => {
     expect(newListItems.at(1).text()).not.toBe('refreshAtualizar')
   })
 
-  it('verify if function is called when refresh is clicked', async () => {
+  it('cleanRefresh should be called when refresh is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -127,7 +127,7 @@ describe('tableMenu.vue', () => {
     expect(cleanRefreshMock).toHaveBeenCalledTimes(1)
   })
 
-  it('verify showing condition of toggle dense item', async () => {
+  it('toggle dense item should exists when dissalowDense is false', async () => {
     expect.hasAssertions()
 
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
@@ -147,7 +147,7 @@ describe('tableMenu.vue', () => {
     expect(newListItems.at(2).text()).not.toBe('unfold_lessListagem densa')
   })
 
-  it('verify if function is called when toggle dense item is clicked', async () => {
+  it('toggleDense should be called when toggle dense item is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -165,7 +165,7 @@ describe('tableMenu.vue', () => {
     expect(toggleDenseMock).toHaveBeenCalledTimes(1)
   })
 
-  it('verify the text on toggle dense item', async () => {
+  it('toggle dense item text should be Listagem densa when dense is false', async () => {
     expect.hasAssertions()
 
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
@@ -187,7 +187,7 @@ describe('tableMenu.vue', () => {
     expect(newListItem.at(2).text()).toBe('unfold_moreListagem normal')
   })
 
-  it('verify showing condition of group item', async () => {
+  it('group item should exists when disallowGroups or disallowKeepGroupedColumns is false', async () => {
     expect.hasAssertions()
 
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
@@ -208,7 +208,7 @@ describe('tableMenu.vue', () => {
     expect(newListItems.at(3).text()).not.toBe('folderManter colunas agrupadas')
   })
 
-  it('verify if function is called when group item is clicked', async () => {
+  it('toggleKeepGroupedColumns should be called when group item is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -226,7 +226,7 @@ describe('tableMenu.vue', () => {
     expect(toggleKeepGroupedColumnsMock).toHaveBeenCalledTimes(1)
   })
 
-  it('verify showing condition of pagination item', async () => {
+  it('pagination item should exists when disablePagination is false', async () => {
     expect.hasAssertions()
 
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
@@ -249,7 +249,7 @@ describe('tableMenu.vue', () => {
   })
 
   // eslint-disable-next-line jest/no-done-callback
-  it('verify the parameter on setItemsPerPage', async (done) => {
+  it('setItem of localStorage should be called with v-query-data-table and the value wich was clicked', async (done) => {
     expect.hasAssertions()
 
     jest.spyOn(Storage.prototype, 'setItem').mockImplementation()

@@ -44,14 +44,14 @@ describe('cellChip.vue', () => {
     })
   })
 
-  it('verify text of v-chip', () => {
+  it('text of chip should be igual to props.value', () => {
     expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-chip' }).text()).toBe(
       properties.value
     )
   })
 
-  it('verify return of computed color', async () => {
+  it('computed color should be equal to color set on $custom even with color is a function', async () => {
     expect.hasAssertions()
     expect(wrapper.vm.color).toBeUndefined()
 
@@ -88,7 +88,7 @@ describe('cellChip.vue', () => {
     expect(wrapper.vm.color).toBe('blue')
   })
 
-  it('verify return of computed text', async () => {
+  it('computed text should return value set on props.value, and change according to $custom.format', async () => {
     expect.hasAssertions()
     expect(wrapper.vm.text).toBe(properties.value)
 
@@ -110,7 +110,7 @@ describe('cellChip.vue', () => {
     expect(wrapper.vm.text).toBe('TESTE NOME')
   })
 
-  it('verify return of computed attrs', async () => {
+  it('computed attrs should return the value set on $custom.color or undefined', async () => {
     expect.hasAssertions()
     expect(wrapper.vm.attrs).toStrictEqual({ small: true, color: undefined })
 

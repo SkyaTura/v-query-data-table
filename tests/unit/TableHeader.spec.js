@@ -63,7 +63,7 @@ describe('tableHeader.vue', () => {
     })
   })
 
-  it('verify initial data', () => {
+  it('icons should be equal as defined on data', () => {
     expect.hasAssertions()
     expect(wrapper.vm.icons).toStrictEqual({
       mdiFilter,
@@ -72,7 +72,7 @@ describe('tableHeader.vue', () => {
     })
   })
 
-  it('verify its showing condition', async () => {
+  it('v-toolbar should exists when hideHeader is false', async () => {
     expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-toolbar' }).exists()).toBeTruthy()
 
@@ -87,7 +87,7 @@ describe('tableHeader.vue', () => {
     expect(wrapper.findComponent({ name: 'v-toolbar' }).exists()).toBeFalsy()
   })
 
-  it('verify its title', async () => {
+  it('header text should be equal as define on props.title', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -101,7 +101,7 @@ describe('tableHeader.vue', () => {
     expect(wrapper.find('.text-h4.font-weight-bold').text()).toBe('Teste')
   })
 
-  it('verify value of search input', () => {
+  it('query.search should be equal to v-text-field', () => {
     expect.hasAssertions()
     expect(wrapper.vm.options.query.search).toBe('')
 
@@ -110,7 +110,7 @@ describe('tableHeader.vue', () => {
     expect(wrapper.vm.options.query.search).toBe('Teste')
   })
 
-  it('verify showing condition of filter and three dots button', async () => {
+  it('three dots button should exists when hideFilter or hideMenu is false', async () => {
     expect.hasAssertions()
     expect(wrapper.findAll('.toolbar-item')).toHaveLength(3)
 
@@ -126,7 +126,7 @@ describe('tableHeader.vue', () => {
     expect(wrapper.findAll('.toolbar-item')).toHaveLength(1)
   })
 
-  it('verify showing condition of search input', async () => {
+  it('v-text-field shoud exists when hideSearch is false', async () => {
     expect.hasAssertions()
     expect(
       wrapper.findComponent({ name: 'v-text-field' }).exists()
@@ -143,7 +143,7 @@ describe('tableHeader.vue', () => {
     expect(wrapper.findComponent({ name: 'v-text-field' }).exists()).toBeFalsy()
   })
 
-  it('verify exhibition of multiples quick actions', async () => {
+  it('should show the proper number of quick actions define by quick propertie', async () => {
     expect.hasAssertions()
     expect(wrapper.findAll('.shrink.ml-3 v-btn-stub')).toHaveLength(1)
 
@@ -171,7 +171,7 @@ describe('tableHeader.vue', () => {
     expect(wrapper.findAll('.shrink.ml-3 v-btn-stub')).toHaveLength(2)
   })
 
-  it('verify showing condition of quick actions', async () => {
+  it('quick actions should exists when hideTableQuickActions is false', async () => {
     expect.hasAssertions()
     expect(wrapper.find('.shrink.ml-3').exists()).toBeTruthy()
 
@@ -186,7 +186,7 @@ describe('tableHeader.vue', () => {
     expect(wrapper.find('.shrink.ml-3').exists()).toBeFalsy()
   })
 
-  it('verify the click on filter button', async () => {
+  it('filter.drawer should be true when button is clicked', async () => {
     expect.hasAssertions()
     expect(wrapper.vm.options.filter.drawer).toBeFalsy()
 
@@ -196,7 +196,7 @@ describe('tableHeader.vue', () => {
     expect(wrapper.vm.options.filter.drawer).toBeTruthy()
   })
 
-  it('verify the emitted function when quick action is clicked', async () => {
+  it('action-table-[] should be emit when button is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({

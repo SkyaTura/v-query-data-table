@@ -34,7 +34,7 @@ describe('tableFooter.vue', () => {
     })
   })
 
-  it('verify its showing condition', async () => {
+  it('v-pagination should exists when disablePaginatioin is false', async () => {
     expect.hasAssertions()
     expect(
       wrapper.findComponent({ name: 'v-pagination' }).exists()
@@ -51,7 +51,7 @@ describe('tableFooter.vue', () => {
     expect(wrapper.findComponent({ name: 'v-pagination' }).exists()).toBeFalsy()
   })
 
-  it('verify the return value of showingFrom', async () => {
+  it('showingFrom should return 1 when page = 1 and itemsPerPage = 10', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -64,12 +64,12 @@ describe('tableFooter.vue', () => {
     expect(wrapper.vm.showingFrom).toBe(1)
   })
 
-  it('verify the return value of showingUntil', () => {
+  it('showingUntil should return 10 when page = 1, itemsPerPage = 10 and resultCount = 10', () => {
     expect.hasAssertions()
     expect(wrapper.vm.showingUntil).toBe(10)
   })
 
-  it('verify its text', () => {
+  it('text should be equal to it according to default props config', () => {
     expect.hasAssertions()
     expect(wrapper.find('.text-center').text()).toBe(
       'Exibindo de 1 até 10 de 10 registros'

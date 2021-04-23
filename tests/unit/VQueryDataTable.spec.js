@@ -12,7 +12,7 @@ describe('vQueryDataTable.vue', () => {
     })
   })
 
-  it('show skeleton when app is loading', async () => {
+  it('skeleton should exists when app is loading', async () => {
     expect.hasAssertions()
 
     wrapper.setData({
@@ -28,7 +28,7 @@ describe('vQueryDataTable.vue', () => {
     )
   })
 
-  it('show table when app is not loading', async () => {
+  it('table should exists when app is not loading', async () => {
     expect.hasAssertions()
 
     wrapper.setData({
@@ -44,7 +44,7 @@ describe('vQueryDataTable.vue', () => {
     ).toBe(true)
   })
 
-  it('show description when its not empty', async () => {
+  it('description should be equal to props.description', async () => {
     expect.hasAssertions()
 
     wrapper.setData({
@@ -61,7 +61,7 @@ describe('vQueryDataTable.vue', () => {
     expect(wrapper.find('p').text()).toBe('Teste')
   })
 
-  it('verify showing condition of debug', async () => {
+  it('shoud show all table variables when showDebug is true', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -72,7 +72,7 @@ describe('vQueryDataTable.vue', () => {
     expect(wrapper.find('.text-h6').text()).toBe('Debug')
   })
 
-  it('verify return of computed queryJSON, and the watch on queryJSON', async () => {
+  it('should emit update:query when iQuery changes', async () => {
     expect.hasAssertions()
 
     expect(wrapper.emitted()).not.toHaveProperty('update:query')
@@ -109,7 +109,7 @@ describe('vQueryDataTable.vue', () => {
     expect(wrapper.emitted()).toHaveProperty('update:query')
   })
 
-  it('verify return of computed oldActions', async () => {
+  it('should return a mix of singleAction and sigle, bulkActions and bulk, and tableAction and table', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -146,7 +146,7 @@ describe('vQueryDataTable.vue', () => {
     })
   })
 
-  it('verify return of computed computedHeaders', async () => {
+  it('should return headers with some additional values', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -267,7 +267,7 @@ describe('vQueryDataTable.vue', () => {
     ])
   })
 
-  it('verify return of computed transformableHeaders', () => {
+  it('should return value of header text according to transformItem', () => {
     expect.hasAssertions()
     expect(wrapper.vm.transformableHeaders).toStrictEqual([
       [
@@ -280,7 +280,7 @@ describe('vQueryDataTable.vue', () => {
     ])
   })
 
-  it('verify return of computed computedItems', async () => {
+  it('should return items with additional $raw property', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -329,7 +329,7 @@ describe('vQueryDataTable.vue', () => {
     ])
   })
 
-  it('verify the value of iQuery on query change', async () => {
+  it('iQuery should be equal to query when it changes', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -358,7 +358,7 @@ describe('vQueryDataTable.vue', () => {
     })
   })
 
-  it('verify value of search on setSearch', () => {
+  it('search should be define by setSearch parameter', () => {
     expect.hasAssertions()
 
     wrapper.vm.setSearch('Teste')
@@ -366,7 +366,7 @@ describe('vQueryDataTable.vue', () => {
     expect(wrapper.vm.search).toStrictEqual('Teste')
   })
 
-  it('verify value of dense, and localStorage on toggleDense', () => {
+  it('should turn dense to its negative, and save it on localStorage when toggleDense is called', () => {
     expect.hasAssertions()
 
     jest.spyOn(Storage.prototype, 'setItem').mockImplementation()
@@ -382,7 +382,7 @@ describe('vQueryDataTable.vue', () => {
     expect(wrapper.vm.dense).toStrictEqual(true)
   })
 
-  it('verify value of keepGroupedColumns, and localStorage on toggleKeepGroupedColumns', () => {
+  it('should turn keepGroupedColumns to its negative, and save it on localStorage when toggleKeepGroupedColumns is called', () => {
     expect.hasAssertions()
 
     jest.spyOn(Storage.prototype, 'setItem').mockImplementation()
@@ -398,7 +398,7 @@ describe('vQueryDataTable.vue', () => {
     expect(wrapper.vm.keepGroupedColumns).toStrictEqual(true)
   })
 
-  it('verify value of cache on clearCache', () => {
+  it('should clear cache value when clearCache is called', () => {
     expect.hasAssertions()
 
     wrapper.vm.cache.set('Teste', 'Valor do teste')

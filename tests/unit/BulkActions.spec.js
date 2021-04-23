@@ -30,7 +30,7 @@ describe('bulkActions.vue', () => {
     })
   })
 
-  it('verify its showing condition', () => {
+  it('should show panel when selected exists', () => {
     expect.hasAssertions()
     expect(wrapper.find('[aria-expanded=true]').exists()).toBeTruthy()
 
@@ -50,7 +50,7 @@ describe('bulkActions.vue', () => {
     expect(component.find('[aria-expanded=false]').exists()).toBeTruthy()
   })
 
-  it('verify the message for selected items', async () => {
+  it('should show number of items selected on text', async () => {
     expect.hasAssertions()
     expect(wrapper.find('.caption').text()).toBe(
       'Ações em massa para os 2 itens selecionados:'
@@ -71,7 +71,7 @@ describe('bulkActions.vue', () => {
     )
   })
 
-  it('verify the message for a selected item', async () => {
+  it('should show especific text if selected have 1 or 2 items', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -89,7 +89,7 @@ describe('bulkActions.vue', () => {
     )
   })
 
-  it('verify the showing of bulk actions buttons', async () => {
+  it('should show the proper number of bulk actions buttons', async () => {
     expect.hasAssertions()
     expect(wrapper.findAllComponents({ name: 'v-btn' })).toHaveLength(1)
 
@@ -113,7 +113,7 @@ describe('bulkActions.vue', () => {
     expect(wrapper.findAllComponents({ name: 'v-btn' })).toHaveLength(2)
   })
 
-  it('verify the emitted function when bulk action is clicked', async () => {
+  it('should emit action-bulk-remove when button is clicked', async () => {
     expect.hasAssertions()
     expect(wrapper.emitted()).not.toHaveProperty('action-bulk-remove')
 
@@ -129,7 +129,7 @@ describe('bulkActions.vue', () => {
     ])
   })
 
-  it('verify the exhibition of button icon', async () => {
+  it('should show action icon if property icon exists', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
