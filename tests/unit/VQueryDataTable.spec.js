@@ -72,8 +72,10 @@ describe('vQueryDataTable.vue', () => {
     expect(wrapper.find('.text-h6').text()).toBe('Debug')
   })
 
-  it('verify return of computed queryJSON', async () => {
+  it('verify return of computed queryJSON, and the watch on queryJSON', async () => {
     expect.hasAssertions()
+
+    expect(wrapper.emitted()).not.toHaveProperty('update:query')
 
     wrapper.setData({
       iQuery: {
@@ -103,6 +105,8 @@ describe('vQueryDataTable.vue', () => {
       multiSort: false,
       mustSort: false,
     })
+
+    expect(wrapper.emitted()).toHaveProperty('update:query')
   })
 
   it('verify return of computed oldActions', async () => {
@@ -323,5 +327,84 @@ describe('vQueryDataTable.vue', () => {
         avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
       },
     ])
+  })
+
+  it('verify the value of iQuery on query change', async () => {
+    expect.hasAssertions()
+
+    wrapper.setProps({
+      query: {
+        page: 2,
+        itemsPerPage: 15,
+        sortBy: [],
+        sortDesc: [],
+        groupBy: ['test'],
+        groupDesc: [true],
+        multiSort: false,
+        mustSort: false,
+      },
+    })
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.iQuery).toStrictEqual({
+      page: 2,
+      itemsPerPage: 15,
+      sortBy: [],
+      sortDesc: [],
+      groupBy: ['test'],
+      groupDesc: [true],
+      multiSort: false,
+      mustSort: false,
+    })
+  })
+
+  it('verify value of search on setSearch', () => {
+    expect.hasAssertions()
+
+    wrapper.vm.setSearch('Teste')
+
+    expect(wrapper.vm.search).toStrictEqual('Teste')
+  })
+
+  it('verify value of dense, and localStorage on toggleDense', () => {
+    expect.hasAssertions()
+
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation()
+
+    expect(wrapper.vm.dense).toStrictEqual(false)
+
+    wrapper.vm.toggleDense()
+
+    expect(Storage.prototype.setItem).toHaveBeenCalledWith(
+      'v-query-data-table:dense',
+      true
+    )
+    expect(wrapper.vm.dense).toStrictEqual(true)
+  })
+
+  it('verify value of keepGroupedColumns, and localStorage on toggleKeepGroupedColumns', () => {
+    expect.hasAssertions()
+
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation()
+
+    expect(wrapper.vm.keepGroupedColumns).toStrictEqual(false)
+
+    wrapper.vm.toggleKeepGroupedColumns()
+
+    expect(Storage.prototype.setItem).toHaveBeenCalledWith(
+      'v-query-data-table:keepGroupedColumns',
+      true
+    )
+    expect(wrapper.vm.keepGroupedColumns).toStrictEqual(true)
+  })
+
+  it('verify value of cache on clearCache', () => {
+    expect.hasAssertions()
+
+    wrapper.vm.cache.set('Teste', 'Valor do teste')
+
+    wrapper.vm.clearCache()
+
+    expect(wrapper.vm.cache.size).toStrictEqual(0)
   })
 })
