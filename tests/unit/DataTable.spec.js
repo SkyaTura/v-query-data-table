@@ -45,7 +45,7 @@ describe('dataTable.vue', () => {
     })
   })
 
-  it('verify message when search return no data', async () => {
+  it('message should be equal to query.search when datatable.items is empty', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -65,7 +65,7 @@ describe('dataTable.vue', () => {
     expect(wrapper.find('.text-h5').text()).toBe('some text')
   })
 
-  it('verify message when its has no data', async () => {
+  it('message should be equal to an icon view_list when query.search and datatable.items are empty', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({

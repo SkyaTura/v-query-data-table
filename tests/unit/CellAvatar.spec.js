@@ -47,14 +47,14 @@ describe('cellAvatar.vue', () => {
     })
   })
 
-  it('verify showing of image', () => {
+  it('should show an image tag with proper value', () => {
     expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-img' }).attributes('src')).toBe(
       properties.value
     )
   })
 
-  it('verify return of computed image', async () => {
+  it('should set proper value of src image tag when format exists', async () => {
     expect.hasAssertions()
     expect(wrapper.vm.image).toBe(properties.value)
 
@@ -78,7 +78,7 @@ describe('cellAvatar.vue', () => {
     )
   })
 
-  it('verify return of computed attrs', async () => {
+  it('should return size: 32 when dense is true', async () => {
     expect.hasAssertions()
     expect(wrapper.vm.attrs).toStrictEqual({ size: 48 })
 

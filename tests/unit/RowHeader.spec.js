@@ -42,12 +42,12 @@ describe('rowHeader.vue', () => {
     })
   })
 
-  it('verify header text', () => {
+  it('header text should be equal to header.value', () => {
     expect.hasAssertions()
     expect(wrapper.find('.customHeader-text').text()).toBe('Teste')
   })
 
-  it('verify sort icon showing condition', async () => {
+  it('sort icon should exists when header.sortable is true', async () => {
     expect.hasAssertions()
     expect(wrapper.find('.customHeader-actions-sort').exists()).toBeFalsy()
 
@@ -65,7 +65,7 @@ describe('rowHeader.vue', () => {
     expect(wrapper.find('.customHeader-actions-sort').exists()).toBeTruthy()
   })
 
-  it('verify the class sorted of span container of sort icon', async () => {
+  it('sort icon should has sorted class when sortBy contains header.value', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -88,7 +88,7 @@ describe('rowHeader.vue', () => {
     )
   })
 
-  it('verify group icon showing condition', async () => {
+  it('group icon should exists when header.sortable is true', async () => {
     expect.hasAssertions()
     expect(wrapper.find('.customHeader-actions-group').exists()).toBeFalsy()
 
@@ -106,7 +106,7 @@ describe('rowHeader.vue', () => {
     expect(wrapper.find('.customHeader-actions-group').exists()).toBeTruthy()
   })
 
-  it('verify the class grouped of span container of sort icon', async () => {
+  it('group icon should has grouped class when groupBy contains header.value', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -129,7 +129,7 @@ describe('rowHeader.vue', () => {
     )
   })
 
-  it('verify the click on sort icon', async () => {
+  it('setGroupBy should be called when group icon is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.vm.setGroupBy = setGroupByMock
@@ -142,7 +142,7 @@ describe('rowHeader.vue', () => {
     })
   })
 
-  it('verify the return value from getHeaderGroup', async () => {
+  it('getHeaderGroup should return true when groupable is true, and groupBy contains header.value', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -184,7 +184,7 @@ describe('rowHeader.vue', () => {
     expect(responseExpectToBeTrue).toStrictEqual({ grouped: true })
   })
 
-  it('verify the return value from getHeaderSort', async () => {
+  it('getHeaderSort should return desc and sorted true when sortBy is equal to header.value and sortDesc is true', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({

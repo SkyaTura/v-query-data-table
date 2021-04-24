@@ -41,7 +41,7 @@ describe('tableFab.vue', () => {
     })
   })
 
-  it('verify its showing condition', async () => {
+  it('should exists when a tableAction have fab propertie equal true', async () => {
     expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-tooltip' }).exists()).toBeTruthy()
 
@@ -63,7 +63,7 @@ describe('tableFab.vue', () => {
     expect(wrapper.findComponent({ name: 'v-tooltip' }).exists()).toBeFalsy()
   })
 
-  it("verify the button's condition of exhibition", async () => {
+  it('button should exists when hideTableFAB is false', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -87,7 +87,7 @@ describe('tableFab.vue', () => {
   })
 
   // eslint-disable-next-line jest/no-done-callback
-  it('verify the text on tooltip', async (done) => {
+  it('tooltip text should be equal to tableAction text', async (done) => {
     expect.hasAssertions()
 
     wrapper.findComponent({ name: 'v-btn' }).trigger('mouseenter')
@@ -100,7 +100,7 @@ describe('tableFab.vue', () => {
     })
   })
 
-  it('verify the emitted function on button click', async () => {
+  it('should emit action-table-add when button is clicked', async () => {
     expect.hasAssertions()
     expect(wrapper.emitted()).not.toHaveProperty('action-table-add')
 
@@ -110,14 +110,14 @@ describe('tableFab.vue', () => {
     expect(wrapper.emitted('action-table-add')).toBeTruthy()
   })
 
-  it('verify the showed icon', () => {
+  it('icon should be equal to tableAction icon', () => {
     expect.hasAssertions()
     expect(wrapper.findComponent({ name: 'v-icon' }).text()).toStrictEqual(
       'add'
     )
   })
 
-  it('verify the return of fab', () => {
+  it('fab should return icon and text of tableActions with fab propertie equal true', () => {
     expect.hasAssertions()
 
     const actions = {

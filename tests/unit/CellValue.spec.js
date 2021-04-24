@@ -32,7 +32,7 @@ describe('cellValue.vue', () => {
     })
   })
 
-  it('verify showing condition of SingleActions', async () => {
+  it('component SingleActions should exists when header value is _actions', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -51,7 +51,7 @@ describe('cellValue.vue', () => {
     ).toBeTruthy()
   })
 
-  it('verify showing condition of CellAvatar', async () => {
+  it('component CellAvatar should exists when header.$custom.template is avatar', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -70,7 +70,7 @@ describe('cellValue.vue', () => {
     expect(wrapper.findComponent({ name: 'CellAvatar' }).exists()).toBeTruthy()
   })
 
-  it('verify showing condition of CellChip', async () => {
+  it('component CellChip should exists when header.$custom.template is chips', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -89,7 +89,7 @@ describe('cellValue.vue', () => {
     expect(wrapper.findComponent({ name: 'CellChip' }).exists()).toBeTruthy()
   })
 
-  it('verify showing condition of default text', async () => {
+  it('text should be equal to props.value by default', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({

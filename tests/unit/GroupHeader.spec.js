@@ -63,12 +63,12 @@ describe('groupHeader.vue', () => {
     })
   })
 
-  it('verify group header text', () => {
+  it('span should be equal to text of header which is grouped', () => {
     expect.hasAssertions()
     expect(wrapper.findAll('span').at(0).text()).toBe('Teste:\u00A01')
   })
 
-  it('verify showing condition of icons', async () => {
+  it('icons should exists when hideRowGroupExpansion and hideRowGroupClose are false', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -98,7 +98,7 @@ describe('groupHeader.vue', () => {
     expect(wrapper.find('.customHeader-actions-sort').exists()).toBeTruthy()
   })
 
-  it('verify showing condition of sort icon', async () => {
+  it('sort icon should exists when header which is sorted has property sortable true', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -142,7 +142,7 @@ describe('groupHeader.vue', () => {
     expect(wrapper.find('.customHeader-actions-sort').exists()).toBeTruthy()
   })
 
-  it('verify class sorted of sort icon', async () => {
+  it('sort icon should have sorted class when header is sorted', async () => {
     expect.hasAssertions()
     expect(wrapper.find('.customHeader-actions-sort').classes()).not.toContain(
       'sorted'
@@ -167,7 +167,7 @@ describe('groupHeader.vue', () => {
     )
   })
 
-  it('verify class invertable-inverted of sort icon', async () => {
+  it('sort icon should have invertable-inverted class when sortDesc is true', async () => {
     expect.hasAssertions()
     expect(
       wrapper.findAllComponents({ name: 'v-icon' }).at(0).classes()
@@ -193,7 +193,7 @@ describe('groupHeader.vue', () => {
     ).toContain('invertable-inverted')
   })
 
-  it('verify click on close icon button', async () => {
+  it('remove function should be called when button is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.findAllComponents({ name: 'v-btn' }).at(1).trigger('click')
@@ -202,7 +202,7 @@ describe('groupHeader.vue', () => {
     expect(removeMock).toHaveBeenCalledTimes(1)
   })
 
-  it('verify click on close icon', async () => {
+  it('close icon should exists when hideRowGroupExpansion is false', async () => {
     expect.hasAssertions()
     expect(wrapper.findAllComponents({ name: 'v-tooltip' })).toHaveLength(3)
 
@@ -221,7 +221,7 @@ describe('groupHeader.vue', () => {
   })
 
   // eslint-disable-next-line jest/no-done-callback
-  it('verify click on close icon when isOpen is true', async (done) => {
+  it('tooltip on close icon should be Recolher when isOpen is true', async (done) => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -247,7 +247,7 @@ describe('groupHeader.vue', () => {
   })
 
   // eslint-disable-next-line jest/no-done-callback
-  it('verify click on close icon when isOpen is false', async (done) => {
+  it('tooltip on close icon should be Expandir when isOpen is false', async (done) => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -273,7 +273,7 @@ describe('groupHeader.vue', () => {
     })
   })
 
-  it('verify click on expand icon button', async () => {
+  it('toggle function should be called when button is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.findAllComponents({ name: 'v-btn' }).at(2).trigger('click')
@@ -282,7 +282,7 @@ describe('groupHeader.vue', () => {
     expect(toggleMock).toHaveBeenCalledTimes(1)
   })
 
-  it('verify class of expand icon', async () => {
+  it('expand icon should have invertable-inverted class when isOpen is true', async () => {
     expect.hasAssertions()
     expect(
       wrapper.findAllComponents({ name: 'v-icon' }).at(2).classes()
@@ -304,7 +304,7 @@ describe('groupHeader.vue', () => {
     ).toContain('invertable-inverted')
   })
 
-  it('verify the return value from groupHeader', async () => {
+  it('computed groupHeader should return the values of header which is grouped', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -324,7 +324,7 @@ describe('groupHeader.vue', () => {
     })
   })
 
-  it('verify the return value from groupHeaderSort', async () => {
+  it('groupHeaderSort should return the desc: false, sorted: false, and empty index to default props config', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -344,7 +344,7 @@ describe('groupHeader.vue', () => {
     })
   })
 
-  it('verify the return value from getGroupHeader', async () => {
+  it('computed getGroupHeader should return text: Teste, key: Teste, value: 1 to default props config', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -364,7 +364,7 @@ describe('groupHeader.vue', () => {
     })
   })
 
-  it('verify the result of sortGroupHeader', async () => {
+  it('query should change to certain values when sortGroupHeader is called', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({

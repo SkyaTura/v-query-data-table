@@ -52,7 +52,7 @@ describe('singleActions.vue', () => {
     })
   })
 
-  it('verify showing condition of quick actions', async () => {
+  it('quick actions should exists when quick propertie is false', async () => {
     expect.hasAssertions()
     expect(wrapper.findAllComponents({ name: 'v-btn' }).at(0).text()).toBe(
       'edit'
@@ -81,7 +81,7 @@ describe('singleActions.vue', () => {
     )
   })
 
-  it('verify emitted function when quick actions are clicked', async () => {
+  it('should emit action-single-modify when quick action edit is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
@@ -98,7 +98,7 @@ describe('singleActions.vue', () => {
     expect(wrapper.emitted('action-single-modify')).toBeTruthy()
   })
 
-  it('verify showing condition of actions', async () => {
+  it('actions should not exists when hideTableActions is true', async () => {
     expect.hasAssertions()
 
     wrapper.findAllComponents({ name: 'v-btn' }).at(1).trigger('click')
@@ -118,7 +118,7 @@ describe('singleActions.vue', () => {
     expect(wrapper.findComponent({ name: 'v-list-item' }).exists()).toBeFalsy()
   })
 
-  it('verify emitted function when actions are clicked', async () => {
+  it('should emit action-single-remove when delete action is clicked', async () => {
     expect.hasAssertions()
 
     wrapper.setProps({
