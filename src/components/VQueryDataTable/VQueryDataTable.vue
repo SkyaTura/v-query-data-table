@@ -31,7 +31,7 @@ v-card.VQueryDataTable(
 
   template(v-if="showDebug")
     .text-h6 Debug
-    pre {{ selected }}
+    pre {{ values.selected }}
     pre {{ options }}
 </template>
 
