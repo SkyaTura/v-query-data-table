@@ -241,7 +241,7 @@ export default {
           ...this.datatable,
           items: this.computedItems,
           loading: this.loading.active,
-          showSelect: Object.keys(this.oldActions.bulkActions).length,
+          showSelect: Object.keys(this.oldActions.bulkActions).length >= 1,
           hideDefaultFooter: true,
           headers: this.computedHeaders,
           disabled: this.loading.active,
