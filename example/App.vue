@@ -134,6 +134,7 @@ v-app#app
             )
         v-card.mt-4.py-3.px-5.big-corners(flat)
           VQueryDataTable(
+            item-key="name"
             v-bind="datatable"
             :query.sync="datatable.query"
             @action-bulk-remove="newItem"
