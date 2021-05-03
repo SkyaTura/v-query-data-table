@@ -49,12 +49,12 @@ v-app#app
               label="Esconder todas as ações"
               v-model="datatable.hideAllActions"
             )
-              v-switch(
-                dense
-                hideDetails
-                label="Esconder menu"
-                v-model="datatable.hideMenu"
-              )
+            v-switch(
+              dense
+              hideDetails
+              label="Esconder menu"
+              v-model="datatable.hideMenu"
+            )
           v-col(cols="12" md="4")
             v-switch(
               dense
