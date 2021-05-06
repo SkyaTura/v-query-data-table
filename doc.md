@@ -79,7 +79,7 @@ Além de todas as propriedades definidas na [v-data-table do vuetify](https://vu
 - [actions](#actions)
 - [bulkActions](#bulkActions)
 - [datatable](#datatable)
-- [description](#datatable)
+- [description](#description)
 - [disablePagination](#disablePagination)
 - [disableSorting](#disableSorting)
 - [disallowDense](#disallowDense)
@@ -141,8 +141,11 @@ actions: {
 
 #### bulkActions
 Tipo: `Object`
+
 Default: `{}`
+
 Descrição: Define as ações em massa para os itens da tabela
+
 Exemplo:
 ```javascript
 bulkActions: {
@@ -159,8 +162,11 @@ bulkActions: {
 
 #### datatable
 Tipo: `Object`
+
 Default: `{}`
+
 Descrição: Objeto que compacta todas as propriedades da tabela
+
 Exemplo:
 ```javascript
 <v-query-data-table v-bind='datatable'>
@@ -181,27 +187,37 @@ export default {
 
 #### description
 Tipo: `string`
+
 Default: `''`
+
 Descrição: Texto de descrição da tabela
 
 #### disablePagination
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Desabilita a paginação dos itens da tabela retirando o elemento de layout responsável por essa funcionalidade
 
 #### disableSorting
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Desabilita a ordenação dos itens
 
 #### disallowDense
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Desabilita amostragem das linhas da tabela de forma densa
 
 #### disallowGroups
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Desabilita agrupamento de itens
 
 #### disallowKeepGroupedColumns
@@ -209,8 +225,11 @@ Não sei o que faz
 
 #### fetch
 Tipo: `Function`
+
 Default: `null`
+
 Descrição: Função responsável por buscar os itens da tabela. Envia para a função um parâmetro informando os filtros para realizar a busca dos dados
+
 Exemplo:
 ```javascript
 <v-query-data-table :fetch="fetchItems" />
@@ -232,8 +251,11 @@ export default {
 
 #### headers
 Tipo: `array`
+
 Default: Não possui, é uma propriedade obrigatória
+
 Descrição: Define os cabeçalhos da tabela
+
 Exemplo:
 ```javascript
 headers: [
@@ -292,6 +314,7 @@ headers: [
 ```
 ##### $custom
 Define algumas customizações que serão utilizadas nos dados de uma coluna. É uma propriedade não obrigatória, assim como as propriedades definidas em seu interior
+
 ```javascript
 $custom: {
     template: 'chips' | 'avatar', //Caso presente, define como o dado será mostrado, como v-chip, ou v-avatar. O valor default é texto
@@ -301,6 +324,7 @@ $custom: {
 ```
 ##### $extra
 Define algumas informações extras sobre a coluna. É uma propriedade não obrigatória, assim como as propriedades definidas em seu interior
+
 ```javascript
 $extra: {
     filterable: Boolean, //Define se a coluna permite ser filtrada
@@ -311,63 +335,88 @@ $extra: {
 
 #### hideAllActions
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde todas as ações que podem ser feitas nos itens e/ou na tabela
 
 #### hideFilter
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Desabilita os filtros da tabela escondendo o ícone usado para acessar o menu de filtragem
 
 #### hideHeader
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde cabeçalho da tabela. O cabeçalho da tabela consiste do título da tabela, do ícone de filtragem, do ícone de menu, do input de busca, e dos botões de ações rápidas da tabela
 
 #### hideMenu
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde o ícone de menu da tabela (ícone de reticências)
 
 #### hideRowGroupClose
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde o botão que realiza o desagrupamento das linhas da tabela que foram agrupadas
 
 #### hideRowGroupExpansion
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde o botão que permite expandir ou recolher a listagem dos itens agrupados
 
 #### hideSearch
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde o input de busca da tabela
 
 #### hideSingleActions
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde as ações unitárias para todas as linha da tabela
 
 #### hideTableActions
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde as ações da tabela
 
 #### hideTableFAB
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde ação flutuante. A ação flutuante se localiza, de forma absoluta, no canto inferior direito da tela
 
 #### hideTableQuickActions
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Esconde as ações rápidas da tabela. Ações rápidas da tabela se localizam no cabeçalho da tabela
 
 #### items
 Tipo: `array`
+
 Default: `null`
+
 Descrição: Lista de itens da tabela, caso tenha definido uma função para o [fetch](#fetch) não é necessário definir a propriedade items
+
 Exemplo:
 ```javascript
 items: [
@@ -397,8 +446,11 @@ items: [
 
 #### itemsMap
 Tipo: `Function`
+
 Default: `(item) => item`,
+
 Descrição: Função para modificar item para a visualização. A função recebe 3 parâmetros, o item, seu index, e o array de origem
+
 Exemplo:
 ```javascript
 <v-query-data-table :itemsMap='itemsMap'>
@@ -424,18 +476,25 @@ export default {
 
 #### multiSort
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Caso valor seja true, habilita o ordenamento de mais de uma coluna ao mesmo tempo
 
 #### mustSort
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Caso valor seja true, torna o ordenamento obrigatório. Uma vez que uma coluna é ordenada, não é mais possível desordená-la, o usuário só poderá alterar entre o ordenamento crescente ou decrescente
 
 #### overrideQuery
 Tipo: `Object`
+
 Default: `null`
+
 Descrição: Sobreescreve opções do [query](#query)
+
 Exemplo:
 ```javascript
 overrideQuery: {
@@ -445,8 +504,11 @@ overrideQuery: {
 
 #### query
 Tipo: `Object`
+
 Default: `null`
+
 Descrição: Define as buscas para a tabela
+
 Exemplo:
 ```javascript
 query: {
@@ -465,13 +527,18 @@ query: {
 
 #### showDebug
 Tipo: `boolean`
+
 Default: `false`
+
 Descrição: Habilita a visibilidade do debug da tabela. O debug mostra todos os valores inerentes a tabela
 
 #### singleActions
 Tipo: `Object`
+
 Default: `{}`
+
 Descrição: Define ações para os itens da tabela
+
 Exemplo:
 ```javascript
 singleActions: {
@@ -489,8 +556,11 @@ singleActions: {
 
 #### tableActions
 Tipo: `Object`
+
 Default: `{}`
+
 Descrição: Define ações para a tabela
+
 Exemplo:
 ```javascript
 tableActions: {
@@ -510,17 +580,23 @@ tableActions: {
 
 #### title
 Tipo: `string`
+
 Default: `''`
+
 Descrição: Texto título da tabela
 
 #### toolbarFieldsBackground
 Tipo: `string`
+
 Default: `grey`
+
 Descrição: Define a cor de fundo dos ícones do cabeçalho da tabela, e do input de busca
 
 #### toolbarFieldsColor
 Tipo: `string`
+
 Default: `primary`
+
 Descrição: Define a cor dos ícones do cabeçalho da tabela, e do input de busca. O valor default aponta para a cor definida como primary no sistema
 
 ### Listeners
@@ -528,6 +604,7 @@ Para ser possível modificar a tabela e seus itens, o uso de listeners são indi
 
 #### Modelo
 Os listeners seguem o seguinte modelo @action-${tipo da ação}-${nome da ação}
+
 Exemplo:
 ```javascript
 <v-query-data-table 
