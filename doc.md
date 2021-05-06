@@ -71,6 +71,9 @@ npm run serve
 ```
 
 ## Documentação
+- [Propriedades](#propriedades-da-tabela)
+- [Listeners](#listeners)
+
 ### Propriedades da tabela
 Além de todas as propriedades definidas na [v-data-table do vuetify](https://vuetifyjs.com/en/api/v-data-table/), há ainda: 
 - [actions](#actions)
@@ -109,7 +112,32 @@ Além de todas as propriedades definidas na [v-data-table do vuetify](https://vu
 - [toolbarFieldsColor](#toolbarFieldsColor)
 
 #### actions
-Fazer
+Tipo: `Object`
+Default: `{}`
+Descrição: Permite compactar as [singleActions](#singleActions), [tableActions](#tableActions) e [bulkActions](#bulkActions), em um objeto. Para isso possui as propriedades, single, table e bulk.
+Exemplo:
+```javascript
+actions: {
+    single: {
+        view: {
+            text: 'Visualizar', icon: 'view', quick: true,
+        },
+        modify: {
+            text: 'Alterar', icon: 'edit',  
+        },
+    },
+    table: {
+        add: {
+            text: 'Adicionar item', icon: 'add', quick: true,
+        },
+    },
+    bulk: {
+        remove: {
+            text: 'Deletar', icon: 'delete'
+        }  
+    },
+}
+```
 
 #### bulkActions
 Tipo: `Object`
@@ -130,6 +158,26 @@ bulkActions: {
 ```
 
 #### datatable
+Tipo: `Object`
+Default: `{}`
+Descrição: Objeto que compacta todas as propriedades da tabela
+Exemplo:
+```javascript
+<v-query-data-table v-bind='datatable'>
+
+<script>
+export default {
+    data () => ({
+        datatable: {
+            headers: [],
+            items: [],
+            description: 'Todas as propriedades vistas aqui podem ser adicionadas no datatable',
+            hideTableFAB: true,
+        }
+    })
+}
+</script>
+```
 
 #### description
 Tipo: `string`
@@ -166,6 +214,7 @@ Descrição: Função responsável por buscar os itens da tabela. Envia para a f
 Exemplo:
 ```javascript
 <v-query-data-table :fetch="fetchItems" />
+
 <script>
 export default {
     methods: {
@@ -174,7 +223,7 @@ export default {
                 params: payload
             })
             
-            return response
+            return response.data
         }
     }
 }
@@ -238,6 +287,7 @@ headers: [
             },
         },
     },
+    { text: 'Carbs (g)', value: 'carbs' },
 ]
 ```
 ##### $custom
@@ -255,7 +305,7 @@ Define algumas informações extras sobre a coluna. É uma propriedade não obri
 $extra: {
     filterable: Boolean, //Define se a coluna permite ser filtrada
     trasformItem: Function | Object, //Transforma o valor recebido
-    filterType: 'autocomplete' | 'range', //Define como a coluna é filtrada
+    filterType: 'autocomplete' | 'range', //Define como a coluna é filtrada, valor default: 'autocomplete'
 }
 ```
 
@@ -287,7 +337,7 @@ Descrição: Esconde o botão que realiza o desagrupamento das linhas da tabela 
 #### hideRowGroupExpansion
 Tipo: `boolean`
 Default: `false`
-Descrição: Esconde o botão que permite expandir ou recolher a listagem do itens agrupadas
+Descrição: Esconde o botão que permite expandir ou recolher a listagem dos itens agrupados
 
 #### hideSearch
 Tipo: `boolean`
@@ -315,9 +365,62 @@ Default: `false`
 Descrição: Esconde as ações rápidas da tabela. Ações rápidas da tabela se localizam no cabeçalho da tabela
 
 #### items
+Tipo: `array`
+Default: `null`
+Descrição: Lista de itens da tabela, caso tenha definido uma função para o [fetch](#fetch) não é necessário definir a propriedade items
+Exemplo:
+```javascript
+items: [
+    { // Cada propriedade deve ser equivalente a um value no [headers](#headers)
+        name: 'Frozen Yogurt',
+        calories: 159,
+        carbs: 24,
+        kind: 'cold',
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+    },
+    {
+        name: 'Cupcake',
+        calories: 300,
+        carbs: 37,
+        kind: 'room_temperature',
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg'
+    },
+    {
+        name: 'Gingerbread',
+        calories: 400,
+        carbs: 49,
+        kind: 'hot',
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg'
+    },
+]
+```
 
 #### itemsMap
-Não sei o que faz
+Tipo: `Function`
+Default: `(item) => item`,
+Descrição: Função para modificar item para a visualização. A função recebe 3 parâmetros, o item, seu index, e o array de origem
+Exemplo:
+```javascript
+<v-query-data-table :itemsMap='itemsMap'>
+
+<script>
+export default {
+    methods: {
+        itemsMap(item, index, self) {
+            if (item.kind === 'Gelado') {
+                return {
+                  ...item,
+                  kind: 'Geladíssimo',
+                }
+            }
+            return {
+                ...item,
+            }
+        }
+    }
+}
+</script>
+```
 
 #### multiSort
 Tipo: `boolean`
@@ -330,9 +433,35 @@ Default: `false`
 Descrição: Caso valor seja true, torna o ordenamento obrigatório. Uma vez que uma coluna é ordenada, não é mais possível desordená-la, o usuário só poderá alterar entre o ordenamento crescente ou decrescente
 
 #### overrideQuery
-Não sei o que faz
+Tipo: `Object`
+Default: `null`
+Descrição: Sobreescreve opções do [query](#query)
+Exemplo:
+```javascript
+overrideQuery: {
+    itemsPerPage: 5,
+}
+```
 
 #### query
+Tipo: `Object`
+Default: `null`
+Descrição: Define as buscas para a tabela
+Exemplo:
+```javascript
+query: {
+    page: 1,
+    itemsPerPage: 10,
+    sortBy: [],
+    sortDesc: [],
+    groupBy: [],
+    groupDesc: [],
+    mustSort: false,
+    multiSort: false,
+    search: "",
+    filter: "" 
+}
+```
 
 #### showDebug
 Tipo: `boolean`
@@ -340,8 +469,44 @@ Default: `false`
 Descrição: Habilita a visibilidade do debug da tabela. O debug mostra todos os valores inerentes a tabela
 
 #### singleActions
+Tipo: `Object`
+Default: `{}`
+Descrição: Define ações para os itens da tabela
+Exemplo:
+```javascript
+singleActions: {
+    modify: { 
+        icon: 'edit',
+        text: 'Editar',
+        quick: true // Define como ação rápida, caso contrário, será acessada pelo menu de ações do item
+    },
+    remove: { 
+        icon: 'delete',
+        text: 'Remover'
+    },
+},
+```
 
 #### tableActions
+Tipo: `Object`
+Default: `{}`
+Descrição: Define ações para a tabela
+Exemplo:
+```javascript
+tableActions: {
+    add: {
+        icon: 'add',
+        text: 'Novo item',
+        quick: true, // Define como uma ação rápida, botão adicionado no cabeçalho da tabela
+        fab: true, // Define como uma ação flutuante, botão adicionado ao canto inferior direito da tela
+        color: 'green',
+    },
+    download: {
+        icon: 'cloud_download',
+        text: 'Exportar',
+    },
+},
+```
 
 #### title
 Tipo: `string`
@@ -357,3 +522,49 @@ Descrição: Define a cor de fundo dos ícones do cabeçalho da tabela, e do inp
 Tipo: `string`
 Default: `primary`
 Descrição: Define a cor dos ícones do cabeçalho da tabela, e do input de busca. O valor default aponta para a cor definida como primary no sistema
+
+### Listeners
+Para ser possível modificar a tabela e seus itens, o uso de listeners são indispensáveis
+
+#### Modelo
+Os listeners seguem o seguinte modelo @action-${tipo da ação}-${nome da ação}
+Exemplo:
+```javascript
+<v-query-data-table 
+    item-key='key'
+    :actions='actions'
+    :bulkActions='bulkActions'
+    @action-single-edit='editItem'
+    @action-bulk-remove='removeItems'
+    @action-table-add='addItem'
+/>
+
+<script>
+export default {
+    data () => ({
+        actions: {
+            table: {
+                add: { text: 'Adicionar', icon: 'add', quick: true }
+            },
+            single: {
+                edit: { text: 'Editar', icon: 'edit' }
+            },
+        },
+        bulkActions: {
+            remove: { text: 'Remover', icon: 'delete' }
+        }
+    })
+    methods: {
+        addItem() {
+            console.log('Adicionar item')
+        },
+        removeItems(selected) {
+            console.log(`Items: ${selected}`)
+        },
+        editItem({ item }) {
+            console.log(`Item: ${item}`)
+        }
+    }
+}
+</script>
+```
