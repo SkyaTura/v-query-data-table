@@ -113,8 +113,11 @@ Além de todas as propriedades definidas na [v-data-table do vuetify](https://vu
 
 #### actions
 Tipo: `Object`
+
 Default: `{}`
+
 Descrição: Permite compactar as [singleActions](#singleActions), [tableActions](#tableActions) e [bulkActions](#bulkActions), em um objeto. Para isso possui as propriedades, single, table e bulk.
+
 Exemplo:
 ```javascript
 actions: {
