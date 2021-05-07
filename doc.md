@@ -224,7 +224,11 @@ Default: `false`
 Descrição: Desabilita agrupamento de itens
 
 #### disallowKeepGroupedColumns
-Não sei o que faz
+Tipo: `boolean`
+
+Default: `false`
+
+Descrição: Não permite mostrar coluna usada para o agrupamento nos cabeçalhos da tabela
 
 #### fetch
 Tipo: `Function`
