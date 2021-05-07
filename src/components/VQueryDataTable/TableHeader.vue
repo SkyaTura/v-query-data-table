@@ -57,10 +57,12 @@ div(v-if="!options.hideHeader")
 import { mdiFilter, mdiDotsHorizontal, mdiMagnify } from '@mdi/js'
 import TableDrawer from './TableDrawer.vue'
 import TableMenu from './TableMenu.vue'
+import conditionMixin from '../../conditionMixin'
 
 export default {
   name: 'TableHeader',
   components: { TableMenu, TableDrawer },
+  mixins: [conditionMixin],
   inheritAttrs: false,
   props: {
     options: { type: Object, required: true },
@@ -72,12 +74,6 @@ export default {
       mdiMagnify,
     },
   }),
-  methods: {
-    condition(action) {
-      if (action.condition) return action.condition()
-      return true
-    },
-  },
 }
 </script>
 

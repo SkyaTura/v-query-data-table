@@ -31,9 +31,11 @@
 
 <script>
 import { mdiDotsHorizontal } from '@mdi/js'
+import conditionMixin from '../../conditionMixin'
 
 export default {
   name: 'SingleActions',
+  mixins: [conditionMixin],
   props: {
     options: { type: Object, required: true },
     payload: { type: Object, required: true },
@@ -47,10 +49,6 @@ export default {
         `action-single-${value}`,
         payload
       )
-    },
-    condition(action) {
-      if (action.condition) return action.condition()
-      return true
     },
   },
 }

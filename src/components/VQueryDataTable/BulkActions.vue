@@ -26,18 +26,17 @@ v-expansion-panels.bulk-actions(
 </template>
 
 <script>
+import conditionMixin from '../../conditionMixin'
+
 export default {
   name: 'BulkActions',
+  mixins: [conditionMixin],
   props: {
     options: { type: Object, required: true },
   },
   methods: {
     emit(value, selected) {
       this.$parent.$parent.$emit(`action-bulk-${value}`, selected)
-    },
-    condition(action) {
-      if (action.condition) return action.condition()
-      return true
     },
   },
 }

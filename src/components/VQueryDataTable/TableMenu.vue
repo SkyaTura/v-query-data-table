@@ -53,8 +53,11 @@ v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
 </template>
 
 <script>
+import conditionMixin from '../../conditionMixin'
+
 export default {
   name: 'TableMenu',
+  mixins: [conditionMixin],
   inheritAttrs: false,
   props: {
     options: { type: Object, required: true },
@@ -62,10 +65,6 @@ export default {
   methods: {
     setItemsPerPage(itemsPerPage) {
       localStorage?.setItem('v-query-data-table:itemsPerPage', itemsPerPage)
-    },
-    condition(action) {
-      if (action.condition) return action.condition()
-      return true
     },
   },
 }
