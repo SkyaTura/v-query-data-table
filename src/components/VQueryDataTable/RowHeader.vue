@@ -40,6 +40,13 @@ export default {
     header: { type: Object, required: true },
   },
   computed: {},
+  watch: {
+    'options.keepGroupedColumns': {
+      handler() {
+        this.onGroup(this.options.query)
+      },
+    },
+  },
   methods: {
     getHeaderGroup({ value }) {
       const { groupBy } = this.options.query
@@ -65,7 +72,7 @@ export default {
     },
     onGroup({ groupBy }) {
       const run = (u) => {
-        const { table } = this.$refs
+        const { table } = this.$parent.$parent.$parent.$parent.$parent.$refs
         if (!table) return
         const { keepGroupedColumns, disallowKeepGroupedColumns } = this.options
         table.internalGroupBy =
