@@ -115,7 +115,8 @@ describe('bulkActions.vue', () => {
 
   it('should emit action-bulk-remove when button is clicked', async () => {
     expect.hasAssertions()
-    expect(wrapper.emitted()).not.toHaveProperty('action-bulk-remove')
+
+    jest.spyOn(wrapper.vm, 'emit').mockImplementation()
 
     const btns = wrapper.findAllComponents({ name: 'v-btn' })
     const deleteButton = btns.at(0)
@@ -123,10 +124,10 @@ describe('bulkActions.vue', () => {
     deleteButton.trigger('click')
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.emitted('action-bulk-remove')).toBeTruthy()
-    expect(wrapper.emitted('action-bulk-remove')).toStrictEqual([
-      [props.values.selected],
-    ])
+    expect(wrapper.vm.emit).toHaveBeenCalledWith(
+      'remove',
+      props.values.selected
+    )
   })
 
   it('should show action icon if property icon exists', async () => {

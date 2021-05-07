@@ -84,18 +84,18 @@ describe('singleActions.vue', () => {
   it('should emit action-single-modify when quick action edit is clicked', async () => {
     expect.hasAssertions()
 
+    jest.spyOn(wrapper.vm, 'emit').mockImplementation()
+
     wrapper.setProps({
       payload: { ...payloadProps },
       options: { ...optionsProps },
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.emitted('action-single-modify')).toBeFalsy()
-
     wrapper.findComponent({ name: 'v-btn' }).trigger('click')
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.emitted('action-single-modify')).toBeTruthy()
+    expect(wrapper.vm.emit).toHaveBeenCalledWith('modify', { value: 'test' })
   })
 
   it('actions should not exists when hideTableActions is true', async () => {
@@ -121,6 +121,9 @@ describe('singleActions.vue', () => {
   it('should emit action-single-remove when delete action is clicked', async () => {
     expect.hasAssertions()
 
+    jest.spyOn(wrapper.vm, 'emit').mockClear()
+    jest.spyOn(wrapper.vm, 'emit').mockImplementation()
+
     wrapper.setProps({
       payload: { ...payloadProps },
       options: { ...optionsProps },
@@ -133,11 +136,9 @@ describe('singleActions.vue', () => {
     const listItems = wrapper.findAllComponents({ name: 'v-list-item' })
     const removeItem = listItems.at(1)
 
-    expect(wrapper.emitted('action-single-remove')).toBeFalsy()
-
     removeItem.trigger('click')
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.emitted('action-single-remove')).toBeTruthy()
+    expect(wrapper.vm.emit).toHaveBeenCalledWith('remove', { value: 'test' })
   })
 })
