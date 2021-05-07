@@ -218,6 +218,7 @@ export default {
         refresh: () => this.refresh(),
         cleanRefresh: () => this.cleanRefresh(),
         toggleDense: () => this.toggleDense(),
+        toggleKeepGroupedColumns: () => this.toggleKeepGroupedColumns(),
         setSearch: (newValue) => this.setSearch(newValue),
         values: this.values,
         slots: {
