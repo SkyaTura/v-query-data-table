@@ -209,7 +209,7 @@ Object.entries(values)
     getFieldMax(field) {
       const { [field]: values } = this.options.filter.items
       // Essa verificação causa bug, mas outro bug aparece caso o campo do range slider não tenha itens
-      // if (!values || !values.length) return 0
+      if (!values || !values.length) return 0
       return values.reduce(
         (acc, cur) => Math.max(acc, parseInt(cur.value, 10)),
         -Infinity

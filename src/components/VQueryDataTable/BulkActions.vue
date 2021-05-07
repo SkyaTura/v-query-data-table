@@ -15,7 +15,7 @@ v-expansion-panels.bulk-actions(
               v-bind="{ color: action.color || 'primary', ...action.options }"
               v-for="(action, value) in options.bulkActions"
               :key="value"
-              @click="$emit(`action-bulk-${value}`, options.values.selected)"
+              @click="emit(value, options.values.selected)"
             )
               v-icon(small v-if="action.icon") {{ action.icon }}
               span {{ action.text }}
@@ -27,6 +27,11 @@ export default {
   name: 'BulkActions',
   props: {
     options: { type: Object, required: true },
+  },
+  methods: {
+    emit(value, selected) {
+      this.$parent.$parent.$emit(`action-bulk-${value}`, selected)
+    },
   },
 }
 </script>

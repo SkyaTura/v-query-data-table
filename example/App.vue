@@ -137,9 +137,11 @@ v-app#app
             item-key="name"
             v-bind="datatable"
             :query.sync="datatable.query"
-            @action-bulk-remove="newItem"
-            @action-single-remove="newItem"
+            @action-bulk-remove="removeBulkItens"
+            @action-single-modify="modifySingleItem"
+            @action-single-remove="removeSingleItem"
             @action-table-add="newItem"
+            @action-table-download="downloadTable"
           )
         v-card.mt-4.py-3.px-5.big-corners(flat)
           v-card-title Exemplo de configuração
@@ -254,6 +256,21 @@ export default {
   methods: {
     newItem() {
       console.info('Novo item')
+    },
+    downloadTable() {
+      console.info('Download table')
+    },
+    removeSingleItem(item) {
+      console.info('remove single item')
+      console.info(item)
+    },
+    modifySingleItem(item) {
+      console.info('modify single item')
+      console.info(item)
+    },
+    removeBulkItens(selected) {
+      console.info('remove bulk itens')
+      console.info(selected)
     },
   },
 }
