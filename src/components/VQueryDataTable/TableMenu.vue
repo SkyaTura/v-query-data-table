@@ -3,7 +3,7 @@ v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
   v-list
     template(
       v-for="(action, value) in options.tableActions"
-      v-if="!options.hideTableActions && !options.hideAllActions"
+      v-if="!options.hideTableActions && !options.hideAllActions && condition(action)"
     )
       v-list-item(
         :color="action.color"
@@ -62,6 +62,10 @@ export default {
   methods: {
     setItemsPerPage(itemsPerPage) {
       localStorage?.setItem('v-query-data-table:itemsPerPage', itemsPerPage)
+    },
+    condition(action) {
+      if (action.condition) return action.condition()
+      return true
     },
   },
 }

@@ -43,7 +43,7 @@ div(v-if="!options.hideHeader")
     )
       template(v-for="(action, value) in options.tableActions")
         v-btn(
-          v-if="action.quick"
+          v-if="action.quick && condition(action)"
           :color="action.color || 'primary'"
           :key="value"
           @click="$emit(`action-table-${value}`)"
@@ -72,6 +72,12 @@ export default {
       mdiMagnify,
     },
   }),
+  methods: {
+    condition(action) {
+      if (action.condition) return action.condition()
+      return true
+    },
+  },
 }
 </script>
 
