@@ -31,7 +31,7 @@ v-card.VQueryDataTable(
 
   template(v-if="showDebug")
     .text-h6 Debug
-    pre {{ selected }}
+    pre {{ values.selected }}
     pre {{ options }}
 </template>
 
@@ -218,6 +218,7 @@ export default {
         refresh: () => this.refresh(),
         cleanRefresh: () => this.cleanRefresh(),
         toggleDense: () => this.toggleDense(),
+        toggleKeepGroupedColumns: () => this.toggleKeepGroupedColumns(),
         setSearch: (newValue) => this.setSearch(newValue),
         values: this.values,
         slots: {
@@ -241,7 +242,7 @@ export default {
           ...this.datatable,
           items: this.computedItems,
           loading: this.loading.active,
-          showSelect: Object.keys(this.oldActions.bulkActions).length,
+          showSelect: Object.keys(this.oldActions.bulkActions).length >= 1,
           hideDefaultFooter: true,
           headers: this.computedHeaders,
           disabled: this.loading.active,
