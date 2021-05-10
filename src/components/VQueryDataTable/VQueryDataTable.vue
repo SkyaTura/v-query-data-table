@@ -212,6 +212,7 @@ export default {
         filter: this.filter,
         loading: this.loading,
         dense: this.dense && !this.disallowDense,
+        keepGroupedColumns: this.keepGroupedColumns,
         headers: this.computedHeaders,
         query: this.iQuery,
         clearCache: () => this.clearCache(),

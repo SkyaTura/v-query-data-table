@@ -32,7 +32,7 @@ v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
       v-list-item-icon
         v-icon folder
       v-list-item-content
-        v-list-item-title Manter colunas agrupadas
+        v-list-item-title {{ options.keepGroupedColumns ? 'Retirar ' : 'Manter' }} colunas agrupadas
     v-menu(offset-x open-on-hover v-if="!options.disablePagination")
       template(#activator="{ attrs, on }")
         v-list-item(v-bind="attrs" v-on="on")
