@@ -5,13 +5,9 @@ v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
       v-for="(action, value) in options.tableActions"
       v-if="!options.hideTableActions && !options.hideAllActions && condition(action)"
     )
-      v-list-item(
-        :color="action.color"
-        :key="value"
-        @click="$emit(`action-table-${value}`)"
-      )
+      v-list-item(:key="value" @click="$emit(`action-table-${value}`)")
         v-list-item-icon
-          v-icon {{ action.icon }}
+          v-icon(:color="action.color") {{ action.icon }}
         v-list-item-content
           v-list-item-title {{ action.text }}
     v-divider(v-if="Object.keys(options.tableActions).length")
