@@ -123,10 +123,17 @@ Exemplo:
 actions: {
     single: {
         view: {
-            text: 'Visualizar', icon: 'view', quick: true,
+            text: 'Visualizar',
+            icon: 'view',
+            quick: true,
+            color: 'orange', // Define a cor do ícone ou botão. Não é uma propriedade obrigatória
+            condition() { // Define condição da ação. Se retornar true a ação aparece, caso false, a ação não é renderizada. Necessita de um return do tipo boolean. Não é uma propriedade obrigatória
+                if (this.user.isRoot) return true
+                return false
+            }
         },
         modify: {
-            text: 'Alterar', icon: 'edit',  
+            text: 'Alterar', icon: 'edit',
         },
     },
     table: {
@@ -136,7 +143,13 @@ actions: {
     },
     bulk: {
         remove: {
-            text: 'Deletar', icon: 'delete'
+            text: 'Deletar',
+            icon: 'delete',
+            color: 'black',
+            condition() {
+                if(this.user.hasPermission) return true
+                return false
+            }
         }  
     },
 }
@@ -155,10 +168,14 @@ bulkActions: {
     remove: {
         icon: 'delete',
         text: 'Remover itens',
+        color: 'black',
     },
     download: {
         icon: 'download',
-        text: 'Baixar itens'
+        text: 'Baixar itens',
+        condition() {
+            return this.permission ? true : false
+        }
     }
 }
 ```
@@ -552,11 +569,15 @@ singleActions: {
     modify: { 
         icon: 'edit',
         text: 'Editar',
+        color: 'orange',
         quick: true // Define como ação rápida, caso contrário, será acessada pelo menu de ações do item
     },
     remove: { 
         icon: 'delete',
-        text: 'Remover'
+        text: 'Remover',
+        condition() {
+            return this.user.permissionToDelete
+        }
     },
 },
 ```
@@ -577,6 +598,9 @@ tableActions: {
         quick: true, // Define como uma ação rápida, botão adicionado no cabeçalho da tabela
         fab: true, // Define como uma ação flutuante, botão adicionado ao canto inferior direito da tela
         color: 'green',
+        condition() {
+            return this.user.permissionToAdd
+        }
     },
     download: {
         icon: 'cloud_download',
