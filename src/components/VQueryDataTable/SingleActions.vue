@@ -6,7 +6,7 @@
       v-if="action.quick"
       :color="action.color"
       :key="value"
-      @click="$emit(`action-single-${value}`, payload)"
+      @click="emit(value, payload)"
     )
       v-icon {{ action.icon }}
   v-menu(offset-y)
@@ -21,7 +21,7 @@
         v-list-item(
           :color="action.color"
           :key="value"
-          @click="$emit(`action-single-${value}`, payload)"
+          @click="emit(value, payload)"
         )
           v-list-item-icon
             v-icon {{ action.icon }}
@@ -41,5 +41,13 @@ export default {
   data: () => ({
     icons: { mdiDotsHorizontal },
   }),
+  methods: {
+    emit(value, payload) {
+      this.$parent.$parent.$parent.$parent.$parent.$parent.$parent.$emit(
+        `action-single-${value}`,
+        payload
+      )
+    },
+  },
 }
 </script>
