@@ -168,7 +168,14 @@ export default {
       disallowGroups: false,
       query: null,
       singleActions: {
-        modify: { icon: 'edit', text: 'Editar', quick: true },
+        modify: {
+          icon: 'edit',
+          text: 'Editar',
+          quick: true,
+          condition() {
+            return false
+          },
+        },
         remove: { icon: 'delete', text: 'Remover' },
       },
       tableActions: {
@@ -185,10 +192,16 @@ export default {
           handler() {
             console.info('Exportar')
           },
+          condition() {
+            return false
+          },
         },
       },
       bulkActions: {
-        remove: { icon: 'delete', text: 'Excluir' },
+        remove: {
+          icon: 'delete',
+          text: 'Excluir',
+        },
       },
       headers: [
         { text: 'Ações', value: '_actions' },

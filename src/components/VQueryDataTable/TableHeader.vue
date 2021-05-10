@@ -43,7 +43,7 @@ div(v-if="!options.hideHeader")
     )
       template(v-for="(action, value) in options.tableActions")
         v-btn(
-          v-if="action.quick"
+          v-if="action.quick && condition(action)"
           :color="action.color || 'primary'"
           :key="value"
           @click="$emit(`action-table-${value}`)"
@@ -57,10 +57,12 @@ div(v-if="!options.hideHeader")
 import { mdiFilter, mdiDotsHorizontal, mdiMagnify } from '@mdi/js'
 import TableDrawer from './TableDrawer.vue'
 import TableMenu from './TableMenu.vue'
+import conditionMixin from '../../conditionMixin'
 
 export default {
   name: 'TableHeader',
   components: { TableMenu, TableDrawer },
+  mixins: [conditionMixin],
   inheritAttrs: false,
   props: {
     options: { type: Object, required: true },

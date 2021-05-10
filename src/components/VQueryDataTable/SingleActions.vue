@@ -3,7 +3,7 @@
   template(v-for="(action, value) in options.singleActions")
     v-btn(
       icon
-      v-if="action.quick"
+      v-if="action.quick && condition(action)"
       :color="action.color"
       :key="value"
       @click="emit(value, payload)"
@@ -16,7 +16,7 @@
     v-list
       template(
         v-for="(action, value) in options.singleActions"
-        v-if="!options.hideTableActions && !options.hideAllActions"
+        v-if="!options.hideTableActions && !options.hideAllActions && condition(action)"
       )
         v-list-item(
           :color="action.color"
@@ -31,9 +31,11 @@
 
 <script>
 import { mdiDotsHorizontal } from '@mdi/js'
+import conditionMixin from '../../conditionMixin'
 
 export default {
   name: 'SingleActions',
+  mixins: [conditionMixin],
   props: {
     options: { type: Object, required: true },
     payload: { type: Object, required: true },

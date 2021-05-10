@@ -3,7 +3,7 @@ v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
   v-list
     template(
       v-for="(action, value) in options.tableActions"
-      v-if="!options.hideTableActions && !options.hideAllActions"
+      v-if="!options.hideTableActions && !options.hideAllActions && condition(action)"
     )
       v-list-item(
         :color="action.color"
@@ -53,8 +53,11 @@ v-menu(activator="#VQueryDataTableToolbarMenu" offset-y :dense="options.dense")
 </template>
 
 <script>
+import conditionMixin from '../../conditionMixin'
+
 export default {
   name: 'TableMenu',
+  mixins: [conditionMixin],
   inheritAttrs: false,
   props: {
     options: { type: Object, required: true },

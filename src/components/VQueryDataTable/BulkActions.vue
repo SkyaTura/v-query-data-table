@@ -10,21 +10,27 @@ v-expansion-panels.bulk-actions(
           .caption(v-else) Ações em massa para os {{ options.values.selected.length }} itens selecionados:
           v-row.my-0
             slot(name="bulkActions.prepend" v-bind="options")
-            v-btn.ml-3(
-              small
-              v-bind="{ color: action.color || 'primary', ...action.options }"
+            template(
               v-for="(action, value) in options.bulkActions"
-              :key="value"
-              @click="emit(value, options.values.selected)"
+              v-if="condition(action)"
             )
-              v-icon(small v-if="action.icon") {{ action.icon }}
-              span {{ action.text }}
+              v-btn.ml-3(
+                small
+                v-bind="{ color: action.color || 'primary', ...action.options }"
+                :key="value"
+                @click="emit(value, options.values.selected)"
+              )
+                v-icon(small v-if="action.icon") {{ action.icon }}
+                span {{ action.text }}
             slot(name="bulkActions.append" v-bind="options")
 </template>
 
 <script>
+import conditionMixin from '../../conditionMixin'
+
 export default {
   name: 'BulkActions',
+  mixins: [conditionMixin],
   props: {
     options: { type: Object, required: true },
   },
