@@ -74,7 +74,7 @@ describe('tableFab.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeFalsy()
+    expect(wrapper.findComponent({ name: 'v-btn' }).exists()).toBeFalsy()
 
     wrapper.setProps({
       options: {
@@ -83,12 +83,19 @@ describe('tableFab.vue', () => {
     })
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.findComponent({ name: 'v-btn' }).isVisible()).toBeTruthy()
+    expect(wrapper.findComponent({ name: 'v-btn' }).exists()).toBeTruthy()
   })
 
   // eslint-disable-next-line jest/no-done-callback
   it('tooltip text should be equal to tableAction text', async (done) => {
     expect.hasAssertions()
+
+    wrapper.setProps({
+      options: {
+        ...props,
+      },
+    })
+    await wrapper.vm.$nextTick()
 
     wrapper.findComponent({ name: 'v-btn' }).trigger('mouseenter')
     await wrapper.vm.$nextTick()
