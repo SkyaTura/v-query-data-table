@@ -9,8 +9,8 @@ v-tooltip(left v-if="fab")
         fixed
         right
         v-bind="attrs"
+        v-if="!options.hideTableFAB && !options.hideAllActions && condition(fab[1])"
         v-on="on"
-        v-show="!options.hideTableFAB && !options.hideAllActions"
         :color="fab ? fab[1].color : ''"
         @click="$emit(`action-table-${fab[0]}`)"
         :disabled="options.loading.active"
@@ -19,8 +19,11 @@ v-tooltip(left v-if="fab")
 </template>
 
 <script>
+import conditionMixin from '../../conditionMixin'
+
 export default {
   name: 'TableFab',
+  mixins: [conditionMixin],
   props: {
     options: { type: Object, required: true },
   },
