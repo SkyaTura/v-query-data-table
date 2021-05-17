@@ -1,6 +1,7 @@
 {
   "name": "v-query-data-table",
-  "version": "3.0.0-beta.1",
+  "version": "3.0.0-beta.2",
+  "main": "dist/v-query-data-table.common.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name v-query-data-table src/wrapper.js",
