@@ -16,28 +16,48 @@ v-card(color="transparent" flat v-else)
         v-row.ma-0.pa-3.filterDrawer-content
           slot(name="filter-prepend")
           template(v-for="row in computedHeaders")
-            v-autocomplete.flex-grow-0.my-2(
-              filled
-              hide-details
-              item-text="text"
-              item-value="value"
-              multiple
-              small-chips
-              v-if="row.$extra.filterable !== false"
-              v-model="filter.values[row.value]"
-              :items="sortFilterItems[row.value]"
-              :label="row.text"
-              @focus="populateFilter(row.value)"
-              :loading="filter.loading[row.value]"
-            )
-              template(v-slot:item="{ item, on, attrs }")
-                v-list-item(v-bind="attrs" v-on="on")
-                  v-list-item-content
-                    v-list-item-title {{ item.text }}
-                  v-list-item-action
-                    v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
-              template(v-slot:selection="{ item, index }")
-                v-chip(v-if="index < 3") {{ index < 2 || filter.values[row.value].length <= 3 ? item.text : `e outros ${filter.values[row.value].length - 2}` }}
+            template(v-if="row.$extra.filterType === 'text'")
+              v-autocomplete.flex-grow-0.my-2(
+                filled
+                hide-details
+                item-text="text"
+                item-value="value"
+                multiple
+                small-chips
+                v-if="row.$extra.filterable !== false"
+                v-model="filter.values[row.value]"
+                :items="sortFilterItems[row.value]"
+                :label="row.text"
+                @focus="populateFilter(row.value)"
+                :loading="filter.loading[row.value]"
+              )
+                template(v-slot:item="{ item, on, attrs }")
+                  v-list-item(v-bind="attrs" v-on="on")
+                    v-list-item-content
+                      v-list-item-title {{ item.text }}
+                    v-list-item-action
+                      v-list-item-subtitle {{ item.count }} {{ item.count > 1 ? 'itens' : 'item' }}
+                template(v-slot:selection="{ item, index }")
+                  v-chip(v-if="index < 3") {{ index < 2 || filter.values[row.value].length <= 3 ? item.text : `e outros ${filter.values[row.value].length - 2}` }}
+            template(v-else-if="row.$extra.filterType === 'dateRange'")
+              v-menu(
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="auto"
+              )
+                template(v-slot:activator="{ on, attrs }")
+                  v-text-field.flex-grow-0.my-2(
+                    filled
+                    hide-details
+                    :value="filterDateText(filter.values[row.value])"
+                    label="Picker in menu"
+                    readonly
+                    append-icon="mdi-calendar"
+                    v-bind="attrs"
+                    v-on="on"
+                  )
+                v-date-picker(v-model="filter.values[row.value]" range)
           slot(name="filter-append")
           v-row.mx-0.mt-4(justify="end")
             slot(name="filter-actions-prepend")
@@ -425,7 +445,7 @@ export default {
   }),
   computed: {
     sortFilterItems() {
-      const { transformableHeaders } = this
+      const { transformableFilters } = this
       const { items, values } = this.filter
       return Object.entries(items)
         .map(([field, itemValues]) => [
@@ -433,7 +453,7 @@ export default {
           itemValues
             .map((item) => {
               const value = item.value
-              const transformItem = transformableHeaders.find(
+              const transformItem = transformableFilters.find(
                 ([itemKey]) => itemKey === field
               )
               if (!transformItem) return { ...item, text: item.value }
@@ -488,6 +508,14 @@ export default {
           return { ...acc, [key]: getNewValue() }
         }, item)
       )
+    },
+    transformableFilters() {
+      return this.computedHeaders
+        .filter(
+          (item) =>
+            item.$extra.transformItem && item.$extra.transformFilter !== false
+        )
+        .map((item) => [item.value, item.$extra.transformItem])
     },
     transformableHeaders() {
       return this.computedHeaders
@@ -545,6 +573,11 @@ export default {
     shownHeaders() {
       return this.computedHeaders.filter((item) => item.$extra.visible)
     },
+    filterTypes() {
+      return this.computedHeaders
+        .map((item) => [item.value, item.$extra.filterType])
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+    },
     computedHeaders() {
       const { headers, hideActions } = this
       const common = {
@@ -583,11 +616,19 @@ export default {
             visible = true,
             filterable = true,
             transformItem = null,
+            transformFilter = true,
+            filterType = 'text',
           } = $extra
 
           return {
             ...newHeader,
-            $extra: { visible, filterable, transformItem },
+            $extra: {
+              visible,
+              filterable,
+              transformItem,
+              transformFilter,
+              filterType,
+            },
           }
         })
         .filter((item) => item.value !== '_actions' || !hideActions)
@@ -658,20 +699,40 @@ export default {
       deep: true,
       handler() {
         const { values } = this.filter
-        console.log(values)
+        const { filterTypes } = this
         this.options = {
           ...this.options,
+          page: 1,
           filter: Object.entries(values)
-            .reduce(
-              (acc, [field, items]) => [
-                ...acc,
-                items
-                  .filter((item) => item !== '')
-                  .map((value) => `${field}(${value})`)
-                  .join(';'),
-              ],
-              []
-            )
+            .reduce((acc, [field, items]) => {
+              switch (filterTypes[field]) {
+                case 'dateRange': {
+                  const [startDate, endDate] = [...items].sort((a, b) => {
+                    if (a > b) return 1
+                    if (a < b) return -1
+                    return 0
+                  })
+                  const start = this.$moment(startDate)
+                    .startOf('day')
+                    .toISOString()
+                  const end = this.$moment(endDate).endOf('day').toISOString()
+                  return endDate
+                    ? [`${field}(lte:${end},gte:${start})`]
+                    : [`${field}(gte:${start})`]
+                }
+                case 'text':
+                default:
+                  return [
+                    ...acc,
+                    items
+                      .filter((item) => item !== '')
+                      .map((value) => {
+                        return `${field}(${value})`
+                      })
+                      .join(';'),
+                  ]
+              }
+            }, [])
             .join(','),
         }
       },
@@ -721,6 +782,18 @@ export default {
     this.loadSettings()
   },
   methods: {
+    filterDateText(dates) {
+      return (
+        dates &&
+        [...dates]
+          .sort((a, b) => {
+            if (a > b) return 1
+            if (a < b) return -1
+            return 0
+          })
+          .join(' ~ ')
+      )
+    },
     actionCondition(item) {
       // eslint-disable-next-line no-unused-vars
       return ([index, props]) => {

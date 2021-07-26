@@ -1,7 +1,7 @@
 {
   "name": "v-query-data-table",
   "description": "A Vuetify Data Table wrapper with easy API querying",
-  "version": "2.1.14",
+  "version": "2.1.15",
   "author": "Antonio Eduardo <antonio@skyatura.com.br>",
   "repository": "https://github.com/SkyaTura/v-query-data-table",
   "license": "ISC",
@@ -62,7 +62,7 @@
   "peerDependencies": {
     "vue": "^2.6.11",
     "vue-router": "latest",
-    "vuex": "latest",
-    "vuetify": "^2.3.6"
+    "vuetify": "^2.3.6",
+    "vuex": "latest"
   }
 }
