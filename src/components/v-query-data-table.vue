@@ -51,7 +51,7 @@ v-card(color="transparent" flat v-else)
                     filled
                     hide-details
                     :value="filterDateText(filter.values[row.value])"
-                    label="Picker in menu"
+                    :label="row.text"
                     readonly
                     append-icon="mdi-calendar"
                     v-bind="attrs"
