@@ -791,6 +791,7 @@ export default {
             if (a < b) return -1
             return 0
           })
+          .map((date) => this.$moment.utc(date).format('DD/MM/YYYY'))
           .join(' ~ ')
       )
     },
