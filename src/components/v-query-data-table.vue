@@ -51,7 +51,7 @@ v-card(color="transparent" flat v-else)
                     filled
                     hide-details
                     :value="filterDateText(filter.values[row.value])"
-                    label="Picker in menu"
+                    :label="row.text"
                     readonly
                     append-icon="mdi-calendar"
                     v-bind="attrs"
@@ -791,6 +791,7 @@ export default {
             if (a < b) return -1
             return 0
           })
+          .map((date) => this.$moment.utc(date).format('DD/MM/YYYY'))
           .join(' ~ ')
       )
     },
