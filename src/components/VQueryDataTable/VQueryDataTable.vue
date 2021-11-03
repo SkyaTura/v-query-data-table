@@ -8,7 +8,7 @@ v-card.VQueryDataTable(
   :style="{ '--x-color': options.toolbarFieldsBackground }"
 )
   slot(name="header" v-bind="options")
-    TableHeader(v-on="$listeners" :options="options")
+  TableHeader(v-on="$listeners" :options="options")
 
   slot(name="body" v-bind="options")
     p.px-5.py-3.mb-10.grey--text.text--darken-1(v-if="options.description") {{ options.description }}
@@ -237,7 +237,7 @@ export default {
         },
         datatable: {
           ...this.$attrs,
-          // disableSort: this.disableSort,
+          // DisableSort: this.disableSort,
           disablePagination: this.disablePagination,
           dense: this.disallowDense ? false : this.dense,
           ...this.datatable,
@@ -247,7 +247,7 @@ export default {
           hideDefaultFooter: true,
           headers: this.computedHeaders,
           disabled: this.loading.active,
-          // value: this.selected,
+          // Value: this.selected,
           options: {
             ...this.iQuery,
             ...this.datatable.options,
